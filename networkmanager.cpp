@@ -1,11 +1,15 @@
 #include "networkmanager.h"
 
-NetworkManager::NetworkManager(EndPointType type, const QString &adresss, QObject *parent) : QObject(parent)
+NetworkManager::NetworkManager(EndPointType type, const QString &address, bool init, QObject *parent) : address(address), type(type), QObject(parent)
 {
+    if (init)
+    {
+        initSocket(address);
+    }
 
 }
 
-void NetworkManager::send(qint32 messageId, google::protobuf::Message* message, QTcpSocket* socket)
+void NetworkManager::send(qint32 messageId, const google::protobuf::Message* message, QTcpSocket* socket)
 {
     if (type == Server && socket == nullptr)
     {
@@ -16,18 +20,27 @@ void NetworkManager::send(qint32 messageId, google::protobuf::Message* message, 
     {
         socket = static_cast <QTcpSocket*> (endPoint);
     }
-    qint32 size = message->ByteSize();
-    QByteArray array(size, '\0');
-    message->SerializeToArray(array.data(), size);
-    array.prepend(size);
-    array.prepend(messageId);
-    socket->write(array);
-    bool flush = true;
-    while (flush)
+    if (socket->isOpen() && socket->state() == QAbstractSocket::ConnectedState)
     {
-        flush = socket->flush();
-    }
+        qint32 size = 0;
+        QByteArray array;
+        if (message != nullptr)
+        {
+            size = message->ByteSize();
+            array.resize(size);
+            message->SerializeToArray(array.data(), size);
+        }
 
+        array.insert(0, (const char*)&size, sizeof(size));
+        array.insert(0, (const char*)&messageId, sizeof(messageId));
+        socket->write(array);
+       // qDebug() << size << messageId << array << array.size();
+        bool flush = true;
+        while (flush)
+        {
+            flush = socket->flush();
+        }
+    }
 }
 
 void NetworkManager::setHandler(qint32 id, std::function<void (const MessageData&)> handler)
@@ -42,7 +55,7 @@ void NetworkManager::setHandler(qint32 id, std::function<void (const MessageData
     }
 }
 
-void NetworkManager::init(const QString &address)
+void NetworkManager::initSocket(const QString &address)
 {
     QStringList ipPort = address.split(":");
     if (type == Server)
@@ -70,6 +83,7 @@ void NetworkManager::init(const QString &address)
                 {
                     for (auto& i : messageHandlers[OnDisconnect])
                     {
+
                         i(MessageData(clientConnection));
                     }
                 }
@@ -101,20 +115,6 @@ void NetworkManager::init(const QString &address)
         endPoint = new QTcpSocket(this);
         QTcpSocket* client = static_cast <QTcpSocket*> (endPoint);
         rawBuffers.insert(client, RawBuffer());
-        client->connectToHost(QHostAddress(ipPort.first()), ipPort.last().toUInt());
-        QSharedPointer <QTimer> timer(new QTimer);
-        connect(timer.data(), &QTimer::timeout, [timer, client, ipPort]()  mutable
-        {
-            if (client->state() != QAbstractSocket::SocketState::ConnectedState)
-            {
-                client->connectToHost(QHostAddress(ipPort.first()), ipPort.last().toUInt());
-            }
-            else
-            {
-                timer.reset();
-            }
-
-        });
         connect(client, &QTcpSocket::connected, [this, client]()
         {
             if (messageHandlers.contains(OnConnect))
@@ -125,13 +125,37 @@ void NetworkManager::init(const QString &address)
                 }
             };
         });
-        connect(client, &QTcpSocket::disconnected, [this, client]()
+        client->connectToHost(QHostAddress(ipPort.first()), ipPort.last().toUInt());
+        QSharedPointer <QTimer> timer(new QTimer);
+        if (client->state() != QAbstractSocket::SocketState::ConnectedState)
+        {
+            connect(timer.data(), &QTimer::timeout, [timer, client, ipPort]()  mutable
+            {
+                qDebug() << client->state() << client->errorString();
+                if (client->state() != QAbstractSocket::SocketState::ConnectedState)
+                {
+                    client->connectToHost(QHostAddress(ipPort.first()), ipPort.last().toUInt());
+                }
+                else
+                {
+                    timer.reset();
+                }
+
+            });
+            timer->start(1000);
+        }
+        connect(client, &QTcpSocket::disconnected, [this, client, ipPort]()
         {
             if (messageHandlers.contains(OnDisconnect))
             {
-                for (auto& i : messageHandlers[OnConnect])
+                for (auto& i : messageHandlers[OnDisconnect])
                 {
-                    i(MessageData(client));
+                    QByteArray portData;
+                    quint32 port = ipPort.last().toUInt();
+
+                    portData.append((const char*)&port, sizeof(port));
+                    qDebug() << portData.size() << portData << portData.toUInt();
+                    i(MessageData(client, portData));
                 }
             };
         });
@@ -166,7 +190,7 @@ void NetworkManager::handle(QObject* endPointData)
 {
     RawBuffer& rawBuffer = rawBuffers[endPointData];
     QTcpSocket* source = static_cast <QTcpSocket*> (endPointData);
-    bool read = source->bytesAvailable() > rawBuffer.needToRead;
+    bool read = source->bytesAvailable() >= rawBuffer.needToRead;
     while (read)
     {
         rawBuffer.buffer = source->read(rawBuffer.needToRead);
@@ -180,13 +204,13 @@ void NetworkManager::handle(QObject* endPointData)
         {
             for (auto& i : messageHandlers[rawBuffer.id])
             {
-                i(MessageData(source,&rawBuffer.buffer));
+                i(MessageData(source, rawBuffer.buffer));
             }
             rawBuffer.id = ReservedCommands::Invalid;
             rawBuffer.needToRead = headerSize;
             rawBuffer.buffer.clear();
         }
-        read = source->bytesAvailable() > rawBuffer.needToRead;
+        read = source->bytesAvailable() >= rawBuffer.needToRead;
     }
 }
 

@@ -18,6 +18,21 @@ PedestrianTracker::PedestrianTracker(qint32 width, qint32 height, QObject *paren
     defenceInfo.insert(TeamRole::LeftFielder, PPlayer::create());
     defenceInfo.insert(TeamRole::CenterFielder, PPlayer::create());
     defenceInfo.insert(TeamRole::RightFielder, PPlayer::create());
+
+    positionCoordinates.insert(GamePositions::Home, qMakePair(QString("Home"), Point3f(0, 0, 0)));
+    positionCoordinates.insert(GamePositions::Umpire, qMakePair(QString("Umpire"), Point3f(1.72, 1.72, 0)));
+    positionCoordinates.insert(GamePositions::LeftSquare, qMakePair(QString("LeftSquare"), Point3f(-1, 1, 0)));
+    positionCoordinates.insert(GamePositions::RightSquare, qMakePair(QString("RightSquare"), Point3f(1, 1, 0)));
+    positionCoordinates.insert(GamePositions::FirstBase, qMakePair(QString("FirstBase"), Point3f(27.04, 0.04, 0)));
+    positionCoordinates.insert(GamePositions::SecondBase, qMakePair(QString("SecondBase"), Point3f(27.23, 27.27, 0)));
+    positionCoordinates.insert(GamePositions::ShortStop, qMakePair(QString("ShortStop"), Point3f(14.5, 27.4, 0)));
+    positionCoordinates.insert(GamePositions::ThirdBase, qMakePair(QString("ThirdBase"), Point3f(0.005, 27.07, 0)));
+    positionCoordinates.insert(GamePositions::LeftField, qMakePair(QString("LeftField"), Point3f(16, 62, 0)));
+    positionCoordinates.insert(GamePositions::CenterField, qMakePair(QString("CenterField"), Point3f(50, 50, 0)));
+    positionCoordinates.insert(GamePositions::RightField, qMakePair(QString("RightField"), Point3f(62, 16, 0)));
+
+
+
 }
 
 
@@ -58,29 +73,31 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
                 sort(ious.begin(), ious.end(), [](auto& a, auto& b){return a.first > b.first;});
                 auto max = ious.begin();
                 // вернуть 0.25, добавить проверку площадей
-                if (max->first > minIntercept)
+                if (max->first > minIntersect)
                 {
                     auto secondMax = max;
                     ++secondMax;
-                    playerFound = true;
-                    if (secondMax->first > minIntercept ||  max->second->interceptState > ProbablyIntercept)
+
+                    if (secondMax->first > minIntersect /*||  max->second->intersectState > ProbablyIntersect*/)
                     {
-                        if ((max->second->interceptState == DontMoveClose
-                             || max->second->interceptState == MoveClose)
+                        if ((max->second->intersectState == DontMoveClose
+                             || max->second->intersectState == MoveClose)
                                 && max->second->lastTrackConfidence > trackerHighConfidence)
                         {
                             max->second->updated = true;
                             ++max->second->confirmed;
                             max->second->lastConfidence = i.first;
+                            playerFound = true;
                         }
                         qDebug() << "TWO PEOPLE";
                     }
                     else
                     {
-                        if (max->second->interceptState == Lost || max->second->interceptState == OutOfFrameLost)
+                        playerFound = true;
+                        if (max->second->intersectState == Lost || max->second->intersectState == OutOfFrameLost)
                         {
                             max->second->speedUpdateCounter = 0;
-                            max->second->interceptState = NoIntercept;
+                            max->second->intersectState = NoIntersect;
                         }
                         if (!max->second->speedUpdateCounter)
                         {
@@ -105,8 +122,8 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
 
             if (!playerFound)
             {
-                bool findIntercepted = false;
-                for (auto& interIt : interceptPlayers)
+                bool findIntersected = false;
+                for (auto& interIt : intersectPlayers)
                 {
                     Point2f foundPlayerCenter = Point2f (i.second.x + i.second.width / 2,
                                                          i.second.y + i.second.height / 2);
@@ -116,12 +133,12 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
                     {
                         if (interIt.second.size() == 2)
                         {
-                            findIntercepted = true;
+                            findIntersected = true;
 
                             PPlayer first = interIt.second.first();
                             PPlayer second = interIt.second.last();
                             PPlayer tracked, nonTracked;
-                            if (first->interceptState == MoveClose || first->interceptState == DontMoveClose)
+                            if (first->intersectState == MoveClose || first->intersectState == DontMoveClose)
                             {
                                 tracked = first;
                                 nonTracked = second;
@@ -163,8 +180,17 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
                             if (!trackedCloserToTrackedPredicted && !foundCloserToNonTrackedPredicted)
                             {
                                 auto tmpId = nonTracked->id;
+                                auto tmpMoves = nonTracked->moves;
+                                auto tmpPosition = nonTracked->position;
+                                auto tmpColor = nonTracked->color;
                                 nonTracked->id = tracked->id;
+                                nonTracked->moves = tracked->moves;
+                                nonTracked->position = tracked->position;
+                                nonTracked->color = tracked->color;
                                 tracked->id = tmpId;
+                                tracked->moves = tmpMoves;
+                                tracked->position = tmpPosition;
+                                tracked->color = tmpColor;
                             }
 
                             nonTracked->rUse = nonTracked->rDet = i.second;
@@ -173,23 +199,25 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
                         }
                         for (auto interPlayer : interIt.second)
                         {
-                            interPlayer->interceptState = NoIntercept;
+                            interPlayer->intersectState = NoIntersect;
                             if (!interPlayer->tracker.empty())
                             {
                                 interPlayer->tracker->setDoLearning(true);
                             }
                             interPlayer->predictedR = Rect2d();
                         }
-                        interceptPlayers.removeOne(interIt);
+                        intersectPlayers.removeOne(interIt);
                         break;
                     }
                 }
-                if (!findIntercepted)
+                if (!findIntersected)
                 {
                     nonStructuredPlayers.append(PPlayer::create());
                     nonStructuredPlayers.back()->lastConfidence = i.first;
                     nonStructuredPlayers.back()->rDet = nonStructuredPlayers.back()->rUse = i.second;
                     nonStructuredPlayers.back()->updated = true;
+                    RNG rng(nonStructuredPlayers.size());
+                    nonStructuredPlayers.back()->color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
                     ++nonStructuredPlayers.back()->confirmed;
                 }
             }
@@ -208,7 +236,7 @@ void PedestrianTracker::finishInitialization()
         QLinkedList <PPlayer>::iterator i = nonStructuredPlayers.begin();
         while (i != nonStructuredPlayers.end())
         {
-            if (i->data()->interceptState == Lost || i->data()->interceptState == OutOfFrameLost)
+            if (i->data()->intersectState == Lost || i->data()->intersectState == OutOfFrameLost)
             {
                 qDebug() << "handle LOST";
                 ++i->data()->detNotFoundCount;
@@ -226,7 +254,7 @@ void PedestrianTracker::finishInitialization()
                 bool eraseBadTrack = qFuzzyCompare(i->data()->lastTrackConfidence, -1.);
                 if (!i->data()->alreadyInited && !qFuzzyCompare(i->data()->lastTrackConfidence, -1.)
                         && i->data()->lastTrackConfidence < trackerHighConfidence
-                        && i->data()->interceptState == NoIntercept)
+                        && i->data()->intersectState == NoIntersect)
                 {
                     eraseBadTrack = true;
                 }
@@ -270,35 +298,35 @@ void PedestrianTracker::initTracker(Mat grayResized, PPlayer player)
 
 void PedestrianTracker::trackPlayerInternal(Mat inputImg, PPlayer player, Mat grayResized, bool& erase)
 {
-    if (player->interceptState == Lost
-            || player->interceptState == OutOfFrameLost)
+    if (player->intersectState == Lost
+            || player->intersectState == OutOfFrameLost)
     {
         return;
     }
 
-    if (player->interceptState == MoveClose
-            || player->interceptState == MoveFar)
+    if (player->intersectState == MoveClose
+            || player->intersectState == MoveFar)
     {
         player->predictedR.x += player->lastSpeed.x * 1.05;
         player->predictedR.y += player->lastSpeed.y * 1.05;
     }
-    if (player->interceptState <= ProbablyIntercept
-            || player->interceptState == DontMoveClose
-            || player->interceptState == MoveClose)
+    if (player->intersectState <= ProbablyIntersect
+            || player->intersectState == DontMoveClose
+            || player->intersectState == MoveClose)
     {
 
         if (!player->tracker->update(grayResized, player->rTrack))
         {
             qDebug() << "not found" << player->id << player->trackNotFoundCount
                      << player->tracker->getThreshold() << player->tracker->getConfidenceValue();
-            if (!player->trackNotFoundCount)
+            if (player->trackNotFoundCount < tryToTrack)
             {
                 initTracker(grayResized, player);
             }
             ++player->trackNotFoundCount;
             if (player->trackNotFoundCount > maxTrackNotFound)
             {
-                player->interceptState = Lost;
+                player->intersectState = Lost;
             }
         }
         else
@@ -348,16 +376,16 @@ void PedestrianTracker::trackPlayerInternal(Mat inputImg, PPlayer player, Mat gr
             if (horizontalCenter < outOfFrameBorder)
             {
                 outOfFrameFlag = true;
-                emit outOfFrame(OutOfFrame::Left);
+                emit outOfFrame(msg::OutOfFrame::LeftOut);
             }
             else if (horizontalCenter > inputImg.cols - outOfFrameBorder)
             {
                 outOfFrameFlag = true;
-                emit outOfFrame(OutOfFrame::Right);
+                emit outOfFrame(msg::OutOfFrame::RightOut);
             }
             if (outOfFrameFlag)
             {
-                player->interceptState = OutOfFrameLost;
+                player->intersectState = OutOfFrameLost;
             }
         }
 
@@ -371,7 +399,7 @@ QPair <Mat, Mat> PedestrianTracker::calculateBodyHueHist(Mat bodyImg, Rect2d r)
     Mat resizedBody;
     resize(body, resizedBody, Size(), resampleCoeff, resampleCoeff);
     Mat cropped;
-    resizedBody(Rect(0, 0, resizedBody.cols, resizedBody.rows / 2)).copyTo(cropped);
+    resizedBody(cv::Rect(0, 0, resizedBody.cols, resizedBody.rows / 2)).copyTo(cropped);
     cvtColor(cropped, cropped, COLOR_BGR2HSV);
     std::vector <Mat> splitted;
     split(cropped, splitted);
@@ -410,32 +438,54 @@ QPair <Mat, Mat> PedestrianTracker::calculateBodyHueHist(Mat bodyImg, Rect2d r)
 
 void PedestrianTracker::resolveConflict(PedestrianTracker::PPlayer p1, PedestrianTracker::PPlayer p2, Rect2d foundPlayer)
 {
+    Q_UNUSED(p2);
     Ptr <TrackerCSRT> p1Tracker = TrackerCSRT::create();
-    Ptr <TrackerCSRT> p2Tracker = TrackerCSRT::create();
-    auto it = std::lower_bound(buffer->begin(), buffer->end(), p1->history.last().first, [](auto& a, auto& b) {return a.time < b;});
-    p1Tracker->init(it->frame, p1->history.last().second);
-    auto itStart = it;
+    //Ptr <TrackerCSRT> p2Tracker = TrackerCSRT::create();
+    auto it = std::lower_bound(buffer->begin(), buffer->end(), p1->history.first, [](auto& a, auto& b) {return a.time < b;});
+    p1Tracker->init(it->frame, p1->history.second);
     ++it;
     Rect2d p1PredictedRect;
-    qint32 frameStep = 4;
-    quint64 prevTime = it->time - 1;
-    while (it->time > prevTime)
+    qint32 frameStep = 6;
+    while (it->time != lastTime)
     {
-        qDebug() << p1Tracker->update(it->frame, p1PredictedRect);
-        rectangle (it->frame, p1PredictedRect, CV_RGB(255,0,0), 3);
+        qDebug() << p1Tracker->update(it->frame, p1PredictedRect) << lastTime - it->time;
+        rectangle (it->frame, p1PredictedRect, CV_RGB(255, 0, 0), 3);
         imshow("window2", it->frame);
         waitKey(0);
-        it += frameStep;
+        qint32 i = 0;
+        while (it != buffer->end() - 1 && i < frameStep)
+        {
+            ++it;
+            ++i;
+        }
     }
     qDebug() << calculateIOU(p1PredictedRect, foundPlayer).iou;
-    //    p2Tracker->init(p2->history.last().first, p2->history.last().second);
-    //    Rect2d p2PredictedRect;
-    //    p2Tracker->update(inputImg, p2PredictedRect);
-    //    qDebug() << calculateIOU(p1PredictedRect, foundPlayer).iou << calculateIOU(p2PredictedRect, foundPlayer).iou;
+}
+
+void PedestrianTracker::assignPosition(PPlayer player, bool& changed)
+{
+    bool ok;
+    MovePosition mPos = evaluate3dPosition(player->rUse, ok);
+    player->moves.append(qMakePair(lastTime, mPos));
+    Q_ASSERT(ok);
+    auto min = std::min_element(positionCoordinates.begin(), positionCoordinates.end(), [mPos](auto& p1, auto& p2)
+    {
+        return norm(p1.second - mPos.onSpace) < norm(p2.second - mPos.onSpace);
+    });
+    if (player->position == GamePositions::Invalid || norm(mPos.onSpace - min.value().second) < 1)
+    {
+        if (player->position != min.key())
+        {
+            changed = true;
+        }
+        player->position = min.key();
+    }
+
 }
 
 void PedestrianTracker::track(Mat _inputImg, quint64 time)
 {    
+    net->interceptCoeff = minIntersect; // correct intercept
     lastTime = time;
     inputImg = _inputImg;
     Mat gray;
@@ -467,16 +517,32 @@ void PedestrianTracker::track(Mat _inputImg, quint64 time)
             {
                 trackPlayerInternal(inputImg, *i, grayResized, erase);
             }
+
             if (erase)
             {
                 i = nonStructuredPlayers.erase(i);
             }
             else
             {
+                //                bool
+                //                assignPosition(i);
+                //evaluate 3d pos here, update if changed, emit signal
                 ++i;
             }
         }
 
+        for (auto& i : nonStructuredPlayers)
+        {
+            if (i->updated)
+            {
+                bool changed = false;
+                assignPosition(i, changed);
+            }
+//            for (auto& j : i->moves)
+//            {
+//                circle(inputImg, j.second.onCam, 3, CV_RGB(255, 0, 0));
+//            }
+        }
         ++detectCounter;
 
         if (detectCounter == detectDuration)
@@ -484,8 +550,6 @@ void PedestrianTracker::track(Mat _inputImg, quint64 time)
             finishInitialization();
             QElapsedTimer t;
             t.start();
-            Mat frameHistory;
-            inputImg.copyTo(frameHistory);
             for (auto& player : nonStructuredPlayers)
             {
                 savePlayerHistory(player);
@@ -522,20 +586,12 @@ void PedestrianTracker::track(Mat _inputImg, quint64 time)
                     }
                     else
                     {
+                        //                        assignPosition(i);
                         ++i;
                     }
                 }
                 qDebug() << "ELAPSED" << t.elapsed();
-                //                for (auto& i : nonStructuredPlayers)
-                //                {
-                //                    Rect r = i->rUse;
-                //                    r.x /= 2;
-                //                    r.y /= 2;
-                //                    r.width /= 2;
-                //                    r.height /= 2;
-                //                    rectangle(grayResized, r, CV_RGB(255,0, 0), 3);
-                //                }
-                //                imshow("window5", grayResized);
+
             }
             ++trackCounter;
         }
@@ -547,14 +603,14 @@ void PedestrianTracker::track(Mat _inputImg, quint64 time)
         break;
     }
     }
-    interceptPlayers.append(checkPlayersIntercept());
+    intersectPlayers.append(checkPlayersIntersect());
 }
 
 void PedestrianTracker::initTrackerFirstly(Mat grayResized, PPlayer player)
 {
     if (player->updated)
     {
-        player->rTrackCropped = (player->rUse.height / player->rUse.width) > 1.5 ? true : false;
+        player->rTrackCropped = (player->rUse.height / player->rUse.width) > bodyWidthHeightProportion ? true : false;
         player->rTrack.x = player->rUse.x * resampleCoeff;
         player->rTrack.y = player->rUse.y * resampleCoeff;
         player->rTrack.width = player->rUse.width * resampleCoeff;
@@ -573,13 +629,9 @@ void PedestrianTracker::initTrackerFirstly(Mat grayResized, PPlayer player)
 
 void PedestrianTracker::savePlayerHistory(PedestrianTracker::PPlayer p)
 {
-    if (p->interceptState <= ProbablyIntercept)
+    if (p->intersectState <= ProbablyIntersect)
     {
-        p->history.append(qMakePair(lastTime, p->rUse));
-        if (p->history.size() > 3)
-        {
-            p->history.removeFirst();
-        }
+        p->history = qMakePair(lastTime, p->rUse);
     }
 }
 
@@ -589,15 +641,24 @@ void PedestrianTracker::drawROIs(Mat drawImg)
     {
         for (auto& i : nonStructuredPlayers)
         {
+            if (i->moves.size() > 2)
+            {
+                for (qint32 j = 1; j < i->moves.size(); ++j)
+                {
+                    line(drawImg, i->moves[j - 1].second.onCam, i->moves[j].second.onCam, i->color, 10);
+                }
+            }
+
             auto p = i->rUse.tl();
             p.y -= 10;
-            if (i->interceptState)
+            if (i->intersectState)
             {
-                if (i->interceptState == DontMoveClose || i->interceptState == MoveClose)
+
+                if (i->intersectState == DontMoveClose || i->intersectState == MoveClose)
                 {
                     rectangle(drawImg, i->rUse, CV_RGB(0, 255, 0), 3);
                 }
-                else if (i->interceptState == Lost || i->interceptState == OutOfFrameLost)
+                else if (i->intersectState == Lost || i->intersectState == OutOfFrameLost)
                 {
                     rectangle(drawImg, i->rUse, CV_RGB(0, 0, 255), 3);
                 }
@@ -610,15 +671,19 @@ void PedestrianTracker::drawROIs(Mat drawImg)
                     rectangle(drawImg, i->predictedR, CV_RGB(255, 255, 255), 3);
                 }
 
-                putText(drawImg, i->id.toString().left(5).toStdString(), i->rUse.tl(), FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 0, 255));
+                //putText(drawImg, i->id.toString().left(5).toStdString(), i->rUse.tl(), FONT_HERSHEY_PLAIN, 5, CV_RGB(255, 0, 255));
+                putText(drawImg, positionCoordinates[i->position].first.toStdString(), Point2f(i->rUse.tl().x, i->rUse.tl().y - 20),
+                        FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 0, 255), 3);
             }
             else
             {
                 rectangle(drawImg, i->rUse, CV_RGB(255, 255, 0), 3);
-                putText(drawImg, i->id.toString().left(5).toStdString(), i->rUse.tl(), FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 255, 255));
+                //putText(drawImg, i->id.toString().left(5).toStdString(), i->rUse.tl(), FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 255, 255));
+                putText(drawImg, positionCoordinates[i->position].first.toStdString(), Point2f(i->rUse.tl().x, i->rUse.tl().y - 20),
+                        FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 255, 255), 3);
             }
         }
-        for (auto& i : interceptPlayers)
+        for (auto& i : intersectPlayers)
         {
             rectangle(drawImg, i.first, CV_RGB(0, 0, 0), 3);
         }
@@ -626,18 +691,18 @@ void PedestrianTracker::drawROIs(Mat drawImg)
 }
 
 
-PedestrianTracker::InterceptCheckResult PedestrianTracker::intersectsAnyPedestrian(Point2f position, bool nonAprior)
+PedestrianTracker::IntersectCheckResult PedestrianTracker::intersectsAnyPedestrian(Point2f position, bool nonAprior)
 {
     QMutexLocker lock(&mutex);
     QVector <QPair <double, PPlayer>> distance;
-    InterceptCheckResult result;
+    IntersectCheckResult result;
     if (mode == Teams)
     {
         QMapIterator<TeamRole, PPlayer> attackIt(attackInfo);
         while (attackIt.hasNext())
         {
-            result = handleInterceptCheck(position, attackIt.value(), distance, nonAprior);
-            if (result.intercept)
+            result = handleIntersectCheck(position, attackIt.value(), distance, nonAprior);
+            if (result.intersect)
             {
                 result.role = attackIt.key();
                 return result;
@@ -647,8 +712,8 @@ PedestrianTracker::InterceptCheckResult PedestrianTracker::intersectsAnyPedestri
         QMapIterator<TeamRole, PPlayer> defenceIt(defenceInfo);
         while (defenceIt.hasNext())
         {
-            result = handleInterceptCheck(position, defenceIt.value(), distance, nonAprior);
-            if (result.intercept)
+            result = handleIntersectCheck(position, defenceIt.value(), distance, nonAprior);
+            if (result.intersect)
             {
                 result.role = defenceIt.key();
                 return result;
@@ -658,8 +723,8 @@ PedestrianTracker::InterceptCheckResult PedestrianTracker::intersectsAnyPedestri
         {
             for (auto& j : i)
             {
-                result = handleInterceptCheck(position, j, distance, nonAprior);
-                if (result.intercept)
+                result = handleIntersectCheck(position, j, distance, nonAprior);
+                if (result.intersect)
                 {
                     return result;
                 }
@@ -671,8 +736,8 @@ PedestrianTracker::InterceptCheckResult PedestrianTracker::intersectsAnyPedestri
     {
         for (auto& i : nonStructuredPlayers)
         {
-            result = handleInterceptCheck(position, i, distance, nonAprior);
-            if (result.intercept)
+            result = handleIntersectCheck(position, i, distance, nonAprior);
+            if (result.intersect)
             {
                 return result;
             }
@@ -715,7 +780,7 @@ void PedestrianTracker::clear()
     }
 }
 
-QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersIntercept()
+QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersIntersect()
 {
     QVector <LostPlayersArea> result;
     QLinkedList <PPlayer> nonStructuredPlayersTmp = nonStructuredPlayers;
@@ -731,50 +796,51 @@ QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersInter
             auto interResult = calculateIOU(i->data()->rUse, j->data()->rUse);
 
 
-            if ((interResult.iou > minIOUIntercept / 3 || interResult.partR1 > minIntercept / 3 || interResult.partR2 > minIntercept / 3)
-                    && i->data()->interceptState == NoIntercept
-                    && j->data()->interceptState == NoIntercept)
+            if ((interResult.iou > minIOUIntersect / 3 || interResult.partR1 > minIntersect / 3 || interResult.partR2 > minIntersect / 3)
+                    && i->data()->intersectState == NoIntersect
+                    && j->data()->intersectState == NoIntersect)
             {
                 if ((i->data()->confirmed >= 2 || !qFuzzyCompare(i->data()->lastTrackConfidence, -1.))
                         && (j->data()->confirmed >= 2 ||  !qFuzzyCompare(j->data()->lastTrackConfidence, -1.)))
                 {
                     i->data()->origHist = calculateBodyHueHist(inputImg, i->data()->rUse);
                     j->data()->origHist = calculateBodyHueHist(inputImg, j->data()->rUse);
-                    i->data()->interceptState = ProbablyIntercept;
-                    j->data()->interceptState = ProbablyIntercept;
+                    i->data()->intersectState = ProbablyIntersect;
+                    j->data()->intersectState = ProbablyIntersect;
                 }
             }
-            if ((interResult.iou > minIOUIntercept || interResult.partR1 > minIntercept || interResult.partR2 > minIntercept)
-                    && i->data()->interceptState <= ProbablyIntercept
-                    && j->data()->interceptState <= ProbablyIntercept)
+            if ((interResult.iou > minIOUIntersect || interResult.partR1 > minIntersect || interResult.partR2 > minIntersect)
+                    && i->data()->intersectState <= ProbablyIntersect
+                    && j->data()->intersectState <= ProbablyIntersect)
             {
                 if ((i->data()->confirmed >= 3 || !qFuzzyCompare(i->data()->lastTrackConfidence, -1.))
                         && (j->data()->confirmed >= 3 ||  !qFuzzyCompare(j->data()->lastTrackConfidence, -1.)))
                 {
 
-                    Mat frameHistory;
-                    inputImg.copyTo(frameHistory);
+
                     savePlayerHistory((*i));
                     savePlayerHistory((*j));
 
                     Point2f tl = i->data()->rUse.tl().x < j->data()->rUse.tl().x ? i->data()->rUse.tl() : j->data()->rUse.tl();
                     Point2f br = i->data()->rUse.br().x > j->data()->rUse.br().x ? i->data()->rUse.br() : j->data()->rUse.br();
-                    tl.x -= 3 * i->data()->rUse.width;
-                    br.x += 3 * i->data()->rUse.width;
+                    tl.x -= 6 * i->data()->rUse.width;
+                    br.x += 6 * i->data()->rUse.width;
                     Rect2d r (tl, br);
 
                     result.append(qMakePair(r, QVector <PPlayer> {*i, *j}));
                     double normSpeedFirst = norm(i->data()->speed);
                     bool firstBeforeSecond = i->data()->rUse.br().y > j->data()->rUse.br().y ? true : false;
-                    if (normSpeedFirst > 10)
+
+
+                    if (normSpeedFirst > speedThreshold)
                     {
                         if (firstBeforeSecond)
                         {
-                            i->data()->interceptState = MoveClose;
+                            i->data()->intersectState = MoveClose;
                         }
                         else
                         {
-                            i->data()->interceptState = MoveFar;
+                            i->data()->intersectState = MoveFar;
 
                         }
                         i->data()->lastSpeed = i->data()->speed / speedUpdateMax;
@@ -784,24 +850,25 @@ QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersInter
                     {
                         if (firstBeforeSecond)
                         {
-                            i->data()->interceptState = DontMoveClose;
+                            i->data()->intersectState = DontMoveClose;
                         }
                         else
                         {
-                            i->data()->interceptState = DontMoveFar;
+                            i->data()->intersectState = DontMoveFar;
                         }
                         i->data()->predictedR = i->data()->rUse;
                     }
                     double normSpeedSecond = norm(j->data()->speed);
-                    if (normSpeedSecond > 10)
+
+                    if (normSpeedSecond > speedThreshold)
                     {
                         if (!firstBeforeSecond)
                         {
-                            j->data()->interceptState = MoveClose;
+                            j->data()->intersectState = MoveClose;
                         }
                         else
                         {
-                            j->data()->interceptState = MoveFar;
+                            j->data()->intersectState = MoveFar;
                         }
 
                         j->data()->lastSpeed = j->data()->speed / speedUpdateMax;
@@ -811,11 +878,11 @@ QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersInter
                     {
                         if (!firstBeforeSecond)
                         {
-                            j->data()->interceptState = DontMoveClose;
+                            j->data()->intersectState = DontMoveClose;
                         }
                         else
                         {
-                            j->data()->interceptState = DontMoveFar;
+                            j->data()->intersectState = DontMoveFar;
                         }
                         j->data()->predictedR = j->data()->rUse;
                     }
@@ -851,14 +918,13 @@ QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersInter
 }
 
 
-
-Point3f PedestrianTracker::evaluate3dPosition(Rect r, bool& ok)
+PedestrianTracker::MovePosition PedestrianTracker::evaluate3dPosition(cv::Rect r, bool& ok)
 {
     Point3f p;
-    auto helper = CalibrationHelper::instance();
+    CalibrationHelper& helper = CalibrationHelper::instance();
     Calibration::Position2D xy;
     xy.X = r.x + r.width / 2;
-    xy.Y = r.y + r.height / 2;
+    xy.Y = r.y + r.height;
     Calibration::RayAndPoint rp;
     if (helper.calculatePointOnGround(xy, rp))
     {
@@ -871,28 +937,17 @@ Point3f PedestrianTracker::evaluate3dPosition(Rect r, bool& ok)
     {
         ok = false;
     }
-    return p;
+    MovePosition mPos;
+    mPos.onSpace = p;
+    mPos.onCam = Point2f(xy.X, xy.Y);
+    return mPos;
 }
-PedestrianTracker::IOUResult PedestrianTracker::calculateIOU(Rect2d r1, Rect2d r2)
-{
-    double xA = max(r1.x, r2.x);
-    double yA = max(r1.y, r2.y);
-    double xB = min(r1.x + r1.width, r2.x + r2.width);
-    double yB = min(r1.y + r1.height, r2.y + r2.height);
 
-    double interArea = max(0., xB - xA + 1) * max(0., yB - yA + 1);
-
-    IOUResult res;
-    res.iou = interArea / float(r1.area() + r2.area() - interArea);
-    res.partR1 = interArea / r1.area();
-    res.partR2 = interArea / r2.area();
-    return res;
-}
 
 QPair <Point2f, bool> PedestrianTracker::checkIntersect(Player& p, Point2f& position, bool nonAprior)
 {
     Point2f roiCenter = Point2f(p.rUse.x + p.rUse.width / 2, p.rUse.y + p.rUse.height / 2);
-    Rect r = p.rUse;
+    cv::Rect r = p.rUse;
     if (nonAprior)
     {
         r.x -= r.width / 2;
@@ -901,16 +956,16 @@ QPair <Point2f, bool> PedestrianTracker::checkIntersect(Player& p, Point2f& posi
     return qMakePair(norm(roiCenter - position), r.contains(position));
 }
 
-PedestrianTracker::InterceptCheckResult PedestrianTracker::handleInterceptCheck(Point2f& position, PPlayer player,
+PedestrianTracker::IntersectCheckResult PedestrianTracker::handleIntersectCheck(Point2f& position, PPlayer player,
                                                                                 QVector <QPair <double, PPlayer>>& distance, bool nonAprior)
 {
-    InterceptCheckResult res;
+    IntersectCheckResult res;
     auto result = checkIntersect(*player, position, nonAprior);
     double dist = sqrt(pow(result.first.x, 2) + pow(result.first.y, 2));
     if (result.second)
     {
         res.distance = dist;
-        res.intercept = true;
+        res.intersect = true;
         res.p = player;
     }
     else

@@ -20,9 +20,9 @@ public:
 
     struct MessageData
     {
-        MessageData(QTcpSocket* _socket = nullptr, QByteArray* _msg = nullptr) : socket(_socket), msg(_msg) {}
+        MessageData(QTcpSocket* _socket = nullptr, QByteArray _msg = QByteArray()) : socket(_socket), msg(_msg) {}
         QTcpSocket* socket = nullptr;
-        QByteArray* msg = nullptr;
+        QByteArray msg;
     };
     enum EndPointType
     {
@@ -37,19 +37,19 @@ public:
         Invalid = std::numeric_limits<qint32>::min()
     };
 
-    explicit NetworkManager(EndPointType t, const QString& address, QObject *parent = nullptr);
+    explicit NetworkManager(EndPointType t, const QString& address, bool init = true, QObject *parent = nullptr);
 
-    void send(qint32 messageId, google::protobuf::Message* message, QTcpSocket* socket = nullptr);
+    void send(qint32 messageId, const google::protobuf::Message *message, QTcpSocket* socket = nullptr);
 
     void setHandler(qint32 id, std::function <void (const MessageData&)> handler);
+
+    void initialize(){initSocket(address);}
 
 signals:
 
     void messageReady(const QString& message);
 
 private:
-
-
 
     struct RawBuffer
     {
@@ -58,14 +58,17 @@ private:
         QByteArray buffer;
     };
 
-    void init(const QString& address);
+    void initSocket(const QString& address);
 
     void handle(QObject* endPointData);
+
     static constexpr const qint32 headerSize = 8;
     QMap <qint32, QVector <std::function <void (const MessageData&)>>> messageHandlers;
     QMap <QObject*, RawBuffer> rawBuffers;
     QObject* endPoint;
     EndPointType type;
+    QString address;
+
 
 };
 

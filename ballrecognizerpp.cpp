@@ -2,15 +2,41 @@
 
 BallRecognizerPP::BallRecognizerPP(QObject *parent) : QObject(parent)
 {
-    cv::namedWindow("window",WINDOW_NORMAL);
+    //    cv::namedWindow("window",WINDOW_NORMAL);
     cv::namedWindow("window2",WINDOW_NORMAL);
+    cv::namedWindow("video3",WINDOW_NORMAL);
+}
+
+void BallRecognizerPP::updateWaitState()
+{
+    if (currentState == WaitForHit || currentState == WaitForMove)
+    {
+        ++waitForEvent;
+        if (waitForEvent == maxWaitForEvent)
+        {
+            intersectPlayerId = QUuid();
+            if (currentState == WaitForHit)
+            {
+                currentState = WaitForMove;
+                maxWaitForEvent = maxWaitForMove;
+            }
+            else
+            {
+                waitForEvent = 0;
+                currentState = WaitForBall;
+            }
+            changeParamsSituation(currentState);
+            mainBallMoves.forks.clear();
+            currentSearchROI = ProtoHelper::gtRectToCv(rois->throw_search_rect());;
+        }
+    }
 }
 
 BallRecognizerPP::State BallRecognizerPP::recognize(Mat frame, qint64 time)
 {
-    if (rois.mainSearchRect.empty() ||
-            rois.trackFirstRect.empty() ||
-            rois.trackSecondRect.empty())
+    if (!rois->has_throw_search_rect() ||
+            rois->has_throw_track_rect() ||
+            rois->has_hit_search_rect())
     {
         emit errorOccured("Не заданы ROI.");
     }
@@ -23,12 +49,14 @@ BallRecognizerPP::State BallRecognizerPP::recognize(Mat frame, qint64 time)
     //        params.maxAngleBetwDirections = 18;
     //        params.corrCoef = 0.7;
     //        params.searchAreaSize = 50;
-    rois.indentSearchRect = rois.trackSecondRect;
-    rois.indentSearchRect.x = 10;
-    rois.indentSearchRect.y = 10;
+    //    rois->indentSearchRect = rois->trackSecondRect;
+    //    rois->indentSearchRect.x = 10;
+    //    rois->indentSearchRect.y = 10;
+    //rois->mutable_hit_track_rect()->mutable_xy()->set_x(10);
+    //rois->mutable_hit_track_rect()->mutable_xy()->set_y(10);
     if (currentSearchROI.empty())
     {
-        currentSearchROI = rois.mainSearchRect;
+        currentSearchROI = ProtoHelper::gtRectToCv(rois->throw_search_rect());
     }
 #endif
 
@@ -73,7 +101,6 @@ BallRecognizerPP::State BallRecognizerPP::recognize(Mat frame, qint64 time)
         {
             previousUpdateCounter = 0;
             frames.background.copyTo(frames.previous);
-            qDebug() << "BACKGROUND CHANGED";
             if (!cutFromBackGround.empty())
             {
                 frames.current(cutFromBackGround).copyTo(frames.previous(cutFromBackGround));
@@ -101,41 +128,172 @@ BallRecognizerPP::State BallRecognizerPP::recognize(Mat frame, qint64 time)
         if (previousUpdateCounter == 1)
         {
             if (!mainBallMoves.forks.isEmpty()
-                    && mainBallMoves.forks.last().times.last().first == time
-                    && mainBallMoves.forks.last().times.last().second)
+                    && mainBallMoves.forks.last().meta.last().time == time
+                    && mainBallMoves.forks.last().meta.last().valid)
             {
                 cutFromBackGround = mainBallMoves.forks.last().rect;
             }
             else
             {
-                cutFromBackGround = Rect();
+                cutFromBackGround = cv::Rect();
             }
         }
 #ifdef DEBUG_BALL_REC
-        rectangle(frames.current, currentSearchROI, CV_RGB(125,125,125), 3);
-        rectangle(frames.current, rois.mainSearchRect, CV_RGB(255,0,0));
-        rectangle(frames.current, rois.trackFirstRect, CV_RGB(255,0,0));
-        rectangle(frames.current, rois.indentSearchRect, CV_RGB(255,0,0));
-        pedTracker->drawROIs(frames.current);
+        //rectangle(frames.current, currentSearchROI, CV_RGB(125,125,125), 3);
+        rectangle(frames.current,  ProtoHelper::gtRectToCv(rois->throw_search_rect()), CV_RGB(255,0,0));
+        rectangle(frames.current,  ProtoHelper::gtRectToCv(rois->throw_track_rect()), CV_RGB(255,0,0));
+        // rectangle(frames.current,  ProtoHelper::gtRectToCv(rois->hit_search_rect()), CV_RGB(255,0,0));
+        // pedTracker->drawROIs(frames.current);
         imshow("video", frames.current);
         waitKey(0);
 #endif
 
-        if (currentState == WaitForHit || currentState == WaitForMove)
-        {
-            ++waitForEvent;
-            if (waitForEvent == maxWaitForEvent)
-            {
-                interceptPlayerId = QUuid();
-                waitForEvent = 0;
-                currentState = WaitForBall;
-                changeParamsSituation(currentState);
-                mainBallMoves.forks.clear();
-                currentSearchROI = rois.mainSearchRect;
-            }
-        }
+        updateWaitState();
     }
     return currentState;
+}
+
+void BallRecognizerPP::setInitialState(BallRecognizerPP::State state)
+{
+    currentState = state;
+    changeParamsSituation(state);
+}
+
+void BallRecognizerPP::setCurrentSearchROI(cv::Rect r)
+{
+    currentSearchROI = r;
+}
+
+void BallRecognizerPP::setROIs(msg::RecROIs *_rois)
+{
+    rois = _rois;
+}
+
+void BallRecognizerPP::setRecognizeParams(msg::RecognizeParameters *recParams)
+{
+    initParams = recParams;
+    params.MergeFrom(*initParams);
+}
+
+void BallRecognizerPP::clear()
+{
+    currentState = WaitForBall;
+    corWindows.clear();
+    cutFromPrevious.clear();
+    mainBallMoves.forks.clear();
+    frames = Frames();
+    previousUpdateCounter = 0;
+
+}
+
+void BallRecognizerPP::setBackGroundFrame(Mat frame)
+{
+    previousUpdateCounter = 0;
+    frame.copyTo(frames.previous);
+}
+
+
+void BallRecognizerPP::analyzePreviousFrames(CorDataRaw& recData, const QVector <FrameInfo>& prev)
+{
+    if (!prev.isEmpty())
+    {
+        Mat pattern = recData.objTemplates.front();
+        Point2f from = recData.arrows.first().second;
+        Point2f dir = recData.arrows[1].first - recData.arrows[1].second;
+        Point2f pos = from + dir;
+        Point2f oldCenter = from;
+        for (const FrameInfo& i : prev)
+        {
+            if (!ProtoHelper::gtRectToCv(rois->throw_track_rect()).contains(pos))
+            {
+                break;
+            }
+            Mat frame;
+            cvtColor(i.frame, frame, CV_BayerBG2GRAY);
+            //cvtColor(i.frame, frame, CV_BGR2GRAY);
+            absdiff(frame, frames.previous, frame);
+
+            qint32 left = pos.x - params.search_area_size() / 2;
+            qint32 up = pos.y - params.search_area_size() / 2;
+
+            cv::Rect sRect = cv::Rect(left, up, params.search_area_size(), params.search_area_size());
+            checkRectangleSize(sRect, i.frame.rows, i.frame.cols);
+
+            Mat searchArea = frame(sRect);
+            int result_cols =  searchArea.cols - pattern.cols + 1;
+            int result_rows = searchArea.rows - pattern.rows + 1;
+            Mat result;
+            result.create(result_rows, result_cols, CV_32FC1 );
+            matchTemplate(searchArea, pattern, result, CV_TM_CCORR_NORMED);
+            double minVal;
+            double maxVal;
+            Point minLoc;
+            Point maxLoc;
+            Point matchLoc;
+            //            rectangle(frame, sRect, CV_RGB(255, 255, 255));
+
+            //                                    imshow("video", searchArea);
+            //                                    waitKey(0);
+            //                                    imshow("video", pattern);
+            //                                    waitKey(0);
+            //                                    imshow("video", frame);
+            //                                    waitKey(0);
+            minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+            matchLoc = maxLoc;
+            if (maxVal > params.corr_coef())
+            {
+                auto center = Point2f ((double)left + ((double)maxLoc.x
+                                                       + ((double)pattern.cols / 2)),
+                                       (double)up + ((double)maxLoc.y
+                                                     + ((double)pattern.rows / 2)));
+
+                auto oldDir = dir;
+                auto oldDirNorm = oldDir / norm(oldDir);
+                dir = center - oldCenter;
+                auto dirNorm = dir / norm(dir);
+                //qDebug() << acosm(dirNorm.dot(oldDirNorm)) * radToDegrees << center.x << center.y << maxVal;
+                if (acosm(dirNorm.dot(oldDirNorm)) * radToDegrees < params.max_angle_directions())
+                {
+                    //                    auto r = Rect(matchLoc.x, matchLoc.y,
+                    //                                  pattern.cols,
+                    //                                  pattern.rows);
+                    //                    searchArea(r).copyTo(pattern);
+
+                    oldCenter = center;
+                    recData.arrows.prepend(qMakePair(pos, center));
+                    recData.meta.prepend(BallMeta(i.time, true, false));
+                }
+                else
+                {
+                    dir = oldDir;
+                    oldCenter += dir;
+                    recData.arrows.prepend(qMakePair(center, pos));
+                    recData.meta.prepend(BallMeta(i.time, false, false));
+                }
+
+            }
+            else
+            {
+                oldCenter += dir;
+                recData.arrows.prepend(qMakePair(oldCenter, pos));
+                recData.meta.prepend(BallMeta(i.time, false, false));
+            }
+
+            pos += dir;
+        }
+    }
+
+
+    //    for (auto & i : next)
+    //    {
+    //        imshow("video", i.frame);
+    //        waitKey(0);
+    //    }
+}
+
+void BallRecognizerPP::setDebug(bool debugFlag)
+{
+
 }
 
 void BallRecognizerPP::handleBallNotFound(qint64 time)
@@ -144,14 +302,14 @@ void BallRecognizerPP::handleBallNotFound(qint64 time)
     frames.threshold = frames.substracted(currentSearchROI);
     cv::meanStdDev(frames.threshold, m, stdv);
 
-    cv::threshold(frames.threshold, frames.threshold, m[0] + params.skoCoef * stdv[0], 255, cv::THRESH_BINARY);
+    cv::threshold(frames.threshold, frames.threshold, m[0] + params.sko_coef() * stdv[0], 255, cv::THRESH_BINARY);
     cv::Mat subImg = frames.threshold;
 
     medianBlur(subImg, subImg, 5);
 
     Mat canny_output;
     vector <vector<Point> > contours;
-    Canny(subImg, canny_output, params.cannyThresMin, params.cannyThresMax, 3 );
+    Canny(subImg, canny_output, params.canny_thres_min(), params.canny_thres_max(), 3 );
     findContours( canny_output, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
 #ifdef DEBUG_BALL_REC
@@ -166,13 +324,13 @@ void BallRecognizerPP::handleBallNotFound(qint64 time)
             auto area = contourArea(contours[j]);
             auto mmnts =  moments( contours[j], true);
             auto circularity = circularityMetric( mmnts );
-            if (area >= params.minArea && area <= params.maxArea
-                    && circularity > params.circularityCoeff)
+            if (area >= params.min_area() && area <= params.max_area()
+                    && circularity > params.circularity_coeff())
             {
                 auto center = Point2f( mmnts.m10 / mmnts.m00 , mmnts.m01 / mmnts.m00 );
 
                 CorDataRaw tmp;
-                qint32 offset = sqrt(area);
+                qint32 offset = sqrtm(area);
                 tmp.center = center;
 
                 tmp.center.x  += currentSearchROI.x;
@@ -184,7 +342,7 @@ void BallRecognizerPP::handleBallNotFound(qint64 time)
                     nonAprior = true;
                 }
 
-                if (pedTracker->intersectsAnyPedestrian(tmp.center, nonAprior).intercept)
+                if (pedTracker && pedTracker->intersectsAnyPedestrian(tmp.center, nonAprior).intersect)
                 {
                     continue;
                 }
@@ -207,7 +365,7 @@ void BallRecognizerPP::handleBallNotFound(qint64 time)
                 frames.current(tmp.rect)
                         .copyTo(tmp.objGrayTemplates.back());
                 tmp.arrows.append(qMakePair(tmp.center, tmp.center));
-                tmp.times.append(qMakePair(time, true));
+                tmp.meta.append(BallMeta(time, true, false));
                 corWindows.push_back(tmp);
 
                 bool cutFind = false;
@@ -259,15 +417,15 @@ void BallRecognizerPP::joinForkedTrajectories()
     qint32 penultIndex = 2;
     auto  penult = mainBallMoves.forks.end() - penultIndex;
     auto lastTrajectory = &mainBallMoves.forks.last();
-    while (!penult->times.back().second)
+    while (!penult->meta.back().valid)
     {
-        penult->times.removeLast();
+        penult->meta.removeLast();
         penult->arrows.removeLast();
     }
 
     penult->forked = false;
     penult->arrows.append(lastTrajectory->arrows);
-    penult->times.append(lastTrajectory->times);
+    penult->meta.append(lastTrajectory->meta);
     penult->center = lastTrajectory->center;
     penult->currentSpeed = lastTrajectory->currentSpeed;
     penult->objGrayTemplates.append(lastTrajectory->objGrayTemplates);
@@ -278,7 +436,7 @@ void BallRecognizerPP::joinForkedTrajectories()
 }
 
 
-Rect BallRecognizerPP::chooseTrackerSearchArea(CorDataRaw& corWin)
+cv::Rect BallRecognizerPP::chooseTrackerSearchArea(CorDataRaw& corWin)
 {
     qint32 leftBorder;
     qint32 upBorder;
@@ -287,11 +445,11 @@ Rect BallRecognizerPP::chooseTrackerSearchArea(CorDataRaw& corWin)
     {
         if (corWin.notFoundCount > 0)
         {
-            searchArea = params.searchAreaSize / 1.5;
+            searchArea = params.search_area_size() / 1.5;
         }
         else
         {
-            searchArea = params.searchAreaSize / 2;
+            searchArea = params.search_area_size() / 2;
         }
 
         Point2f p = Point2f(corWin.center.x + corWin.currentSpeed.x,
@@ -301,17 +459,17 @@ Rect BallRecognizerPP::chooseTrackerSearchArea(CorDataRaw& corWin)
     }
     else
     {
-        searchArea = params.searchAreaSize;
-        leftBorder = corWin.center.x  - params.searchAreaSize;
-        upBorder = corWin.center.y  - params.searchAreaSize;
+        searchArea = params.search_area_size();
+        leftBorder = corWin.center.x  - params.search_area_size();
+        upBorder = corWin.center.y  - params.search_area_size();
     }
-    auto searchRect = Rect(leftBorder, upBorder,
-                           2 * searchArea, 2 * searchArea);
+    auto searchRect = cv::Rect(leftBorder, upBorder,
+                               2 * searchArea, 2 * searchArea);
     checkRectangleSize(searchRect, frames.substracted.cols, frames.substracted.rows);
     return searchRect;
 }
 
-double BallRecognizerPP::correlateBallTemplate(CorDataRaw& corWin, Mat& subFlip, Point& matchLoc, double& corrCoef, Rect& searchRect)
+double BallRecognizerPP::correlateBallTemplate(CorDataRaw& corWin, Mat& subFlip, Point& matchLoc, double& corrCoef, cv::Rect& searchRect)
 {
     qint32 result_cols =  subFlip.cols - corWin.objTemplates.back().cols + 1;
     qint32 result_rows = subFlip.rows - corWin.objTemplates.back().rows + 1;
@@ -326,7 +484,7 @@ double BallRecognizerPP::correlateBallTemplate(CorDataRaw& corWin, Mat& subFlip,
     matchLoc = maxLoc;
 
     corrCoef = (corWin.dirAccordCount > 2 * ensureBallThreshold && corWin.notFoundCount == 0)
-            ? params.corrCoef - 0.1 : params.corrCoef;
+            ? params.corr_coef() - 0.1 : params.corr_coef();
     qDebug() << maxVal << "correlation";
     if (maxVal < corrCoef && corWin.count >= acceptBallThreshold)
     {
@@ -350,13 +508,13 @@ double BallRecognizerPP::correlateBallTemplate(CorDataRaw& corWin, Mat& subFlip,
     return maxVal;
 }
 
-Mat BallRecognizerPP::extractNewTemplate(CorDataRaw& corWin, Point matchLoc, Mat subFlip, Rect& rectTemplate)
+Mat BallRecognizerPP::extractNewTemplate(CorDataRaw& corWin, Point matchLoc, Mat subFlip, cv::Rect& rectTemplate)
 {
     qint32 lb = matchLoc.x;
     qint32 ub = matchLoc.y;
     qint32 w = corWin.objTemplates.back().cols;
     qint32 h = corWin.objTemplates.back().rows;
-    rectTemplate = Rect(lb, ub, w, h);
+    rectTemplate = cv::Rect(lb, ub, w, h);
     checkRectangleSize(rectTemplate, subFlip.cols, subFlip.rows);
     Mat tmpTemplate;
     subFlip(rectTemplate).copyTo(tmpTemplate);
@@ -372,9 +530,9 @@ qint32 BallRecognizerPP::clarifyBallCenter(CorDataRaw& corWin, Mat tmpTemplate, 
     {
         Mat canny_output;
         vector <vector<Point> > contours;
-        cv::threshold(tmpTemplate, tmpTemplate, m[0] + params.skoCoef * stdv[0], 255, cv::THRESH_BINARY);
+        cv::threshold(tmpTemplate, tmpTemplate, m[0] + params.sko_coef() * stdv[0], 255, cv::THRESH_BINARY);
         dilate(tmpTemplate, tmpTemplate, getStructuringElement(MORPH_RECT, Size(3, 3)));
-        Canny(tmpTemplate, canny_output, params.cannyThresMin, params.cannyThresMax, 3);
+        Canny(tmpTemplate, canny_output, params.canny_thres_min(), params.canny_thres_max(), 3);
         imshow("window4", canny_output);
         findContours(canny_output, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, Point(0, 0));
         cv::Moments mmnts;
@@ -383,12 +541,12 @@ qint32 BallRecognizerPP::clarifyBallCenter(CorDataRaw& corWin, Mat tmpTemplate, 
         {
             mmnts = moments( contours.front(), true);
             double circularity = circularityMetric(mmnts); // хранить среднюю площадь и проверять
-            if (circularity > params.circularityCoeff)
+            if (circularity > params.circularity_coeff())
             {
                 takeFromCenter = true;
                 center = Point2f( mmnts.m10 / mmnts.m00 , mmnts.m01 / mmnts.m00 );
             }
-            else if (circularity < params.circularityCoeff / 2)
+            else if (circularity < params.circularity_coeff() / 2)
             {
                 takeOldDir = true;
             }
@@ -403,8 +561,8 @@ qint32 BallRecognizerPP::clarifyBallCenter(CorDataRaw& corWin, Mat tmpTemplate, 
                 double circularity = circularityMetric(mmnts);
                 double area = contourArea(contours[k]);
 
-                if (circularity > params.circularityCoeff
-                        && area > params.minArea)
+                if (circularity > params.circularity_coeff()
+                        && area > params.min_area())
                 {
                     if (area > prevArea)
                     {
@@ -435,7 +593,19 @@ void BallRecognizerPP::increaseAccordCounter(CorDataRaw& corWin, BallTrackStatus
     status = BallTrackStatus::Passed;
 }
 
-BallRecognizerPP::BallTrackStatus BallRecognizerPP::checkThresholds(CorDataRaw& corWin, double maxVal, Point2f newDir, bool takeOldDir, bool pedIntercept, qint64 time)
+BallMeasure BallRecognizerPP::fillBallMeasure(const Point2f& position, const BallMeta& meta, BallEvent ballEvent)
+{
+    msg::BallMeasure measure;
+    measure.mutable_xy()->set_x(position.x);
+    measure.mutable_xy()->set_y(position.y);
+    measure.set_event(ballEvent);
+    measure.set_time(meta.time);
+    measure.set_is_rebound(meta.rebound);
+    measure.set_valid(meta.valid);
+    return measure;
+}
+
+BallRecognizerPP::BallTrackStatus BallRecognizerPP::checkThresholds(CorDataRaw& corWin, double maxVal, Point2f newDir, bool takeOldDir, bool pedIntersect, qint64 time)
 {
     BallTrackStatus status = Undefined;
 
@@ -450,18 +620,18 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::checkThresholds(CorDataRaw& 
         Point2f dirOldNorm = corWin.currentSpeed / normOld;
         double normNew = norm(newDir);
         Point2f dirNewNorm = newDir / normNew;
-        double angle = acos(dirOldNorm.dot(dirNewNorm)) * radToDegrees;
+        double angle = acosm(dirOldNorm.dot(dirNewNorm)) * radToDegrees;
         double relation = normOld > normNew ? normOld / normNew : normNew / normOld;
-        qDebug() << corWin.arrows.first().first.x << "angle" << angle << "speed" << normNew  << "minSpeed" << params.minSpeed << "relation" << relation;
-        if (angle < params.maxAngleBetwDirections
-                && (normNew > params.minSpeed || corWin.dirAccordCount >= ensureBallThreshold)
+        qDebug() << corWin.arrows.first().first.x << "angle" << angle << "speed" << normNew  << "minSpeed" << params.min_speed() << "relation" << relation;
+        if (angle < params.max_angle_directions()
+                && (normNew > params.min_speed() || corWin.dirAccordCount >= ensureBallThreshold)
                 && relation < maxSpeedRelation)
         {
             increaseAccordCounter(corWin, status);
         }
         else if (currentState == BallHit
                  && corWin.dirAccordCount > ensureBallThreshold
-                 && normNew < params.minSpeed
+                 && normNew < params.min_speed()
                  && relation < maxSpeedRelation)
         {
             increaseAccordCounter(corWin, status);
@@ -470,7 +640,7 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::checkThresholds(CorDataRaw& 
         else if (corWin.justForked) // probably rebound from ground
         {
             increaseAccordCounter(corWin, status);
-            corWin.firstForkedGround = true;
+            corWin.meta.first().rebound = true;
         }
         else if (mainBallMoves.forks.size() >= 2
                  && corWin.dirAccordCount > 3 * ensureBallThreshold
@@ -480,12 +650,12 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::checkThresholds(CorDataRaw& 
         {
             increaseAccordCounter(corWin, status);
         }
-        else if (angle > params.maxAngleBetwDirections
+        else if (angle > params.max_angle_directions()
                  && corWin.dirAccordCount >= ensureBallThreshold)
         {
             handleNotFound(corWin, time);
 
-            if (pedIntercept)
+            if (pedIntersect)
             {
                 status = BallTrackStatus::Missed;
             }
@@ -517,7 +687,7 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::checkThresholds(CorDataRaw& 
 
 
 
-void BallRecognizerPP::updateNewState(auto lastTrajectory)
+void BallRecognizerPP::updateNewState(const CorDataRaw &lastTrajectory)
 {
     switch (currentState)
     {
@@ -525,7 +695,7 @@ void BallRecognizerPP::updateNewState(auto lastTrajectory)
         currentState = WaitForHit;
         maxWaitForEvent = maxWaitForHit;
         changeParamsSituation(currentState);
-        currentSearchROI = rois.trackSecondRect;
+        currentSearchROI = ProtoHelper::gtRectToCv(rois->hit_search_rect());
         break;
     case BallHit:
     case BallMove:
@@ -533,8 +703,8 @@ void BallRecognizerPP::updateNewState(auto lastTrajectory)
         currentState = WaitForMove;
         maxWaitForEvent = maxWaitForMove;
         changeParamsSituation(currentState);
-        auto res = pedTracker->intersectsAnyPedestrian(lastTrajectory->center);
-        if (res.intercept || res.distance < maxPlayerDistance)
+        auto res = pedTracker->intersectsAnyPedestrian(lastTrajectory.center);
+        if (res.intersect || res.distance < maxPlayerDistance)
         {
             Rect2d r = res.p->rUse;
             r.x -= r.width * 3;
@@ -543,17 +713,17 @@ void BallRecognizerPP::updateNewState(auto lastTrajectory)
             r.height += r.height * 2;
             currentSearchROI = r;
             checkRectangleSize(currentSearchROI, frames.current.cols, frames.current.rows);
-            interceptPlayerId = res.p->id;
+            intersectPlayerId = res.p->id;
         }
         else
         {
-            interceptPlayerId = QUuid();
+            intersectPlayerId = QUuid();
             qint32 x, y, w, h;
-            x = lastTrajectory->center.x - params.searchAreaSize * 3;
-            y = lastTrajectory->center.y - params.searchAreaSize * 4;
-            w = params.searchAreaSize * 6;
-            h = params.searchAreaSize * 6;
-            currentSearchROI = Rect(x, y, w, h);
+            x = lastTrajectory.center.x - params.search_area_size() * 3;
+            y = lastTrajectory.center.y - params.search_area_size() * 4;
+            w = params.search_area_size() * 6;
+            h = params.search_area_size() * 6;
+            currentSearchROI = cv::Rect(x, y, w, h);
             checkRectangleSize(currentSearchROI, frames.current.cols, frames.current.rows);
         }
 
@@ -564,18 +734,35 @@ void BallRecognizerPP::updateNewState(auto lastTrajectory)
     }
 }
 
-void BallRecognizerPP::handleResults(BallTrackStatus status)
+void BallRecognizerPP::handleResults(BallTrackStatus status, State previousState)
 {
-    if (!mainBallMoves.forks.isEmpty() )
+
+    if (!mainBallMoves.forks.isEmpty())
     {
         auto lastTrajectory = &mainBallMoves.forks.last();
-        bool branchConfirmed;
-        if (status == ConfirmedAsBall  ||
-                (branchConfirmed = (lastTrajectory->branch && lastTrajectory->dirAccordCountBranch == acceptBallThreshold)))
+        State actualState = previousState == Invalid ? lastTrajectory->forkState : previousState;
+        msg::BallEvent ballEvent;
+        if (actualState == BallThrow)
+        {
+            ballEvent = msg::BallEvent::ThrowDetected;
+        }
+        else if (actualState == BallHit)
+        {
+            ballEvent = msg::BallEvent::HitDetected;
+        }
+        else
+        {
+            ballEvent = msg::BallEvent::MoveDetected;
+        }
+
+
+        bool branchConfirmed = lastTrajectory->branch && lastTrajectory->dirAccordCountBranch == acceptBallThreshold;
+        if (status == ConfirmedAsBall  || branchConfirmed)
         {
             for (qint32 i = 0; i < lastTrajectory->arrows.size(); ++i)
             {
-                emit ballRecognized(lastTrajectory->arrows[i].second, lastTrajectory->times[i].first);
+                msg::BallMeasure measure = fillBallMeasure(lastTrajectory->arrows[i].second, lastTrajectory->meta[i], ballEvent);
+                emit ballRecognized(measure);
             }
         }
 
@@ -584,10 +771,11 @@ void BallRecognizerPP::handleResults(BallTrackStatus status)
             if ((!lastTrajectory->branch && lastTrajectory->isBall)
                     || (lastTrajectory->branch && lastTrajectory->dirAccordCountBranch > acceptBallThreshold))
             {
-                emit ballRecognized(lastTrajectory->arrows.last().second, lastTrajectory->times.last().first);
+                msg::BallMeasure measure = fillBallMeasure(lastTrajectory->arrows.last().second, lastTrajectory->meta.last(), ballEvent);
+                emit ballRecognized(measure);
             }
         }
-        if (branchConfirmed && lastTrajectory->forkedAngle < maxForkedAngle)
+        if (branchConfirmed && lastTrajectory->forkedAngle < maxForkedAngle) // почему угол меньше?
         {
             joinForkedTrajectories();
         }
@@ -596,10 +784,12 @@ void BallRecognizerPP::handleResults(BallTrackStatus status)
 
 void BallRecognizerPP::handleTrack(qint64 time)
 {
+    bool trajectoryLost = false;
+    State previousState = Invalid;
     qint32 penultIndex = 2;
     BallTrackStatus status;
     bool lastForkErased = false;
-    if (mainBallMoves.forks.size() >= 2)
+    if (mainBallMoves.forks.size() >= 2) // попытка обработать предыдущую ветвь, если она не закрыта
     {
         auto penult = mainBallMoves.forks.end() - penultIndex;
         if (!penult->closed)
@@ -612,7 +802,7 @@ void BallRecognizerPP::handleTrack(qint64 time)
                     penult->closed = true;
                 }
             }
-            else
+            else // если предыдущая ветвь возобновлена, удаляем последнюю
             {
                 penult->forked = false;
                 mainBallMoves.forks.removeLast();
@@ -630,7 +820,7 @@ void BallRecognizerPP::handleTrack(qint64 time)
         {
             if (status == MissedFromFrame)
             {
-                emit ballOutOfFrame(dir);
+                emit ballOutOfFrame(outOfFrameDir, lastTrajectory->arrows.last().second);
             }
             if (lastTrajectory->notFoundCount >= acceptBallThreshold + 1)
             {
@@ -638,8 +828,11 @@ void BallRecognizerPP::handleTrack(qint64 time)
 
                 if (mainBallMoves.forks.size() == 1 || penult->closed)
                 {
+                    trajectoryLost = true;
+                    previousState = currentState;
                     lastTrajectory->closed = true;
-                    updateNewState(lastTrajectory);
+                    updateNewState(*lastTrajectory);
+                    // forks.clear() ??
                 }
                 else
                 {
@@ -675,12 +868,18 @@ void BallRecognizerPP::handleTrack(qint64 time)
         }
     }
 
-    handleResults(status);
+    handleResults(status, previousState);
+
+    if (trajectoryLost)
+    {
+        emit resultsReady(previousState, mainBallMoves.forks.last());
+        mainBallMoves.forks.clear();
+    }
 }
 
 
 Point2f BallRecognizerPP::chooseCenterOfBall(qint32 contoursCount, bool takeFromCenter,
-                                             Rect searchRect, CorDataRaw* corWin, Point2f center,
+                                             cv::Rect searchRect, CorDataRaw* corWin, Point2f center,
                                              Point matchLoc, Mat tmpTemplate)
 {
 
@@ -696,13 +895,13 @@ Point2f BallRecognizerPP::chooseCenterOfBall(qint32 contoursCount, bool takeFrom
         Point2f dirOldNorm = corWin->currentSpeed / normOld;
         double normNew = norm(newDir);
         Point2f dirNewNorm = newDir / normNew;
-        double realAngle = acos(dirOldNorm.dot(dirNewNorm)) * radToDegrees;
+        double realAngle = acosm(dirOldNorm.dot(dirNewNorm)) * radToDegrees;
 
         newDir = corrCenter - prevCenter;
         normNew = norm(newDir);
         dirNewNorm = newDir / normNew;
-        double corrAngle = acos(dirOldNorm.dot(dirNewNorm)) * radToDegrees;
-        if (realAngle > params.maxAngleBetwDirections / 2 && (realAngle / corrAngle) > maxAngleRelation)
+        double corrAngle = acosm(dirOldNorm.dot(dirNewNorm)) * radToDegrees;
+        if (realAngle > params.max_angle_directions() / 2 && (realAngle / corrAngle) > maxAngleRelation)
         {
             center = corrCenter;
         }
@@ -725,13 +924,13 @@ Point2f BallRecognizerPP::chooseCenterOfBall(qint32 contoursCount, bool takeFrom
 
 void BallRecognizerPP::updateROIClosestPlayer()
 {
-    if (!interceptPlayerId.isNull())
+    if (!intersectPlayerId.isNull())
     {
         bool ok;
-        auto p = pedTracker->findPlayerById(interceptPlayerId, ok);
+        auto p = pedTracker->findPlayerById(intersectPlayerId, ok);
         if (ok)
         {
-            Rect r = p->rUse;
+            cv::Rect r = p->rUse;
             r.x -= r.width * 3;
             r.width += r.width * 6;
             r.y -= r.height;
@@ -752,7 +951,7 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::handleBallFound(CorDataRaw* 
         return status;
     }
 
-    Rect searchRect = chooseTrackerSearchArea(*corWin);
+    cv::Rect searchRect = chooseTrackerSearchArea(*corWin);
     Mat subFlip = frames.substracted(searchRect);
 
     Point matchLoc;
@@ -761,7 +960,7 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::handleBallFound(CorDataRaw* 
 
     if (maxVal >= corrCoef)
     {
-        Rect rectTemplate;
+        cv::Rect rectTemplate;
         Mat tmpTemplate = extractNewTemplate(*corWin, matchLoc, subFlip, rectTemplate);
 
         bool takeFromCenter = false;
@@ -774,31 +973,33 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::handleBallFound(CorDataRaw* 
 
         Point2f prevCenter = corWin->center;
         Point2f newDir = testCenter - prevCenter;
-
-        auto result = pedTracker->intersectsAnyPedestrian(testCenter);
-
-
-
-        if (result.intercept)
+        bool intersect = false;
+        if (pedTracker)
         {
-            ++corWin->interceptPed;
-            if (corWin->interceptPed == acceptBallThreshold && !corWin->isBall)
+            auto result = pedTracker->intersectsAnyPedestrian(testCenter);
+            intersect = result.intersect;
+            if (result.intersect)
             {
-                corWin->forceDelete = true;
-                status = Missed;
-                return status;
-            }
-            else if (corWin->interceptPed == ensureBallThreshold)
-            {
-                corWin->notFoundCount = acceptBallThreshold + 1;
-                status = Missed;
-                return status;
+                ++corWin->intersectPed;
+                if (corWin->intersectPed == acceptBallThreshold && !corWin->isBall)
+                {
+                    corWin->forceDelete = true;
+                    status = Missed;
+                    return status;
+                }
+                else if (corWin->intersectPed == ensureBallThreshold)
+                {
+                    corWin->notFoundCount = acceptBallThreshold + 1;
+                    status = Missed;
+                    return status;
+                }
             }
         }
 
+
         if (corWin->count > 0)
         {
-            BallTrackStatus status = checkThresholds(*corWin, maxVal, newDir, takeOldDir, result.intercept, time);
+            BallTrackStatus status = checkThresholds(*corWin, maxVal, newDir, takeOldDir, intersect, time);
             switch (status)
             {
             case Missed:
@@ -814,13 +1015,13 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::handleBallFound(CorDataRaw* 
         corWin->center = testCenter;
         corWin->currentSpeed = newDir;
         corWin->arrows.append(qMakePair(prevCenter, corWin->center));
-        corWin->times.append(qMakePair(time, true));
+        corWin->meta.append(BallMeta(time, true, false));
 
         if (corWin->dirAccordCount >= acceptBallThreshold)
         {
             checkNonApriorMeasures(*corWin);
             if (find_if(mainBallMoves.forks.begin(), mainBallMoves.forks.end(),
-                               [corWin](auto& a){return a.id == corWin->id;}) == mainBallMoves.forks.end())
+                        [corWin](auto& a){return a.id == corWin->id;}) == mainBallMoves.forks.end())
             {
                 mainBallMoves.forks.append(*corWin);
                 corWin = &mainBallMoves.forks.last();
@@ -843,35 +1044,41 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::handleBallFound(CorDataRaw* 
                 else
                 {
                     currentState = BallThrow;
+                    // тут сделать clear forks
                 }
                 corWin->isBall = true;
                 status = ConfirmedAsBall;
             }
 #ifdef DEBUG_BALL_REC
-            rectangle(frames.current, Rect(corWin->center.x - 10, corWin->center.y - 10, 20, 20), CV_RGB(255, 255, 255));
+            rectangle(frames.current, cv::Rect(corWin->center.x - 10, corWin->center.y - 10, 20, 20), CV_RGB(255, 255, 255));
             for (auto& ar : corWin->arrows)
             {
                 line(frames.current, ar.first, ar.second, CV_RGB(255, 0, 0));
             }
 #endif
-            OutOfFrame dir;
-            if (!checkInSearchArea(*corWin, dir)) // проверять только граничную зону
+            if (!checkInSearchArea(*corWin, outOfFrameDir)) // проверять только граничную зону
             {
-                Q_ASSERT(status != ConfirmedAsBall);
                 status = MissedFromFrame;
-                return status;
+                if (status == ConfirmedAsBall)
+                {
+                    return ConfirmedAsBall;
+                }
+                else
+                {
+                    return status;
+                }
             }
         }
 
-        if (stdv[0] > params.minSkoOnTemplate)
+        if (stdv[0] > params.min_sko_template())
         {
-            Rect r;
+            cv::Rect r;
             if (takeFromCenter)
             {
-                r  = Rect(matchLoc.x + center.x - corWin->objTemplates.back().cols / 2,
-                          matchLoc.y + center.y - corWin->objTemplates.back().rows / 2,
-                          corWin->objTemplates.back().cols + 1,
-                          corWin->objTemplates.back().rows + 1);
+                r  = cv::Rect(matchLoc.x + center.x - corWin->objTemplates.back().cols / 2,
+                              matchLoc.y + center.y - corWin->objTemplates.back().rows / 2,
+                              corWin->objTemplates.back().cols + 1,
+                              corWin->objTemplates.back().rows + 1);
 
                 if (r.x < 0)
                 {
@@ -889,14 +1096,14 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::handleBallFound(CorDataRaw* 
                 {
                     r.height = subFlip.rows - r.y;
                 }
-                if (r.width > params.searchAreaSize / 2)
+                if (r.width > params.search_area_size() / 2)
                 {
-                    r.width = params.searchAreaSize / 2;
+                    r.width = params.search_area_size() / 2;
                 }
 
-                if (r.height > params.searchAreaSize / 2)
+                if (r.height > params.search_area_size() / 2)
                 {
-                    r.height = params.searchAreaSize / 2;
+                    r.height = params.search_area_size() / 2;
                 }
             }
             else
@@ -911,9 +1118,9 @@ BallRecognizerPP::BallTrackStatus BallRecognizerPP::handleBallFound(CorDataRaw* 
             corWin->objGrayTemplates.push_back(Mat());
             frames.current(r).copyTo(corWin->objGrayTemplates.back());
 
-            corWin->rect = Rect(Point(searchRect.x + matchLoc.x, searchRect.y + matchLoc.y),
-                                Point(searchRect.x + matchLoc.x + corWin->objTemplates.back().cols,
-                                      searchRect.y + matchLoc.y + corWin->objTemplates.back().rows));
+            corWin->rect = cv::Rect(Point(searchRect.x + matchLoc.x, searchRect.y + matchLoc.y),
+                                    Point(searchRect.x + matchLoc.x + corWin->objTemplates.back().cols,
+                                          searchRect.y + matchLoc.y + corWin->objTemplates.back().rows));
         }
         else
         {
@@ -936,7 +1143,7 @@ void BallRecognizerPP::handleNotFound(CorDataRaw& corWin, qint64 time)
     corWin.center.x += corWin.currentSpeed.x;
     corWin.center.y += corWin.currentSpeed.y;
     corWin.arrows.append(qMakePair(prevCenter, corWin.center));
-    corWin.times.append(qMakePair(time, false));
+    corWin.meta.append(BallMeta(time, false, false));
     ++corWin.notFoundCount;
     corWin.previousWasNotFound = true;
 }
@@ -959,27 +1166,27 @@ void BallRecognizerPP::addFork(BallRecognizerPP::CorDataRaw& data, double forked
 }
 
 
-void BallRecognizerPP::getOutOfFrameDirection(Point2f& prevCenter, OutOfFrame& dir)
+void BallRecognizerPP::getOutOfFrameDirection(Point2f& prevCenter, msg::OutOfFrame& dir)
 {
-    if (prevCenter.x < 100)
+    if (prevCenter.x < outOfFrameBorder)
     {
-        dir = OutOfFrame::Left;
+        dir = msg::OutOfFrame::LeftOut;
     }
-    else if (prevCenter.x > frames.current.cols - 100)
+    else if (prevCenter.x > frames.current.cols - outOfFrameBorder)
     {
-        dir = OutOfFrame::Right;
+        dir =  msg::OutOfFrame::RightOut;
     }
-    else if (prevCenter.y < 100)
+    else if (prevCenter.y < outOfFrameBorder)
     {
-        dir = OutOfFrame::Up;
+        dir = msg::OutOfFrame::UpOut;
     }
-    else if (prevCenter.y > frames.current.rows - 100)
+    else if (prevCenter.y > frames.current.rows - outOfFrameBorder)
     {
-        dir = OutOfFrame::Down;
+        dir = msg::OutOfFrame::DownOut;
     }
 }
 
-bool BallRecognizerPP::checkInSearchArea(CorDataRaw& corWin, OutOfFrame& dir)
+bool BallRecognizerPP::checkInSearchArea(CorDataRaw& corWin, msg::OutOfFrame& dir)
 {
     Point2f prevCenter = corWin.center;
     prevCenter.x += corWin.currentSpeed.x;
@@ -987,7 +1194,7 @@ bool BallRecognizerPP::checkInSearchArea(CorDataRaw& corWin, OutOfFrame& dir)
     bool result = false;
     if (currentState == BallThrow)
     {
-        if (rois.trackFirstRect.contains(Point2f(prevCenter.x, prevCenter.y)))
+        if (ProtoHelper::gtRectToCv(rois->throw_track_rect()).contains(Point2f(prevCenter.x, prevCenter.y)))
         {
             result = true;
         }
@@ -995,16 +1202,11 @@ bool BallRecognizerPP::checkInSearchArea(CorDataRaw& corWin, OutOfFrame& dir)
         {
             ++corWin.notFoundCount;
             getOutOfFrameDirection(prevCenter, dir);
-            //            if (corWin.isBall)
-            //            {
-            //                corWin.forceDelete = true;
-            //                currentState = WaitForHit;
-            //            }
         }
     }
     else if (currentState == BallHit)
     {
-        if (rois.trackSecondRect.contains(Point2f(prevCenter.x, prevCenter.y)))
+        if (ProtoHelper::gtRectToCv(rois->hit_track_rect()).contains(Point2f(prevCenter.x, prevCenter.y)))
         {
             result = true;
         }
@@ -1012,17 +1214,11 @@ bool BallRecognizerPP::checkInSearchArea(CorDataRaw& corWin, OutOfFrame& dir)
         {
             ++corWin.notFoundCount;
             getOutOfFrameDirection(prevCenter, dir);
-            //            if (corWin.isBall)
-            //            {
-            //                currentState = WaitForBall;
-            //                corWin.forceDelete = true;
-
-            //            }
         }
     }
     else if (currentState == BallMove)
     {
-        if (rois.indentSearchRect.contains(Point2f(prevCenter.x, prevCenter.y)))
+        if (ProtoHelper::gtRectToCv(rois->hit_track_rect()).contains(Point2f(prevCenter.x, prevCenter.y)))
         {
             result = true;
         }
@@ -1038,25 +1234,22 @@ bool BallRecognizerPP::checkInSearchArea(CorDataRaw& corWin, OutOfFrame& dir)
 
 void BallRecognizerPP::changeParamsSituation(State state)
 {
-//    if (!(state == currentState))
-//    {
-        if (state == WaitForBall)
-        {
-            params = initParams;
-        }
-        else if (state == WaitForHit)
-        {
-            params.circularityCoeff = 0.7;
-            params.maxArea = initParams.maxArea * 2.5;
-            params.searchAreaSize = initParams.searchAreaSize * 2.25;
-            params.minSpeed = initParams.minSpeed - 5;
-        }
-        else if (state == WaitForMove)
-        {
-            params.minSpeed = initParams.minSpeed - 11.5;
-            params.minArea = initParams.minArea * 0.3;
-        }
-    //}
+    if (state == WaitForBall)
+    {
+        params.MergeFrom(*initParams);
+    }
+    else if (state == WaitForHit)
+    {
+        params.set_circularity_coeff(0.7);
+        params.set_max_area(initParams->max_area() * 2.5);
+        params.set_search_area_size(initParams->search_area_size() * 2.25);
+        params.set_min_speed(initParams->min_speed() - 5);
+    }
+    else if (state == WaitForMove)
+    {
+        params.set_min_speed(initParams->min_speed() - 11.5);
+        params.set_min_area(initParams->min_area() * 0.3);
+    }
 }
 
 
@@ -1076,7 +1269,7 @@ void BallRecognizerPP::checkNonApriorMeasures(CorDataRaw& corWin)
             Point2f dirSecond = corWin.arrows[i - 1].second - corWin.arrows[i - 1].first;
             double normSecond = norm(dirSecond);
             dirSecond = dirSecond / normSecond;
-            double angle = acos(dirFirst.dot(dirSecond)) * radToDegrees;
+            double angle = acosm(dirFirst.dot(dirSecond)) * radToDegrees;
             angles.prepend(angle);
             meanAngle += angle / (corWin.arrows.size() - 1);
         }
@@ -1085,10 +1278,10 @@ void BallRecognizerPP::checkNonApriorMeasures(CorDataRaw& corWin)
         for (qint32 j = 1; j < acceptBallThreshold; ++j)
         {
             if (angles[j] / meanAngle > 2
-                    && angles[j] > params.maxAngleBetwDirections / 2)
+                    && angles[j] > params.max_angle_directions() / 2)
             {
                 angles.removeAt(j);
-                corWin.times.remove(j);
+                corWin.meta.remove(j);
                 corWin.arrows.remove(j);
                 corWin.objTemplates.remove(j);
                 corWin.objGrayTemplates.remove(j);
@@ -1098,7 +1291,7 @@ void BallRecognizerPP::checkNonApriorMeasures(CorDataRaw& corWin)
         }
         if (remove)
         {
-            corWin.times.removeFirst();
+            corWin.meta.removeFirst();
             corWin.arrows.removeFirst();
             corWin.objTemplates.removeFirst();
             corWin.objGrayTemplates.removeFirst();

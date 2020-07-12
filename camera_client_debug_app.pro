@@ -1,3 +1,4 @@
+
 #-------------------------------------------------
 #
 # Project created by QtCreator 2019-05-31T10:11:30
@@ -8,9 +9,13 @@ QT       += core gui network serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+
+
 TARGET = camera_client_work_app
 TEMPLATE = app
 CONFIG += c++14
+DEFINES += PROTOBUF_USE_DLLS
+
 
 
 SOURCES += main.cpp\
@@ -19,19 +24,39 @@ SOURCES += main.cpp\
     camera.cpp \
     objectivecontroller.cpp \
     imageprocext.cpp \
-    ballrecognizer.cpp \
     rtspvideohandler.cpp \
-    mathfunc.cpp
+    mathfunc.cpp \
+    proto/msg.internal.pb.cc \
+    networkmanager.cpp \
+    logger.cpp \
+    proto/proto_helper.cpp \
+    ballrecognizerpp.cpp \
+    pedestriantracker.cpp \
+    opencvhelpfunction.cpp \
+    calibrationhelper.cpp \
+    calibration.cpp \
+    detectnetbase.cpp \
+    battracker.cpp
 
 HEADERS  += mainwindow.h \
     cameraclient.h \
     camera.h \
     objectivecontroller.h \
     imageprocext.h \
-    ballrecognizer.h \
     mainstructs.h \
     rtspvideohandler.h \
-    mathfunc.h
+    mathfunc.h \
+    proto/msg.internal.pb.h \
+    networkmanager.h \
+    logger.h \
+    proto/proto_helper.h \
+    ballrecognizerpp.h \
+    pedestriantracker.h \
+    opencvhelpfunction.h \
+    calibrationhelper.h \
+    calibration.h \
+    detectnetbase.h \
+    battracker.h
 
 FORMS    += mainwindow.ui
 
@@ -48,11 +73,11 @@ unix:!macx: LIBS += -L$$PWD/../../../../../usr/local/lib/ -lopencv_tracking
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_core
 
-unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudaarithm
+#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudaarithm
 
-unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudaimgproc
+#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudaimgproc
 
-unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_shape
+#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_shape
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_highgui
 
@@ -62,9 +87,9 @@ unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_imgcodecs
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_features2d
 
-unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudacodec
+#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudacodec
 
-unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudalegacy
+#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudalegacy
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_videoio
 
@@ -73,8 +98,6 @@ unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudafilters
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_video
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_imgproc
-
-unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_features2d
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_xphoto
 
@@ -97,5 +120,42 @@ unix:!macx: LIBS += -L$$PWD/../../../../../usr/lib/aarch64-linux-gnu/ -lglib-2.0
 unix:!macx: LIBS += -L$$PWD/../../../../../usr/lib/aarch64-linux-gnu/ -lgio-2.0
 
 unix:!macx: LIBS += -L$$PWD/../../../../../usr/lib/aarch64-linux-gnu/ -lgstrtspserver-1.0
+
+unix:!macx: LIBS += -L$$PWD/../../../../../usr/lib/aarch64-linux-gnu/ -lgstrtp-1.0
+
+
+
+
+unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lprotobuf
+
+INCLUDEPATH += $$PWD/../../../../usr/local/include
+DEPENDPATH += $$PWD/../../../../usr/local/include
+
+
+
+unix:!macx: LIBS += -L$$PWD/../../../../usr/local/cuda/lib64/ -lcudart
+unix:!macx: LIBS += -L$$PWD/../../../../usr/local/cuda/lib64/ -lcublas
+
+INCLUDEPATH += $$PWD/../../../../usr/local/cuda/include
+DEPENDPATH += $$PWD/../../../../usr/local/cuda/include
+
+
+
+
+
+unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -ljetson-inference
+
+INCLUDEPATH += $$PWD/../../../../usr/local/include
+DEPENDPATH += $$PWD/../../../../usr/local/include
+
+
+
+
+
+#unix:!macx: LIBS += -L$$PWD/../../../../usr/lib/aarch64-linux-gnu/ -lgstrtp-1.0
+
+#INCLUDEPATH += $$PWD/../../../../usr/lib/aarch64-linux-gnu
+#DEPENDPATH += $$PWD/../../../../usr/lib/aarch64-linux-gnu
+
 
 

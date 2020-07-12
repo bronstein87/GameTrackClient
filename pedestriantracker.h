@@ -13,9 +13,11 @@
 #include <algorithm>
 #include <detectnetbase.h>
 #include <calibrationhelper.h>
+#include <proto/msg.internal.pb.h>
 
 using namespace cv;
 using namespace std;
+using namespace gt::internal;
 
 
 
@@ -44,27 +46,38 @@ public:
         CenterFielder = 4096
     };
 
-    enum PlayerInterceptState
+    enum PlayerIntersectState
     {
-        NoIntercept,
+        NoIntersect,
         Lost,
         OutOfFrameLost,
-        ProbablyIntercept,
+        ProbablyIntersect,
         DontMoveClose,
         DontMoveFar,
         MoveClose,
         MoveFar
     };
 
-    enum class PlayerPosition
+    enum class GamePositions
     {
+        Invalid,
         Home,
+        LeftSquare,
+        RightSquare,
+        Umpire,
         FirstBase,
         SecondBase,
         ThirdBase,
         LeftField,
         CenterField,
-        RightField
+        RightField,
+        ShortStop
+    };
+
+    struct MovePosition
+    {
+        Point2f onCam;
+        Point3f onSpace;
     };
 
     struct Player
@@ -83,7 +96,7 @@ public:
         Ptr<TrackerMOSSE> tracker;
         double lastConfidence = 0;
         double lastTrackConfidence = -1.;
-        PlayerInterceptState interceptState = NoIntercept;
+        PlayerIntersectState intersectState = NoIntersect;
         Point2f speed;
         qint32 speedUpdateCounter = 0;
         Rect2d prevR;
@@ -91,24 +104,21 @@ public:
         Point2f lastSpeed;
         QPair <Mat, Mat> origHist;
         bool alreadyInited = false;
-        QVector <QPair<quint64, Rect2d>> history;
-        PlayerPosition position;
+        QPair<quint64, Rect2d> history;
+        GamePositions position = GamePositions::Invalid;
+        QVector <QPair <quint64, MovePosition>> moves;
+        cv::Scalar color;
     };
 
-    struct IOUResult
-    {
-        double iou;
-        double partR1;
-        double partR2;
-    };
+
 
 
     using PPlayer = QSharedPointer<Player>;
     using LostPlayersArea = QPair <Rect2d, QVector <PPlayer>>;
 
-    struct InterceptCheckResult
+    struct IntersectCheckResult
     {
-        bool intercept = false;
+        bool intersect = false;
         PPlayer p;
         double distance = 1000;
         TeamRole role = TeamRole::Undefined;
@@ -135,8 +145,6 @@ public:
 
     void setTrackZone(Rect2d r) {trackZone = r;}
 
-    void setCameraPosition(CameraPosition p) {camPosition = p;}
-
     void setMode(TrackMode m) {mode = m;}
 
     void setDetectDuration(qint32 d) {detectDuration = d;}
@@ -145,30 +153,30 @@ public:
 
     void setState(State s) {state = s;}
 
-    InterceptCheckResult intersectsAnyPedestrian(Point2f position, bool nonAprior = false);
+    IntersectCheckResult intersectsAnyPedestrian(Point2f position, bool nonAprior = false);
 
     PPlayer findPlayerById(QUuid id, bool &ok);
 
     void clear();
 
-    void setDebugBuffer (QLinkedList <FrameTime>* _buffer){buffer = _buffer;}
+    void setDebugBuffer (QLinkedList <FrameInfo>* _buffer){buffer = _buffer;}
+
+    QLinkedList <PPlayer>& getPlayersInfo() {return nonStructuredPlayers;}
 
 
 signals:
 
-    void outOfFrame(OutOfFrame dir);
+    void outOfFrame(msg::OutOfFrame dir);
 
 private:
 
-    QVector <LostPlayersArea> checkPlayersIntercept();
+    QVector <LostPlayersArea> checkPlayersIntersect();
 
-    Point3f evaluate3dPosition(Rect r, bool& ok);
-
-    IOUResult calculateIOU(Rect2d r1, Rect2d r2);
+    MovePosition evaluate3dPosition(cv::Rect r, bool& ok);
 
     QPair<Point2f, bool> checkIntersect(Player& p, Point2f& position, bool nonAprior = false);
 
-    PedestrianTracker::InterceptCheckResult handleInterceptCheck(Point2f &position, PPlayer player,
+    PedestrianTracker::IntersectCheckResult handleIntersectCheck(Point2f &position, PPlayer player,
                                                                  QVector <QPair <double, PPlayer>>& distance, bool nonAprior = false);
 
     void assignROIs(const qint32 numDetections, detectNet::Detection* detections);
@@ -187,15 +195,16 @@ private:
 
     void savePlayerHistory(PPlayer p);
 
+    void assignPosition(PPlayer player, bool &changed);
+
 
     qint32 detectCounter = 0;
     qint32 trackCounter = 0;
     double trackerThreshold = 3.5;
-    double minIOUIntercept = 0.2;
-    double minIntercept = 0.25;
+    double minIOUIntersect = 0.2;
+    double minIntersect = 0.25;
     double trackConfidenceUpdateCoeff = 0.7;
 
-    CameraPosition camPosition;
     Rect2d trackZone;
     qint32 detectDuration = 8;
     qint32 trackDuration = 20;
@@ -204,14 +213,15 @@ private:
 
     QMap <TeamRole, QVector <PPlayer> > unconfirmedPlayers;
     QLinkedList <PPlayer> nonStructuredPlayers;
-    QVector <LostPlayersArea> interceptPlayers;
+    QVector <LostPlayersArea> intersectPlayers;
     QVector <PPlayer> outOfFramePlayers;
     TrackMode mode = Players;
     State state = Detect;
     QMutex mutex;
     Mat inputImg;
-    QLinkedList <FrameTime>* buffer;
+    QLinkedList <FrameInfo>* buffer;
     quint64 lastTime;
+    QMap <GamePositions, QPair <QString, Point3f>> positionCoordinates;
 
 
     constexpr const static double resampleCoeff = 0.75;
@@ -221,8 +231,11 @@ private:
     constexpr const static double confidenceThreshold = 1.;
     constexpr const static double trackerHighConfidence = 4.5;
     constexpr const static double bodyCropCoeff = 0.6;
-    constexpr const static double expandBodyROICoeff = 0.2;
+    constexpr const static double bodyWidthHeightProportion = 1.5;
+    constexpr const static double expandBodyROICoeff = 0.25;
     constexpr const static double maxTrackNotFound = 10;
+    constexpr const static qint32 tryToTrack = 3;
+    constexpr const static double speedThreshold = 10;
 
 };
 

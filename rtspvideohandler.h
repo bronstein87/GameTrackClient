@@ -4,10 +4,11 @@
 #include <gst/gst.h>
 #include <glib.h>
 #include <gst/rtsp-server/rtsp-server.h>
+#include <gst/rtp/gstrtpbuffer.h>
 #include <QObject>
 #include <camera.h>
-#include <cameraclient.h>
 #include <QApplication>
+
 
 struct RtspVideoHandlerParams
 {
@@ -15,7 +16,6 @@ struct RtspVideoHandlerParams
     qint32 w;
     qint32 h;
     qint32 framerate;
-    qint32 rotate;
 };
 
 class CameraClient;
@@ -26,18 +26,19 @@ class RtspVideoHandler : public QObject
 {
     Q_OBJECT
 public:
-    explicit RtspVideoHandler(const RtspVideoHandlerParams& p, CameraClient* clnt, QObject *parent = 0);
+    explicit RtspVideoHandler(const RtspVideoHandlerParams& p, QObject *parent = 0);
+
     explicit RtspVideoHandler(QObject *parent = 0);
 
-    explicit RtspVideoHandler(const RtspVideoHandlerParams& p, const QLinkedList <FrameTime>& resFrames, QObject *parent = 0);
-
-    void setCameraClient(CameraClient* c) {client = c;}
+    explicit RtspVideoHandler(const RtspVideoHandlerParams& p, const QLinkedList <FrameInfo>& resFrames, QObject *parent = 0);
 
     void setRtspParams(const RtspVideoHandlerParams& p){params = p;}
 
-    void setVideoToSend(const QLinkedList <FrameTime>& frames) {framesToSend = frames;}
+    void setVideoToSend(const QLinkedList <FrameInfo>& frames) {framesToSend = frames;}
 
-    void sendVideo(qint32 port, const QString &pipeLine, qint32 frameCount = -1);
+    void sendVideo(qint32 port, const QString &pipeLine, qint32 frameCount = -1, bool _onlyMain = true);
+
+    void setTimeout(qint32 ms);
 
     bool isSendArray() {return !framesToSend.isEmpty();}
 
@@ -47,7 +48,9 @@ public:
 
     ~ RtspVideoHandler();
 signals:
+
     void serverStarted();
+
 public slots:
 
 private:
@@ -64,6 +67,10 @@ private:
 
     void closedClient (GstRTSPClient * self,
                        gpointer data);
+
+    void init();
+
+    void reset();
 
 
     static void needDataCallBack(GstElement* appsrc, guint unused, gpointer data) {
@@ -95,22 +102,34 @@ private:
         reinterpret_cast<RtspVideoHandler*>(data)->closedClient(self, data);
     }
 
+    static GstPadProbeReturn
+    extend_rtp_header_probe (GstPad* pad,
+                GstPadProbeInfo* info,
+                gpointer         user_data);
+
+    CameraClient* client = nullptr;
+    RtspVideoHandlerParams params;
+    QLinkedList <FrameInfo> framesToSend;
+    QLinkedList <FrameInfo>::iterator it;
+    QLinkedList <quint64> tsRtpHeader;
+    QMutex mutex;
+
+
+
     GMainLoop* loop = nullptr;
     GstRTSPServer* server = nullptr;
-    RtspVideoHandlerParams params;
-    QLinkedList <FrameTime> framesToSend;
-    CameraClient* client = nullptr;
-    QLinkedList <FrameTime>::iterator it;
-
     GstRTSPClient* rtspClient = nullptr;
-    bool getValidIterator = false;
+
 
     qint32 currentFrameCount = 0;
     qint32 needFrameCount = -1;
     qint32 serverId;
     qint64 startTime = -1;
+    bool onlyMain = false;
+    bool getValidIterator = false;
+    QTimer timeoutTimer;
 
-    void reset();
+
 };
 
 #endif // RTSPVIDEOHANDLER_H

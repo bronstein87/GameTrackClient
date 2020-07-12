@@ -23,5 +23,6 @@ void Logger::write(Logger::LogType type, const QString &from, const QString &mes
 
     QString typeStr = (type == Error) ? "ERROR" : (type == Debug) ? "DEBUG" : "WARN";
     QMutexLocker lock(&mutex);
-    out << typeStr << "\n" << from << "\n" << message << endl;
+    out << typeStr << "\t" << from << "\t" << message << endl;
+    qDebug() << typeStr << "\t" << from << "\t" << message;
 }

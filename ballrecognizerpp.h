@@ -9,9 +9,6 @@
 #include <opencv2/imgproc.hpp>
 #include <QDebug>
 #include <vector>
-#include <opencv2/video/tracking.hpp>
-#include <opencv2/core/utility.hpp>
-#include <opencv2/tracking.hpp>
 #include <QElapsedTimer>
 #include <QDir>
 #include <QDateTime>
@@ -21,10 +18,17 @@
 #include <QUuid>
 #include <pedestriantracker.h>
 #include <opencvhelpfunction.h>
+#include <proto/msg.internal.pb.h>
+#include <proto/proto_helper.h>
+#include <mathfunc.h>
+
 #define DEBUG_BALL_REC
 
 using namespace std;
 using namespace cv;
+using namespace gt::internal;
+using namespace BOKZMath;
+
 class BallRecognizerPP : public QObject
 {
     Q_OBJECT
@@ -33,6 +37,7 @@ public:
 
     enum State
     {
+        Invalid,
         WaitForBall,
         WaitForHit,
         WaitForMove,
@@ -53,48 +58,15 @@ public:
         MissedFromFrame
     };
 
-
-
-    explicit BallRecognizerPP(QObject *parent = nullptr);
-
-    State recognize(Mat frame, qint64 time);
-
-    void setInitialState(State state)
+    struct BallMeta
     {
-        currentState = state;
-        changeParamsSituation(state);
-    }
-
-    void setPedestrianTracker (QSharedPointer <PedestrianTracker> tracker) {pedTracker = tracker;}
-
-    void setCurrentSearchROI(Rect r) { currentSearchROI = r;}
-
-    void setMainROI(Rect r) {rois.mainSearchRect = r;}
-
-    void setFirstROI(Rect r) {rois.trackFirstRect = r;}
-
-    void setSecondROI(Rect r) {rois.trackSecondRect = r;}
-
-    void setIndentROI(Rect r){rois.indentSearchRect = r;}
-
-    void setBackGroundFrame(Mat frame)
-    {
-        previousUpdateCounter = 0;
-        frame.copyTo(frames.previous);
-    }
-
-
-
-signals:
-
-    void errorOccured(const QString& text);
-
-    void ballOutOfFrame(OutOfFrame dir);
-
-    void ballRecognized(Point2f coords, qint64 time);
-
-
-private:
+        BallMeta() {}
+        BallMeta (qint64 _time, bool _valid, bool _rebound) :
+            time (_time), valid(_valid), rebound(_rebound) {}
+        qint64 time;
+        bool valid;
+        bool rebound = false;
+    };
 
     struct CorDataRaw
     {
@@ -108,22 +80,57 @@ private:
         qint32 dirAccordCount = 0;
         qint32 dirAccordCountBranch = 0;
         QVector <QPair <Point2f, Point2f>> arrows;
-        QVector <QPair<qint64, bool>> times;
+        QVector <BallMeta> meta;
         bool isBall = false;
-        Rect rect;
+        cv::Rect rect;
         bool forceDelete = false;
         bool previousWasNotFound = false;
         bool isNew = true;
         State forkState;
-        bool closed = false;
-        bool forked = false;
-        bool branch = false;
-        bool justForked = false;
-        bool firstForkedGround = false;
+        bool closed = false; // закрыта ли данная траектория (т.е заменена ли новой веткой)
+        bool forked = false; // существует ли форк для текущей ветки
+        bool branch = false; // ветка ли данная траектория
+        bool justForked = false; // была ли ветка образована на предыдущей итерации
         QUuid id = QUuid::createUuid();
-        qint32 interceptPed = 0;
-        double forkedAngle;
+        qint32 intersectPed = 0;
+        double forkedAngle = 0;
     };
+
+
+
+    explicit BallRecognizerPP(QObject *parent = nullptr);
+
+    State recognize(Mat frame, qint64 time);
+
+    void setInitialState(State state);
+
+    void setPedestrianTracker (PedestrianTracker* tracker) {pedTracker = tracker;}
+
+    void setCurrentSearchROI(cv::Rect r);
+
+    void setROIs(msg::RecROIs* _rois);
+
+    void setRecognizeParams(msg::RecognizeParameters* recParams);
+
+    void analyzePreviousFrames(CorDataRaw& recData, const QVector <FrameInfo>& prev);
+
+    void setDebug(bool debugFlag);
+
+    void clear();
+
+    void setBackGroundFrame(Mat frame);
+
+signals:
+
+    void errorOccured(const QString& text);
+
+    void ballOutOfFrame(msg::OutOfFrame dir, const Point2f& lastPoint);
+
+    void ballRecognized(msg::BallMeasure measure);
+
+    void resultsReady(const State state, const CorDataRaw& results);
+
+private:
 
     struct CorData
     {
@@ -146,79 +153,83 @@ private:
         Point2f center;
         qint32 counter = 0;
         bool confirmed = true;
-        Rect rect;
+        cv::Rect rect;
     };
 
 
 
     double circularityMetric(Moments& mmnts);
 
-    void handleBallNotFound(qint64 time);
-
-    void joinForkedTrajectories();
-
     void handleTrack(qint64 time);
 
-    BallRecognizerPP::BallTrackStatus handleBallFound(CorDataRaw* corWin, qint64 time);
-
-    void changeParamsSituation(BallRecognizerPP::State state);
-
-    Rect chooseTrackerSearchArea(CorDataRaw& corWin);
-
-    double correlateBallTemplate(CorDataRaw& corWin, Mat& subFlip, Point& matchLoc, double& corrCoef, Rect& searchRect);
-
-    Mat extractNewTemplate(CorDataRaw& corWin, Point matchLoc, Mat subFlip, Rect& rectTemplate);
-
-    qint32 clarifyBallCenter(CorDataRaw& corWin, Mat tmpTemplate, Point2f& center, Scalar& m, Scalar& stdv, bool& takeFromCenter, bool& takeOldDir);
-
-    bool checkInSearchArea(CorDataRaw& corWin, OutOfFrame& dir);
+    BallTrackStatus handleBallFound(CorDataRaw* corWin, qint64 time);
 
     void handleNotFound(CorDataRaw& corWin, qint64 time);
 
+    void handleBallNotFound(qint64 time);
+
+    void changeParamsSituation(BallRecognizerPP::State state);
+
+    cv::Rect chooseTrackerSearchArea(CorDataRaw& corWin);
+
+    double correlateBallTemplate(CorDataRaw& corWin, Mat& subFlip, Point& matchLoc, double& corrCoef, cv::Rect& searchRect);
+
+    Mat extractNewTemplate(CorDataRaw& corWin, Point matchLoc, Mat subFlip, cv::Rect& rectTemplate);
+
+    qint32 clarifyBallCenter(CorDataRaw& corWin, Mat tmpTemplate, Point2f& center, Scalar& m, Scalar& stdv, bool& takeFromCenter, bool& takeOldDir);
+
+    bool checkInSearchArea(CorDataRaw& corWin, msg::OutOfFrame& dir);
+
     void addFork(CorDataRaw& data, double forkedAngle);
+
+    void joinForkedTrajectories();
 
     void checkNonApriorMeasures(CorDataRaw& corWin);
 
-    void getOutOfFrameDirection(Point2f& prevCenter, OutOfFrame& dir);
+    void getOutOfFrameDirection(Point2f& prevCenter, msg::OutOfFrame& dir);
 
-    BallRecognizerPP::BallTrackStatus checkThresholds(CorDataRaw& corWin, double maxVal, Point2f newDir, bool takeOldDir, bool pedIntercept, qint64 time);
+    BallTrackStatus checkThresholds(CorDataRaw& corWin, double maxVal, Point2f newDir, bool takeOldDir, bool pedIntersect, qint64 time);
 
-    void updateNewState(auto lastTrajectory);
+    void updateNewState(const CorDataRaw& lastTrajectory);
 
-    Point2f chooseCenterOfBall(qint32 contoursCount, bool takeFromCenter, Rect searchRect,
+    void updateWaitState();
+
+    Point2f chooseCenterOfBall(qint32 contoursCount, bool takeFromCenter, cv::Rect searchRect,
                                CorDataRaw* corWin, Point2f center, Point matchLoc, Mat tmpTemplate);
 
     void updateROIClosestPlayer();
 
-    void increaseAccordCounter(CorDataRaw& corWin, BallTrackStatus &status);
+    void increaseAccordCounter(CorDataRaw& corWin, BallTrackStatus& status);
 
-    void handleResults(BallTrackStatus status);
+    void handleResults(BallTrackStatus status, State previousState);
 
-    QSharedPointer <PedestrianTracker> pedTracker;
+    msg::BallMeasure fillBallMeasure(const Point2f& position, const BallMeta& meta, msg::BallEvent ballEvent);
+
+    PedestrianTracker* pedTracker;
 
     State currentState = WaitForBall;
 
-    Rect currentSearchROI;
+    cv::Rect currentSearchROI;
 
-    RecROIs rois;
+    msg::RecROIs* rois;
+
+    msg::RecognizeParameters params;
+
+    msg::RecognizeParameters* initParams;
 
     QVector <CutFromPrevious> cutFromPrevious;
 
     QLinkedList <CorDataRaw> corWindows;
 
-    Rect cutFromBackGround = Rect();
+    cv::Rect cutFromBackGround = cv::Rect();
 
-    OutOfFrame dir;
+    msg::OutOfFrame outOfFrameDir;
 
     CorData mainBallMoves;
 
     Frames frames;
 
-    RecognizeParameters params;
-
-    RecognizeParameters initParams;
-
-    QUuid interceptPlayerId;
+    QUuid intersectPlayerId;
 
     static constexpr const qint32 maxWaitForMove = 200;
 
@@ -246,7 +257,12 @@ private:
 
     constexpr const static qint32 maxPlayerDistance = 200;
 
-     constexpr const static qint32 maxForkedAngle = 28;
+    constexpr const static qint32 maxForkedAngle = 28;
+
+    constexpr const static qint32 outOfFrameBorder = 100;
+
+
+
 
 
 };

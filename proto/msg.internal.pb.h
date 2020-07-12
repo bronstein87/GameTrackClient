@@ -960,12 +960,12 @@ class HardwareCameraParameters : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 gain() const;
   inline void set_gain(::google::protobuf::int32 value);
 
-  // optional int32 debounce_enable = 13;
+  // optional bool debounce_enable = 13;
   inline bool has_debounce_enable() const;
   inline void clear_debounce_enable();
   static const int kDebounceEnableFieldNumber = 13;
-  inline ::google::protobuf::int32 debounce_enable() const;
-  inline void set_debounce_enable(::google::protobuf::int32 value);
+  inline bool debounce_enable() const;
+  inline void set_debounce_enable(bool value);
 
   // optional int32 debounce_value = 14;
   inline bool has_debounce_value() const;
@@ -980,6 +980,20 @@ class HardwareCameraParameters : public ::google::protobuf::Message {
   static const int kTriggerModeFieldNumber = 15;
   inline ::google::protobuf::int32 trigger_mode() const;
   inline void set_trigger_mode(::google::protobuf::int32 value);
+
+  // optional int32 focusing = 16;
+  inline bool has_focusing() const;
+  inline void clear_focusing();
+  static const int kFocusingFieldNumber = 16;
+  inline ::google::protobuf::int32 focusing() const;
+  inline void set_focusing(::google::protobuf::int32 value);
+
+  // optional bool trigger_mode_enable = 17;
+  inline bool has_trigger_mode_enable() const;
+  inline void clear_trigger_mode_enable();
+  static const int kTriggerModeEnableFieldNumber = 17;
+  inline bool trigger_mode_enable() const;
+  inline void set_trigger_mode_enable(bool value);
 
   // @@protoc_insertion_point(class_scope:gt.internal.msg.HardwareCameraParameters)
  private:
@@ -1013,6 +1027,10 @@ class HardwareCameraParameters : public ::google::protobuf::Message {
   inline void clear_has_debounce_value();
   inline void set_has_trigger_mode();
   inline void clear_has_trigger_mode();
+  inline void set_has_focusing();
+  inline void clear_has_focusing();
+  inline void set_has_trigger_mode_enable();
+  inline void clear_has_trigger_mode_enable();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -1030,9 +1048,11 @@ class HardwareCameraParameters : public ::google::protobuf::Message {
   double max_frame_rate_;
   ::google::protobuf::int32 height_;
   ::google::protobuf::int32 gain_;
-  ::google::protobuf::int32 debounce_enable_;
   ::google::protobuf::int32 debounce_value_;
   ::google::protobuf::int32 trigger_mode_;
+  bool debounce_enable_;
+  bool trigger_mode_enable_;
+  ::google::protobuf::int32 focusing_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -1118,94 +1138,80 @@ class PictureCameraParameters : public ::google::protobuf::Message {
   inline ::gt::internal::msg::Rect* release_wb_rect();
   inline void set_allocated_wb_rect(::gt::internal::msg::Rect* wb_rect);
 
-  // optional int32 auto_exposure_internal = 4;
-  inline bool has_auto_exposure_internal() const;
-  inline void clear_auto_exposure_internal();
-  static const int kAutoExposureInternalFieldNumber = 4;
-  inline ::google::protobuf::int32 auto_exposure_internal() const;
-  inline void set_auto_exposure_internal(::google::protobuf::int32 value);
-
-  // optional int32 focusing = 5;
-  inline bool has_focusing() const;
-  inline void clear_focusing();
-  static const int kFocusingFieldNumber = 5;
-  inline ::google::protobuf::int32 focusing() const;
-  inline void set_focusing(::google::protobuf::int32 value);
-
-  // optional double gamma = 6;
+  // optional double gamma = 4;
   inline bool has_gamma() const;
   inline void clear_gamma();
-  static const int kGammaFieldNumber = 6;
+  static const int kGammaFieldNumber = 4;
   inline double gamma() const;
   inline void set_gamma(double value);
 
-  // optional double sharp = 7;
+  // optional double sharp = 5;
   inline bool has_sharp() const;
   inline void clear_sharp();
-  static const int kSharpFieldNumber = 7;
+  static const int kSharpFieldNumber = 5;
   inline double sharp() const;
   inline void set_sharp(double value);
 
-  // optional int32 saturation = 8;
+  // optional int32 saturation = 6;
   inline bool has_saturation() const;
   inline void clear_saturation();
-  static const int kSaturationFieldNumber = 8;
+  static const int kSaturationFieldNumber = 6;
   inline ::google::protobuf::int32 saturation() const;
   inline void set_saturation(::google::protobuf::int32 value);
 
-  // optional int32 r_saturation = 9;
+  // optional int32 r_saturation = 7;
   inline bool has_r_saturation() const;
   inline void clear_r_saturation();
-  static const int kRSaturationFieldNumber = 9;
+  static const int kRSaturationFieldNumber = 7;
   inline ::google::protobuf::int32 r_saturation() const;
   inline void set_r_saturation(::google::protobuf::int32 value);
 
-  // optional int32 g_saturation = 10;
+  // optional int32 g_saturation = 8;
   inline bool has_g_saturation() const;
   inline void clear_g_saturation();
-  static const int kGSaturationFieldNumber = 10;
+  static const int kGSaturationFieldNumber = 8;
   inline ::google::protobuf::int32 g_saturation() const;
   inline void set_g_saturation(::google::protobuf::int32 value);
 
-  // optional int32 b_saturation = 11;
+  // optional int32 b_saturation = 9;
   inline bool has_b_saturation() const;
   inline void clear_b_saturation();
-  static const int kBSaturationFieldNumber = 11;
+  static const int kBSaturationFieldNumber = 9;
   inline ::google::protobuf::int32 b_saturation() const;
   inline void set_b_saturation(::google::protobuf::int32 value);
 
-  // optional int32 hue = 12;
+  // optional int32 hue = 10;
   inline bool has_hue() const;
   inline void clear_hue();
-  static const int kHueFieldNumber = 12;
+  static const int kHueFieldNumber = 10;
   inline ::google::protobuf::int32 hue() const;
   inline void set_hue(::google::protobuf::int32 value);
 
-  // optional double shadow_coef = 13;
+  // optional double shadow_coef = 11;
   inline bool has_shadow_coef() const;
   inline void clear_shadow_coef();
-  static const int kShadowCoefFieldNumber = 13;
+  static const int kShadowCoefFieldNumber = 11;
   inline double shadow_coef() const;
   inline void set_shadow_coef(double value);
 
-  // optional double shadow_threshold = 14;
+  // optional double shadow_threshold = 12;
   inline bool has_shadow_threshold() const;
   inline void clear_shadow_threshold();
-  static const int kShadowThresholdFieldNumber = 14;
+  static const int kShadowThresholdFieldNumber = 12;
   inline double shadow_threshold() const;
   inline void set_shadow_threshold(double value);
 
-  // optional int32 shadow_gauss_window_size = 15;
+  // optional int32 shadow_gauss_window_size = 13;
   inline bool has_shadow_gauss_window_size() const;
   inline void clear_shadow_gauss_window_size();
-  static const int kShadowGaussWindowSizeFieldNumber = 15;
+  static const int kShadowGaussWindowSizeFieldNumber = 13;
   inline ::google::protobuf::int32 shadow_gauss_window_size() const;
   inline void set_shadow_gauss_window_size(::google::protobuf::int32 value);
 
-  // optional int32 rotate = 16;
+  // optional int32 rotate = 14;
   inline bool has_rotate() const;
   inline void clear_rotate();
-  static const int kRotateFieldNumber = 16;
+  static const int kRotateFieldNumber = 14;
   inline ::google::protobuf::int32 rotate() const;
   inline void set_rotate(::google::protobuf::int32 value);
 
@@ -1217,10 +1223,6 @@ class PictureCameraParameters : public ::google::protobuf::Message {
   inline void clear_has_white_balance();
   inline void set_has_wb_rect();
   inline void clear_has_wb_rect();
-  inline void set_has_auto_exposure_internal();
-  inline void clear_has_auto_exposure_internal();
-  inline void set_has_focusing();
-  inline void clear_has_focusing();
   inline void set_has_gamma();
   inline void clear_has_gamma();
   inline void set_has_sharp();
@@ -1251,8 +1253,6 @@ class PictureCameraParameters : public ::google::protobuf::Message {
   ::google::protobuf::int32 picture_param_flag_;
   ::google::protobuf::int32 white_balance_;
   ::gt::internal::msg::Rect* wb_rect_;
-  ::google::protobuf::int32 auto_exposure_internal_;
-  ::google::protobuf::int32 focusing_;
   double gamma_;
   double sharp_;
   ::google::protobuf::int32 saturation_;
@@ -1713,52 +1713,87 @@ class CalibrationParameters : public ::google::protobuf::Message {
   inline double focus() const;
   inline void set_focus(double value);
 
-  // required double k1 = 4;
+  // required double samples = 4;
+  inline bool has_samples() const;
+  inline void clear_samples();
+  static const int kSamplesFieldNumber = 4;
+  inline double samples() const;
+  inline void set_samples(double value);
+
+  // required double lines = 5;
+  inline bool has_lines() const;
+  inline void clear_lines();
+  static const int kLinesFieldNumber = 5;
+  inline double lines() const;
+  inline void set_lines(double value);
+
+  // required double sample = 6;
+  inline bool has_sample() const;
+  inline void clear_sample();
+  static const int kSampleFieldNumber = 6;
+  inline double sample() const;
+  inline void set_sample(double value);
+
+  // required double line = 7;
+  inline bool has_line() const;
+  inline void clear_line();
+  static const int kLineFieldNumber = 7;
+  inline double line() const;
+  inline void set_line(double value);
+
+  // required double pixel_size = 8;
+  inline bool has_pixel_size() const;
+  inline void clear_pixel_size();
+  static const int kPixelSizeFieldNumber = 8;
+  inline double pixel_size() const;
+  inline void set_pixel_size(double value);
+
+  // required double k1 = 9;
   inline bool has_k1() const;
   inline void clear_k1();
-  static const int kK1FieldNumber = 4;
+  static const int kK1FieldNumber = 9;
   inline double k1() const;
   inline void set_k1(double value);
 
-  // required double k2 = 5;
+  // required double k2 = 10;
   inline bool has_k2() const;
   inline void clear_k2();
-  static const int kK2FieldNumber = 5;
+  static const int kK2FieldNumber = 10;
   inline double k2() const;
   inline void set_k2(double value);
 
-  // required double k3 = 6;
+  // required double k3 = 11;
   inline bool has_k3() const;
   inline void clear_k3();
-  static const int kK3FieldNumber = 6;
+  static const int kK3FieldNumber = 11;
   inline double k3() const;
   inline void set_k3(double value);
 
-  // required double p1 = 7;
+  // required double p1 = 12;
   inline bool has_p1() const;
   inline void clear_p1();
-  static const int kP1FieldNumber = 7;
+  static const int kP1FieldNumber = 12;
   inline double p1() const;
   inline void set_p1(double value);
 
-  // required double p2 = 8;
+  // required double p2 = 13;
   inline bool has_p2() const;
   inline void clear_p2();
-  static const int kP2FieldNumber = 8;
+  static const int kP2FieldNumber = 13;
   inline double p2() const;
   inline void set_p2(double value);
 
-  // required double b1 = 9;
+  // required double b1 = 14;
   inline bool has_b1() const;
   inline void clear_b1();
-  static const int kB1FieldNumber = 9;
+  static const int kB1FieldNumber = 14;
   inline double b1() const;
   inline void set_b1(double value);
 
-  // required double b2 = 10;
+  // required double b2 = 15;
   inline bool has_b2() const;
   inline void clear_b2();
-  static const int kB2FieldNumber = 10;
+  static const int kB2FieldNumber = 15;
   inline double b2() const;
   inline void set_b2(double value);
 
@@ -1770,6 +1805,16 @@ class CalibrationParameters : public ::google::protobuf::Message {
   inline void clear_has_angles();
   inline void set_has_focus();
   inline void clear_has_focus();
+  inline void set_has_samples();
+  inline void clear_has_samples();
+  inline void set_has_lines();
+  inline void clear_has_lines();
+  inline void set_has_sample();
+  inline void clear_has_sample();
+  inline void set_has_line();
+  inline void clear_has_line();
+  inline void set_has_pixel_size();
+  inline void clear_has_pixel_size();
   inline void set_has_k1();
   inline void clear_has_k1();
   inline void set_has_k2();
@@ -1792,6 +1837,11 @@ class CalibrationParameters : public ::google::protobuf::Message {
   ::gt::internal::msg::Point3d* xyz_;
   ::gt::internal::msg::Point3d* angles_;
   double focus_;
+  double samples_;
+  double lines_;
+  double sample_;
+  double line_;
+  double pixel_size_;
   double k1_;
   double k2_;
   double k3_;
@@ -2001,6 +2051,18 @@ class BatMeasure : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2d >*
       mutable_measures();
 
+  // repeated .gt.internal.msg.Rect bboxes = 3;
+  inline int bboxes_size() const;
+  inline void clear_bboxes();
+  static const int kBboxesFieldNumber = 3;
+  inline const ::gt::internal::msg::Rect& bboxes(int index) const;
+  inline ::gt::internal::msg::Rect* mutable_bboxes(int index);
+  inline ::gt::internal::msg::Rect* add_bboxes();
+  inline const ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Rect >&
+      bboxes() const;
+  inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Rect >*
+      mutable_bboxes();
+
   // @@protoc_insertion_point(class_scope:gt.internal.msg.BatMeasure)
  private:
   inline void set_has_was_swing();
@@ -2011,6 +2073,7 @@ class BatMeasure : public ::google::protobuf::Message {
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
   ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2d > measures_;
+  ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Rect > bboxes_;
   bool was_swing_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
@@ -2442,19 +2505,19 @@ class CameraOptions : public ::google::protobuf::Message {
   inline ::gt::internal::msg::RecROIs* release_rec_rois();
   inline void set_allocated_rec_rois(::gt::internal::msg::RecROIs* rec_rois);
 
-  // optional int32 ball_recognize_flag = 6;
-  inline bool has_ball_recognize_flag() const;
-  inline void clear_ball_recognize_flag();
-  static const int kBallRecognizeFlagFieldNumber = 6;
-  inline ::google::protobuf::int32 ball_recognize_flag() const;
-  inline void set_ball_recognize_flag(::google::protobuf::int32 value);
+  // optional bool ball_recognize_enable = 6;
+  inline bool has_ball_recognize_enable() const;
+  inline void clear_ball_recognize_enable();
+  static const int kBallRecognizeEnableFieldNumber = 6;
+  inline bool ball_recognize_enable() const;
+  inline void set_ball_recognize_enable(bool value);
 
-  // optional int32 debug_flag = 7;
-  inline bool has_debug_flag() const;
-  inline void clear_debug_flag();
-  static const int kDebugFlagFieldNumber = 7;
-  inline ::google::protobuf::int32 debug_flag() const;
-  inline void set_debug_flag(::google::protobuf::int32 value);
+  // optional bool debug_enable = 7;
+  inline bool has_debug_enable() const;
+  inline void clear_debug_enable();
+  static const int kDebugEnableFieldNumber = 7;
+  inline bool debug_enable() const;
+  inline void set_debug_enable(bool value);
 
   // optional .gt.internal.msg.RecognizeParameters rec_params = 8;
   inline bool has_rec_params() const;
@@ -2512,6 +2575,27 @@ class CameraOptions : public ::google::protobuf::Message {
   inline ::gt::internal::msg::StreamCameraParameters* release_stream_params();
   inline void set_allocated_stream_params(::gt::internal::msg::StreamCameraParameters* stream_params);
 
+  // optional bool auto_exposure_enable = 14;
+  inline bool has_auto_exposure_enable() const;
+  inline void clear_auto_exposure_enable();
+  static const int kAutoExposureEnableFieldNumber = 14;
+  inline bool auto_exposure_enable() const;
+  inline void set_auto_exposure_enable(bool value);
+
+  // required bool main_add_mode = 15;
+  inline bool has_main_add_mode() const;
+  inline void clear_main_add_mode();
+  static const int kMainAddModeFieldNumber = 15;
+  inline bool main_add_mode() const;
+  inline void set_main_add_mode(bool value);
+
+  // optional int32 main_each = 16;
+  inline bool has_main_each() const;
+  inline void clear_main_each();
+  static const int kMainEachFieldNumber = 16;
+  inline ::google::protobuf::int32 main_each() const;
+  inline void set_main_each(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:gt.internal.msg.CameraOptions)
  private:
   inline void set_has_hw_params();
@@ -2524,10 +2608,10 @@ class CameraOptions : public ::google::protobuf::Message {
   inline void clear_has_calib_params();
   inline void set_has_rec_rois();
   inline void clear_has_rec_rois();
-  inline void set_has_ball_recognize_flag();
-  inline void clear_has_ball_recognize_flag();
-  inline void set_has_debug_flag();
-  inline void clear_has_debug_flag();
+  inline void set_has_ball_recognize_enable();
+  inline void clear_has_ball_recognize_enable();
+  inline void set_has_debug_enable();
+  inline void clear_has_debug_enable();
   inline void set_has_rec_params();
   inline void clear_has_rec_params();
   inline void set_has_desc();
@@ -2540,6 +2624,12 @@ class CameraOptions : public ::google::protobuf::Message {
   inline void clear_has_save_parameters();
   inline void set_has_stream_params();
   inline void clear_has_stream_params();
+  inline void set_has_auto_exposure_enable();
+  inline void clear_has_auto_exposure_enable();
+  inline void set_has_main_add_mode();
+  inline void clear_has_main_add_mode();
+  inline void set_has_main_each();
+  inline void clear_has_main_each();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -2550,14 +2640,17 @@ class CameraOptions : public ::google::protobuf::Message {
   ::gt::internal::msg::AutoExposureParameters* auto_exp_params_;
   ::gt::internal::msg::CalibrationParameters* calib_params_;
   ::gt::internal::msg::RecROIs* rec_rois_;
-  ::google::protobuf::int32 ball_recognize_flag_;
-  ::google::protobuf::int32 debug_flag_;
   ::gt::internal::msg::RecognizeParameters* rec_params_;
   ::std::string* desc_;
-  ::std::string* id_;
-  int cam_type_;
+  bool ball_recognize_enable_;
+  bool debug_enable_;
   bool save_parameters_;
+  bool auto_exposure_enable_;
+  int cam_type_;
+  ::std::string* id_;
   ::gt::internal::msg::StreamCameraParameters* stream_params_;
+  bool main_add_mode_;
+  ::google::protobuf::int32 main_each_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -3787,7 +3880,7 @@ inline void HardwareCameraParameters::set_gain(::google::protobuf::int32 value) 
   // @@protoc_insertion_point(field_set:gt.internal.msg.HardwareCameraParameters.gain)
 }
 
-// optional int32 debounce_enable = 13;
+// optional bool debounce_enable = 13;
 inline bool HardwareCameraParameters::has_debounce_enable() const {
   return (_has_bits_[0] & 0x00001000u) != 0;
 }
@@ -3798,14 +3891,14 @@ inline void HardwareCameraParameters::clear_has_debounce_enable() {
   _has_bits_[0] &= ~0x00001000u;
 }
 inline void HardwareCameraParameters::clear_debounce_enable() {
-  debounce_enable_ = 0;
+  debounce_enable_ = false;
   clear_has_debounce_enable();
 }
-inline ::google::protobuf::int32 HardwareCameraParameters::debounce_enable() const {
+inline bool HardwareCameraParameters::debounce_enable() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.HardwareCameraParameters.debounce_enable)
   return debounce_enable_;
 }
-inline void HardwareCameraParameters::set_debounce_enable(::google::protobuf::int32 value) {
+inline void HardwareCameraParameters::set_debounce_enable(bool value) {
   set_has_debounce_enable();
   debounce_enable_ = value;
   // @@protoc_insertion_point(field_set:gt.internal.msg.HardwareCameraParameters.debounce_enable)
@@ -3857,6 +3950,54 @@ inline void HardwareCameraParameters::set_trigger_mode(::google::protobuf::int32
   set_has_trigger_mode();
   trigger_mode_ = value;
   // @@protoc_insertion_point(field_set:gt.internal.msg.HardwareCameraParameters.trigger_mode)
+}
+
+// optional int32 focusing = 16;
+inline bool HardwareCameraParameters::has_focusing() const {
+  return (_has_bits_[0] & 0x00008000u) != 0;
+}
+inline void HardwareCameraParameters::set_has_focusing() {
+  _has_bits_[0] |= 0x00008000u;
+}
+inline void HardwareCameraParameters::clear_has_focusing() {
+  _has_bits_[0] &= ~0x00008000u;
+}
+inline void HardwareCameraParameters::clear_focusing() {
+  focusing_ = 0;
+  clear_has_focusing();
+}
+inline ::google::protobuf::int32 HardwareCameraParameters::focusing() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.HardwareCameraParameters.focusing)
+  return focusing_;
+}
+inline void HardwareCameraParameters::set_focusing(::google::protobuf::int32 value) {
+  set_has_focusing();
+  focusing_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.HardwareCameraParameters.focusing)
+}
+
+// optional bool trigger_mode_enable = 17;
+inline bool HardwareCameraParameters::has_trigger_mode_enable() const {
+  return (_has_bits_[0] & 0x00010000u) != 0;
+}
+inline void HardwareCameraParameters::set_has_trigger_mode_enable() {
+  _has_bits_[0] |= 0x00010000u;
+}
+inline void HardwareCameraParameters::clear_has_trigger_mode_enable() {
+  _has_bits_[0] &= ~0x00010000u;
+}
+inline void HardwareCameraParameters::clear_trigger_mode_enable() {
+  trigger_mode_enable_ = false;
+  clear_has_trigger_mode_enable();
+}
+inline bool HardwareCameraParameters::trigger_mode_enable() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.HardwareCameraParameters.trigger_mode_enable)
+  return trigger_mode_enable_;
+}
+inline void HardwareCameraParameters::set_trigger_mode_enable(bool value) {
+  set_has_trigger_mode_enable();
+  trigger_mode_enable_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.HardwareCameraParameters.trigger_mode_enable)
 }
 
 // -------------------------------------------------------------------
@@ -3952,63 +4093,15 @@ inline void PictureCameraParameters::set_allocated_wb_rect(::gt::internal::msg::
   // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.PictureCameraParameters.wb_rect)
 }
 
-// optional int32 auto_exposure_internal = 4;
-inline bool PictureCameraParameters::has_auto_exposure_internal() const {
+// optional double gamma = 4;
+inline bool PictureCameraParameters::has_gamma() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void PictureCameraParameters::set_has_auto_exposure_internal() {
+inline void PictureCameraParameters::set_has_gamma() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void PictureCameraParameters::clear_has_auto_exposure_internal() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void PictureCameraParameters::clear_auto_exposure_internal() {
-  auto_exposure_internal_ = 0;
-  clear_has_auto_exposure_internal();
-}
-inline ::google::protobuf::int32 PictureCameraParameters::auto_exposure_internal() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.PictureCameraParameters.auto_exposure_internal)
-  return auto_exposure_internal_;
-}
-inline void PictureCameraParameters::set_auto_exposure_internal(::google::protobuf::int32 value) {
-  set_has_auto_exposure_internal();
-  auto_exposure_internal_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.auto_exposure_internal)
-}
-
-// optional int32 focusing = 5;
-inline bool PictureCameraParameters::has_focusing() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void PictureCameraParameters::set_has_focusing() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void PictureCameraParameters::clear_has_focusing() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void PictureCameraParameters::clear_focusing() {
-  focusing_ = 0;
-  clear_has_focusing();
-}
-inline ::google::protobuf::int32 PictureCameraParameters::focusing() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.PictureCameraParameters.focusing)
-  return focusing_;
-}
-inline void PictureCameraParameters::set_focusing(::google::protobuf::int32 value) {
-  set_has_focusing();
-  focusing_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.focusing)
-}
-
-// optional double gamma = 6;
-inline bool PictureCameraParameters::has_gamma() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void PictureCameraParameters::set_has_gamma() {
-  _has_bits_[0] |= 0x00000020u;
-}
 inline void PictureCameraParameters::clear_has_gamma() {
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void PictureCameraParameters::clear_gamma() {
   gamma_ = 0;
@@ -4024,15 +4117,15 @@ inline void PictureCameraParameters::set_gamma(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.gamma)
 }
 
-// optional double sharp = 7;
+// optional double sharp = 5;
 inline bool PictureCameraParameters::has_sharp() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void PictureCameraParameters::set_has_sharp() {
-  _has_bits_[0] |= 0x00000040u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void PictureCameraParameters::clear_has_sharp() {
-  _has_bits_[0] &= ~0x00000040u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void PictureCameraParameters::clear_sharp() {
   sharp_ = 0;
@@ -4048,15 +4141,15 @@ inline void PictureCameraParameters::set_sharp(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.sharp)
 }
 
-// optional int32 saturation = 8;
+// optional int32 saturation = 6;
 inline bool PictureCameraParameters::has_saturation() const {
-  return (_has_bits_[0] & 0x00000080u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline void PictureCameraParameters::set_has_saturation() {
-  _has_bits_[0] |= 0x00000080u;
+  _has_bits_[0] |= 0x00000020u;
 }
 inline void PictureCameraParameters::clear_has_saturation() {
-  _has_bits_[0] &= ~0x00000080u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void PictureCameraParameters::clear_saturation() {
   saturation_ = 0;
@@ -4072,15 +4165,15 @@ inline void PictureCameraParameters::set_saturation(::google::protobuf::int32 va
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.saturation)
 }
 
-// optional int32 r_saturation = 9;
+// optional int32 r_saturation = 7;
 inline bool PictureCameraParameters::has_r_saturation() const {
-  return (_has_bits_[0] & 0x00000100u) != 0;
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
 inline void PictureCameraParameters::set_has_r_saturation() {
-  _has_bits_[0] |= 0x00000100u;
+  _has_bits_[0] |= 0x00000040u;
 }
 inline void PictureCameraParameters::clear_has_r_saturation() {
-  _has_bits_[0] &= ~0x00000100u;
+  _has_bits_[0] &= ~0x00000040u;
 }
 inline void PictureCameraParameters::clear_r_saturation() {
   r_saturation_ = 0;
@@ -4096,15 +4189,15 @@ inline void PictureCameraParameters::set_r_saturation(::google::protobuf::int32 
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.r_saturation)
 }
 
-// optional int32 g_saturation = 10;
+// optional int32 g_saturation = 8;
 inline bool PictureCameraParameters::has_g_saturation() const {
-  return (_has_bits_[0] & 0x00000200u) != 0;
+  return (_has_bits_[0] & 0x00000080u) != 0;
 }
 inline void PictureCameraParameters::set_has_g_saturation() {
-  _has_bits_[0] |= 0x00000200u;
+  _has_bits_[0] |= 0x00000080u;
 }
 inline void PictureCameraParameters::clear_has_g_saturation() {
-  _has_bits_[0] &= ~0x00000200u;
+  _has_bits_[0] &= ~0x00000080u;
 }
 inline void PictureCameraParameters::clear_g_saturation() {
   g_saturation_ = 0;
@@ -4120,15 +4213,15 @@ inline void PictureCameraParameters::set_g_saturation(::google::protobuf::int32 
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.g_saturation)
 }
 
-// optional int32 b_saturation = 11;
+// optional int32 b_saturation = 9;
 inline bool PictureCameraParameters::has_b_saturation() const {
-  return (_has_bits_[0] & 0x00000400u) != 0;
+  return (_has_bits_[0] & 0x00000100u) != 0;
 }
 inline void PictureCameraParameters::set_has_b_saturation() {
-  _has_bits_[0] |= 0x00000400u;
+  _has_bits_[0] |= 0x00000100u;
 }
 inline void PictureCameraParameters::clear_has_b_saturation() {
-  _has_bits_[0] &= ~0x00000400u;
+  _has_bits_[0] &= ~0x00000100u;
 }
 inline void PictureCameraParameters::clear_b_saturation() {
   b_saturation_ = 0;
@@ -4144,15 +4237,15 @@ inline void PictureCameraParameters::set_b_saturation(::google::protobuf::int32 
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.b_saturation)
 }
 
-// optional int32 hue = 12;
+// optional int32 hue = 10;
 inline bool PictureCameraParameters::has_hue() const {
-  return (_has_bits_[0] & 0x00000800u) != 0;
+  return (_has_bits_[0] & 0x00000200u) != 0;
 }
 inline void PictureCameraParameters::set_has_hue() {
-  _has_bits_[0] |= 0x00000800u;
+  _has_bits_[0] |= 0x00000200u;
 }
 inline void PictureCameraParameters::clear_has_hue() {
-  _has_bits_[0] &= ~0x00000800u;
+  _has_bits_[0] &= ~0x00000200u;
 }
 inline void PictureCameraParameters::clear_hue() {
   hue_ = 0;
@@ -4168,15 +4261,15 @@ inline void PictureCameraParameters::set_hue(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.hue)
 }
 
-// optional double shadow_coef = 13;
+// optional double shadow_coef = 11;
 inline bool PictureCameraParameters::has_shadow_coef() const {
-  return (_has_bits_[0] & 0x00001000u) != 0;
+  return (_has_bits_[0] & 0x00000400u) != 0;
 }
 inline void PictureCameraParameters::set_has_shadow_coef() {
-  _has_bits_[0] |= 0x00001000u;
+  _has_bits_[0] |= 0x00000400u;
 }
 inline void PictureCameraParameters::clear_has_shadow_coef() {
-  _has_bits_[0] &= ~0x00001000u;
+  _has_bits_[0] &= ~0x00000400u;
 }
 inline void PictureCameraParameters::clear_shadow_coef() {
   shadow_coef_ = 0;
@@ -4192,15 +4285,15 @@ inline void PictureCameraParameters::set_shadow_coef(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.shadow_coef)
 }
 
-// optional double shadow_threshold = 14;
+// optional double shadow_threshold = 12;
 inline bool PictureCameraParameters::has_shadow_threshold() const {
-  return (_has_bits_[0] & 0x00002000u) != 0;
+  return (_has_bits_[0] & 0x00000800u) != 0;
 }
 inline void PictureCameraParameters::set_has_shadow_threshold() {
-  _has_bits_[0] |= 0x00002000u;
+  _has_bits_[0] |= 0x00000800u;
 }
 inline void PictureCameraParameters::clear_has_shadow_threshold() {
-  _has_bits_[0] &= ~0x00002000u;
+  _has_bits_[0] &= ~0x00000800u;
 }
 inline void PictureCameraParameters::clear_shadow_threshold() {
   shadow_threshold_ = 0;
@@ -4216,15 +4309,15 @@ inline void PictureCameraParameters::set_shadow_threshold(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.shadow_threshold)
 }
 
-// optional int32 shadow_gauss_window_size = 15;
+// optional int32 shadow_gauss_window_size = 13;
 inline bool PictureCameraParameters::has_shadow_gauss_window_size() const {
-  return (_has_bits_[0] & 0x00004000u) != 0;
+  return (_has_bits_[0] & 0x00001000u) != 0;
 }
 inline void PictureCameraParameters::set_has_shadow_gauss_window_size() {
-  _has_bits_[0] |= 0x00004000u;
+  _has_bits_[0] |= 0x00001000u;
 }
 inline void PictureCameraParameters::clear_has_shadow_gauss_window_size() {
-  _has_bits_[0] &= ~0x00004000u;
+  _has_bits_[0] &= ~0x00001000u;
 }
 inline void PictureCameraParameters::clear_shadow_gauss_window_size() {
   shadow_gauss_window_size_ = 0;
@@ -4240,15 +4333,15 @@ inline void PictureCameraParameters::set_shadow_gauss_window_size(::google::prot
   // @@protoc_insertion_point(field_set:gt.internal.msg.PictureCameraParameters.shadow_gauss_window_size)
 }
 
-// optional int32 rotate = 16;
+// optional int32 rotate = 14;
 inline bool PictureCameraParameters::has_rotate() const {
-  return (_has_bits_[0] & 0x00008000u) != 0;
+  return (_has_bits_[0] & 0x00002000u) != 0;
 }
 inline void PictureCameraParameters::set_has_rotate() {
-  _has_bits_[0] |= 0x00008000u;
+  _has_bits_[0] |= 0x00002000u;
 }
 inline void PictureCameraParameters::clear_has_rotate() {
-  _has_bits_[0] &= ~0x00008000u;
+  _has_bits_[0] &= ~0x00002000u;
 }
 inline void PictureCameraParameters::clear_rotate() {
   rotate_ = 0;
@@ -4799,15 +4892,135 @@ inline void CalibrationParameters::set_focus(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.focus)
 }
 
-// required double k1 = 4;
-inline bool CalibrationParameters::has_k1() const {
+// required double samples = 4;
+inline bool CalibrationParameters::has_samples() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void CalibrationParameters::set_has_k1() {
+inline void CalibrationParameters::set_has_samples() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void CalibrationParameters::clear_has_k1() {
+inline void CalibrationParameters::clear_has_samples() {
   _has_bits_[0] &= ~0x00000008u;
+}
+inline void CalibrationParameters::clear_samples() {
+  samples_ = 0;
+  clear_has_samples();
+}
+inline double CalibrationParameters::samples() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CalibrationParameters.samples)
+  return samples_;
+}
+inline void CalibrationParameters::set_samples(double value) {
+  set_has_samples();
+  samples_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.samples)
+}
+
+// required double lines = 5;
+inline bool CalibrationParameters::has_lines() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CalibrationParameters::set_has_lines() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CalibrationParameters::clear_has_lines() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CalibrationParameters::clear_lines() {
+  lines_ = 0;
+  clear_has_lines();
+}
+inline double CalibrationParameters::lines() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CalibrationParameters.lines)
+  return lines_;
+}
+inline void CalibrationParameters::set_lines(double value) {
+  set_has_lines();
+  lines_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.lines)
+}
+
+// required double sample = 6;
+inline bool CalibrationParameters::has_sample() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CalibrationParameters::set_has_sample() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CalibrationParameters::clear_has_sample() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CalibrationParameters::clear_sample() {
+  sample_ = 0;
+  clear_has_sample();
+}
+inline double CalibrationParameters::sample() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CalibrationParameters.sample)
+  return sample_;
+}
+inline void CalibrationParameters::set_sample(double value) {
+  set_has_sample();
+  sample_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.sample)
+}
+
+// required double line = 7;
+inline bool CalibrationParameters::has_line() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CalibrationParameters::set_has_line() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CalibrationParameters::clear_has_line() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CalibrationParameters::clear_line() {
+  line_ = 0;
+  clear_has_line();
+}
+inline double CalibrationParameters::line() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CalibrationParameters.line)
+  return line_;
+}
+inline void CalibrationParameters::set_line(double value) {
+  set_has_line();
+  line_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.line)
+}
+
+// required double pixel_size = 8;
+inline bool CalibrationParameters::has_pixel_size() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void CalibrationParameters::set_has_pixel_size() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void CalibrationParameters::clear_has_pixel_size() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void CalibrationParameters::clear_pixel_size() {
+  pixel_size_ = 0;
+  clear_has_pixel_size();
+}
+inline double CalibrationParameters::pixel_size() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CalibrationParameters.pixel_size)
+  return pixel_size_;
+}
+inline void CalibrationParameters::set_pixel_size(double value) {
+  set_has_pixel_size();
+  pixel_size_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.pixel_size)
+}
+
+// required double k1 = 9;
+inline bool CalibrationParameters::has_k1() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void CalibrationParameters::set_has_k1() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void CalibrationParameters::clear_has_k1() {
+  _has_bits_[0] &= ~0x00000100u;
 }
 inline void CalibrationParameters::clear_k1() {
   k1_ = 0;
@@ -4823,15 +5036,15 @@ inline void CalibrationParameters::set_k1(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.k1)
 }
 
-// required double k2 = 5;
+// required double k2 = 10;
 inline bool CalibrationParameters::has_k2() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000200u) != 0;
 }
 inline void CalibrationParameters::set_has_k2() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000200u;
 }
 inline void CalibrationParameters::clear_has_k2() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000200u;
 }
 inline void CalibrationParameters::clear_k2() {
   k2_ = 0;
@@ -4847,15 +5060,15 @@ inline void CalibrationParameters::set_k2(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.k2)
 }
 
-// required double k3 = 6;
+// required double k3 = 11;
 inline bool CalibrationParameters::has_k3() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
+  return (_has_bits_[0] & 0x00000400u) != 0;
 }
 inline void CalibrationParameters::set_has_k3() {
-  _has_bits_[0] |= 0x00000020u;
+  _has_bits_[0] |= 0x00000400u;
 }
 inline void CalibrationParameters::clear_has_k3() {
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000400u;
 }
 inline void CalibrationParameters::clear_k3() {
   k3_ = 0;
@@ -4871,15 +5084,15 @@ inline void CalibrationParameters::set_k3(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.k3)
 }
 
-// required double p1 = 7;
+// required double p1 = 12;
 inline bool CalibrationParameters::has_p1() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
+  return (_has_bits_[0] & 0x00000800u) != 0;
 }
 inline void CalibrationParameters::set_has_p1() {
-  _has_bits_[0] |= 0x00000040u;
+  _has_bits_[0] |= 0x00000800u;
 }
 inline void CalibrationParameters::clear_has_p1() {
-  _has_bits_[0] &= ~0x00000040u;
+  _has_bits_[0] &= ~0x00000800u;
 }
 inline void CalibrationParameters::clear_p1() {
   p1_ = 0;
@@ -4895,15 +5108,15 @@ inline void CalibrationParameters::set_p1(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.p1)
 }
 
-// required double p2 = 8;
+// required double p2 = 13;
 inline bool CalibrationParameters::has_p2() const {
-  return (_has_bits_[0] & 0x00000080u) != 0;
+  return (_has_bits_[0] & 0x00001000u) != 0;
 }
 inline void CalibrationParameters::set_has_p2() {
-  _has_bits_[0] |= 0x00000080u;
+  _has_bits_[0] |= 0x00001000u;
 }
 inline void CalibrationParameters::clear_has_p2() {
-  _has_bits_[0] &= ~0x00000080u;
+  _has_bits_[0] &= ~0x00001000u;
 }
 inline void CalibrationParameters::clear_p2() {
   p2_ = 0;
@@ -4919,15 +5132,15 @@ inline void CalibrationParameters::set_p2(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.p2)
 }
 
-// required double b1 = 9;
+// required double b1 = 14;
 inline bool CalibrationParameters::has_b1() const {
-  return (_has_bits_[0] & 0x00000100u) != 0;
+  return (_has_bits_[0] & 0x00002000u) != 0;
 }
 inline void CalibrationParameters::set_has_b1() {
-  _has_bits_[0] |= 0x00000100u;
+  _has_bits_[0] |= 0x00002000u;
 }
 inline void CalibrationParameters::clear_has_b1() {
-  _has_bits_[0] &= ~0x00000100u;
+  _has_bits_[0] &= ~0x00002000u;
 }
 inline void CalibrationParameters::clear_b1() {
   b1_ = 0;
@@ -4943,15 +5156,15 @@ inline void CalibrationParameters::set_b1(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.CalibrationParameters.b1)
 }
 
-// required double b2 = 10;
+// required double b2 = 15;
 inline bool CalibrationParameters::has_b2() const {
-  return (_has_bits_[0] & 0x00000200u) != 0;
+  return (_has_bits_[0] & 0x00004000u) != 0;
 }
 inline void CalibrationParameters::set_has_b2() {
-  _has_bits_[0] |= 0x00000200u;
+  _has_bits_[0] |= 0x00004000u;
 }
 inline void CalibrationParameters::clear_has_b2() {
-  _has_bits_[0] &= ~0x00000200u;
+  _has_bits_[0] &= ~0x00004000u;
 }
 inline void CalibrationParameters::clear_b2() {
   b2_ = 0;
@@ -5165,6 +5378,36 @@ inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2d >*
 BatMeasure::mutable_measures() {
   // @@protoc_insertion_point(field_mutable_list:gt.internal.msg.BatMeasure.measures)
   return &measures_;
+}
+
+// repeated .gt.internal.msg.Rect bboxes = 3;
+inline int BatMeasure::bboxes_size() const {
+  return bboxes_.size();
+}
+inline void BatMeasure::clear_bboxes() {
+  bboxes_.Clear();
+}
+inline const ::gt::internal::msg::Rect& BatMeasure::bboxes(int index) const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.BatMeasure.bboxes)
+  return bboxes_.Get(index);
+}
+inline ::gt::internal::msg::Rect* BatMeasure::mutable_bboxes(int index) {
+  // @@protoc_insertion_point(field_mutable:gt.internal.msg.BatMeasure.bboxes)
+  return bboxes_.Mutable(index);
+}
+inline ::gt::internal::msg::Rect* BatMeasure::add_bboxes() {
+  // @@protoc_insertion_point(field_add:gt.internal.msg.BatMeasure.bboxes)
+  return bboxes_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Rect >&
+BatMeasure::bboxes() const {
+  // @@protoc_insertion_point(field_list:gt.internal.msg.BatMeasure.bboxes)
+  return bboxes_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Rect >*
+BatMeasure::mutable_bboxes() {
+  // @@protoc_insertion_point(field_mutable_list:gt.internal.msg.BatMeasure.bboxes)
+  return &bboxes_;
 }
 
 // -------------------------------------------------------------------
@@ -5757,52 +6000,52 @@ inline void CameraOptions::set_allocated_rec_rois(::gt::internal::msg::RecROIs* 
   // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.CameraOptions.rec_rois)
 }
 
-// optional int32 ball_recognize_flag = 6;
-inline bool CameraOptions::has_ball_recognize_flag() const {
+// optional bool ball_recognize_enable = 6;
+inline bool CameraOptions::has_ball_recognize_enable() const {
   return (_has_bits_[0] & 0x00000020u) != 0;
 }
-inline void CameraOptions::set_has_ball_recognize_flag() {
+inline void CameraOptions::set_has_ball_recognize_enable() {
   _has_bits_[0] |= 0x00000020u;
 }
-inline void CameraOptions::clear_has_ball_recognize_flag() {
+inline void CameraOptions::clear_has_ball_recognize_enable() {
   _has_bits_[0] &= ~0x00000020u;
 }
-inline void CameraOptions::clear_ball_recognize_flag() {
-  ball_recognize_flag_ = 0;
-  clear_has_ball_recognize_flag();
+inline void CameraOptions::clear_ball_recognize_enable() {
+  ball_recognize_enable_ = false;
+  clear_has_ball_recognize_enable();
 }
-inline ::google::protobuf::int32 CameraOptions::ball_recognize_flag() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.CameraOptions.ball_recognize_flag)
-  return ball_recognize_flag_;
+inline bool CameraOptions::ball_recognize_enable() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CameraOptions.ball_recognize_enable)
+  return ball_recognize_enable_;
 }
-inline void CameraOptions::set_ball_recognize_flag(::google::protobuf::int32 value) {
-  set_has_ball_recognize_flag();
-  ball_recognize_flag_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.CameraOptions.ball_recognize_flag)
+inline void CameraOptions::set_ball_recognize_enable(bool value) {
+  set_has_ball_recognize_enable();
+  ball_recognize_enable_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CameraOptions.ball_recognize_enable)
 }
 
-// optional int32 debug_flag = 7;
-inline bool CameraOptions::has_debug_flag() const {
+// optional bool debug_enable = 7;
+inline bool CameraOptions::has_debug_enable() const {
   return (_has_bits_[0] & 0x00000040u) != 0;
 }
-inline void CameraOptions::set_has_debug_flag() {
+inline void CameraOptions::set_has_debug_enable() {
   _has_bits_[0] |= 0x00000040u;
 }
-inline void CameraOptions::clear_has_debug_flag() {
+inline void CameraOptions::clear_has_debug_enable() {
   _has_bits_[0] &= ~0x00000040u;
 }
-inline void CameraOptions::clear_debug_flag() {
-  debug_flag_ = 0;
-  clear_has_debug_flag();
+inline void CameraOptions::clear_debug_enable() {
+  debug_enable_ = false;
+  clear_has_debug_enable();
 }
-inline ::google::protobuf::int32 CameraOptions::debug_flag() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.CameraOptions.debug_flag)
-  return debug_flag_;
+inline bool CameraOptions::debug_enable() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CameraOptions.debug_enable)
+  return debug_enable_;
 }
-inline void CameraOptions::set_debug_flag(::google::protobuf::int32 value) {
-  set_has_debug_flag();
-  debug_flag_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.CameraOptions.debug_flag)
+inline void CameraOptions::set_debug_enable(bool value) {
+  set_has_debug_enable();
+  debug_enable_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CameraOptions.debug_enable)
 }
 
 // optional .gt.internal.msg.RecognizeParameters rec_params = 8;
@@ -6086,6 +6329,78 @@ inline void CameraOptions::set_allocated_stream_params(::gt::internal::msg::Stre
     clear_has_stream_params();
   }
   // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.CameraOptions.stream_params)
+}
+
+// optional bool auto_exposure_enable = 14;
+inline bool CameraOptions::has_auto_exposure_enable() const {
+  return (_has_bits_[0] & 0x00002000u) != 0;
+}
+inline void CameraOptions::set_has_auto_exposure_enable() {
+  _has_bits_[0] |= 0x00002000u;
+}
+inline void CameraOptions::clear_has_auto_exposure_enable() {
+  _has_bits_[0] &= ~0x00002000u;
+}
+inline void CameraOptions::clear_auto_exposure_enable() {
+  auto_exposure_enable_ = false;
+  clear_has_auto_exposure_enable();
+}
+inline bool CameraOptions::auto_exposure_enable() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CameraOptions.auto_exposure_enable)
+  return auto_exposure_enable_;
+}
+inline void CameraOptions::set_auto_exposure_enable(bool value) {
+  set_has_auto_exposure_enable();
+  auto_exposure_enable_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CameraOptions.auto_exposure_enable)
+}
+
+// required bool main_add_mode = 15;
+inline bool CameraOptions::has_main_add_mode() const {
+  return (_has_bits_[0] & 0x00004000u) != 0;
+}
+inline void CameraOptions::set_has_main_add_mode() {
+  _has_bits_[0] |= 0x00004000u;
+}
+inline void CameraOptions::clear_has_main_add_mode() {
+  _has_bits_[0] &= ~0x00004000u;
+}
+inline void CameraOptions::clear_main_add_mode() {
+  main_add_mode_ = false;
+  clear_has_main_add_mode();
+}
+inline bool CameraOptions::main_add_mode() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CameraOptions.main_add_mode)
+  return main_add_mode_;
+}
+inline void CameraOptions::set_main_add_mode(bool value) {
+  set_has_main_add_mode();
+  main_add_mode_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CameraOptions.main_add_mode)
+}
+
+// optional int32 main_each = 16;
+inline bool CameraOptions::has_main_each() const {
+  return (_has_bits_[0] & 0x00008000u) != 0;
+}
+inline void CameraOptions::set_has_main_each() {
+  _has_bits_[0] |= 0x00008000u;
+}
+inline void CameraOptions::clear_has_main_each() {
+  _has_bits_[0] &= ~0x00008000u;
+}
+inline void CameraOptions::clear_main_each() {
+  main_each_ = 0;
+  clear_has_main_each();
+}
+inline ::google::protobuf::int32 CameraOptions::main_each() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CameraOptions.main_each)
+  return main_each_;
+}
+inline void CameraOptions::set_main_each(::google::protobuf::int32 value) {
+  set_has_main_each();
+  main_each_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CameraOptions.main_each)
 }
 
 // -------------------------------------------------------------------

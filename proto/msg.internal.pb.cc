@@ -193,7 +193,7 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(RecognizeParameters));
   HardwareCameraParameters_descriptor_ = file->message_type(5);
-  static const int HardwareCameraParameters_offsets_[15] = {
+  static const int HardwareCameraParameters_offsets_[17] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HardwareCameraParameters, exposure_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HardwareCameraParameters, min_exposure_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HardwareCameraParameters, max_exposure_),
@@ -209,6 +209,8 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HardwareCameraParameters, debounce_enable_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HardwareCameraParameters, debounce_value_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HardwareCameraParameters, trigger_mode_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HardwareCameraParameters, focusing_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HardwareCameraParameters, trigger_mode_enable_),
   };
   HardwareCameraParameters_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -222,12 +224,10 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(HardwareCameraParameters));
   PictureCameraParameters_descriptor_ = file->message_type(6);
-  static const int PictureCameraParameters_offsets_[16] = {
+  static const int PictureCameraParameters_offsets_[14] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PictureCameraParameters, picture_param_flag_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PictureCameraParameters, white_balance_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PictureCameraParameters, wb_rect_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PictureCameraParameters, auto_exposure_internal_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PictureCameraParameters, focusing_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PictureCameraParameters, gamma_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PictureCameraParameters, sharp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PictureCameraParameters, saturation_),
@@ -309,10 +309,15 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(StreamCameraCommand));
   CalibrationParameters_descriptor_ = file->message_type(10);
-  static const int CalibrationParameters_offsets_[10] = {
+  static const int CalibrationParameters_offsets_[15] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, xyz_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, angles_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, focus_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, samples_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, lines_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, sample_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, line_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, pixel_size_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, k1_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, k2_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrationParameters, k3_),
@@ -352,9 +357,10 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(BallMeasure));
   BatMeasure_descriptor_ = file->message_type(12);
-  static const int BatMeasure_offsets_[2] = {
+  static const int BatMeasure_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BatMeasure, was_swing_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BatMeasure, measures_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BatMeasure, bboxes_),
   };
   BatMeasure_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -420,20 +426,23 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PedestrianMeasure));
   CameraOptions_descriptor_ = file->message_type(16);
-  static const int CameraOptions_offsets_[13] = {
+  static const int CameraOptions_offsets_[16] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, hw_params_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, p_params_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, auto_exp_params_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, calib_params_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, rec_rois_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, ball_recognize_flag_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, debug_flag_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, ball_recognize_enable_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, debug_enable_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, rec_params_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, desc_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, cam_type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, save_parameters_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, stream_params_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, auto_exposure_enable_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, main_add_mode_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, main_each_),
   };
   CameraOptions_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -625,101 +634,106 @@ void protobuf_AddDesc_msg_2einternal_2eproto() {
     "\030\006 \001(\001\022\027\n\017canny_thres_min\030\007 \001(\005\022\027\n\017canny"
     "_thres_max\030\010 \001(\005\022\020\n\010max_area\030\t \001(\005\022\020\n\010mi"
     "n_area\030\n \001(\005\022\031\n\021circularity_coeff\030\013 \001(\001\""
-    "\327\002\n\030HardwareCameraParameters\022\020\n\010exposure"
+    "\206\003\n\030HardwareCameraParameters\022\020\n\010exposure"
     "\030\001 \001(\001\022\024\n\014min_exposure\030\002 \001(\001\022\024\n\014max_expo"
     "sure\030\003 \001(\001\022\023\n\013pixel_clock\030\004 \001(\005\022\027\n\017min_p"
     "ixel_clock\030\005 \001(\005\022\027\n\017max_pixel_clock\030\006 \001("
     "\005\022\022\n\nframe_rate\030\007 \001(\001\022\026\n\016min_frame_rate\030"
     "\010 \001(\001\022\026\n\016max_frame_rate\030\t \001(\001\022\r\n\005width\030\n"
     " \001(\005\022\016\n\006height\030\013 \001(\005\022\014\n\004gain\030\014 \001(\005\022\027\n\017de"
-    "bounce_enable\030\r \001(\005\022\026\n\016debounce_value\030\016 "
-    "\001(\005\022\024\n\014trigger_mode\030\017 \001(\005\"\210\003\n\027PictureCam"
-    "eraParameters\022\032\n\022picture_param_flag\030\001 \001("
-    "\005\022\025\n\rwhite_balance\030\002 \001(\005\022&\n\007wb_rect\030\003 \001("
-    "\0132\025.gt.internal.msg.Rect\022\036\n\026auto_exposur"
-    "e_internal\030\004 \001(\005\022\020\n\010focusing\030\005 \001(\005\022\r\n\005ga"
-    "mma\030\006 \001(\001\022\r\n\005sharp\030\007 \001(\001\022\022\n\nsaturation\030\010"
-    " \001(\005\022\024\n\014r_saturation\030\t \001(\005\022\024\n\014g_saturati"
-    "on\030\n \001(\005\022\024\n\014b_saturation\030\013 \001(\005\022\013\n\003hue\030\014 "
-    "\001(\005\022\023\n\013shadow_coef\030\r \001(\001\022\030\n\020shadow_thres"
-    "hold\030\016 \001(\001\022 \n\030shadow_gauss_window_size\030\017"
-    " \001(\005\022\016\n\006rotate\030\020 \001(\005\"\251\001\n\026AutoExposurePar"
-    "ameters\022\014\n\004gain\030\001 \001(\001\022\020\n\010exposure\030\002 \001(\001\022"
-    "\026\n\016min_gain_coeff\030\003 \001(\001\022\026\n\016max_gain_coef"
-    "f\030\004 \001(\001\022\023\n\013max_percent\030\005 \001(\001\022\024\n\014min_rel_"
-    "coef\030\006 \001(\001\022\024\n\014max_rel_coef\030\007 \001(\001\"\243\001\n\026Str"
-    "eamCameraParameters\022\021\n\traw_frame\030\001 \001(\005\022\034"
-    "\n\024send_frame_rate_main\030\004 \001(\005\022\033\n\023send_fra"
-    "me_rate_add\030\006 \001(\005\022\035\n\025port_send_stream_ma"
-    "in\030\010 \001(\005\022\034\n\024port_send_stream_add\030\t \001(\005\"f"
-    "\n\023StreamCameraCommand\022)\n\004type\030\001 \002(\0162\033.gt"
-    ".internal.msg.StreamType\022\026\n\016video_durati"
-    "on\030\002 \001(\005\022\014\n\004desc\030\003 \001(\t\"\313\001\n\025CalibrationPa"
-    "rameters\022%\n\003xyz\030\001 \002(\0132\030.gt.internal.msg."
-    "Point3d\022(\n\006angles\030\002 \002(\0132\030.gt.internal.ms"
-    "g.Point3d\022\r\n\005focus\030\003 \002(\001\022\n\n\002k1\030\004 \002(\001\022\n\n\002"
-    "k2\030\005 \002(\001\022\n\n\002k3\030\006 \002(\001\022\n\n\002p1\030\007 \002(\001\022\n\n\002p2\030\010"
-    " \002(\001\022\n\n\002b1\030\t \002(\001\022\n\n\002b2\030\n \002(\001\"\217\001\n\013BallMea"
-    "sure\022$\n\002xy\030\001 \002(\0132\030.gt.internal.msg.Point"
-    "2d\022\r\n\005valid\030\002 \002(\010\022\014\n\004time\030\003 \002(\004\022)\n\005event"
-    "\030\004 \002(\0162\032.gt.internal.msg.BallEvent\022\022\n\nis"
-    "_rebound\030\005 \002(\010\"K\n\nBatMeasure\022\021\n\twas_swin"
-    "g\030\001 \002(\010\022*\n\010measures\030\002 \003(\0132\030.gt.internal."
-    "msg.Point2d\"\247\001\n\016OutOfFrameInfo\022(\n\003dir\030\001 "
-    "\002(\0162\033.gt.internal.msg.OutOfFrame\0222\n\014ball"
-    "_measure\030\002 \001(\0132\034.gt.internal.msg.BallMea"
-    "sure\0227\n\013ped_measure\030\003 \001(\0132\".gt.internal."
-    "msg.PedestrianMeasure\"N\n\rRecognizeData\022*"
-    "\n\004data\030\001 \003(\0132\034.gt.internal.msg.BallMeasu"
-    "re\022\021\n\tstartTime\030\002 \001(\004\"\275\001\n\021PedestrianMeas"
-    "ure\022 \n\001r\030\001 \002(\0132\025.gt.internal.msg.Rect\022#\n"
-    "\001p\030\002 \002(\0132\030.gt.internal.msg.Point3d\022,\n\003po"
-    "s\030\003 \002(\0162\037.gt.internal.msg.PlayerPosition"
-    "\022\'\n\004role\030\004 \001(\0162\031.gt.internal.msg.TeamRol"
-    "e\022\n\n\002id\030\005 \002(\t\"\302\004\n\rCameraOptions\022<\n\thw_pa"
-    "rams\030\001 \001(\0132).gt.internal.msg.HardwareCam"
-    "eraParameters\022:\n\010p_params\030\002 \001(\0132(.gt.int"
-    "ernal.msg.PictureCameraParameters\022@\n\017aut"
-    "o_exp_params\030\003 \001(\0132\'.gt.internal.msg.Aut"
-    "oExposureParameters\022<\n\014calib_params\030\004 \001("
-    "\0132&.gt.internal.msg.CalibrationParameter"
-    "s\022*\n\010rec_rois\030\005 \001(\0132\030.gt.internal.msg.Re"
-    "cROIs\022\033\n\023ball_recognize_flag\030\006 \001(\005\022\022\n\nde"
-    "bug_flag\030\007 \001(\005\0228\n\nrec_params\030\010 \001(\0132$.gt."
-    "internal.msg.RecognizeParameters\022\014\n\004desc"
-    "\030\t \001(\t\022-\n\010cam_type\030\n \001(\0162\033.gt.internal.m"
-    "sg.CameraType\022\n\n\002id\030\013 \002(\t\022\027\n\017save_parame"
-    "ters\030\014 \001(\010\022>\n\rstream_params\030\r \001(\0132\'.gt.i"
-    "nternal.msg.StreamCameraParameters\"B\n\rSe"
-    "rverOptions\022\025\n\rwrite_to_disk\030\001 \001(\010\022\032\n\022wr"
-    "ite_uncompressed\030\002 \001(\010\"F\n\tFrameTime\022\025\n\rc"
-    "omputer_time\030\001 \001(\004\022\023\n\013camera_time\030\002 \001(\004\022"
-    "\r\n\005frame\030\003 \001(\014\"\034\n\tDebugInfo\022\017\n\007message\030\001"
-    " \002(\t*4\n\016CameraPosition\022\r\n\tUndefined\020\000\022\010\n"
-    "\004Left\020\001\022\t\n\005Right\020\002*\?\n\nOutOfFrame\022\013\n\007Left"
-    "Out\020\000\022\014\n\010RightOut\020\001\022\t\n\005UpOut\020\002\022\013\n\007DownOu"
-    "t\020\003*&\n\nStreamType\022\010\n\004Main\020\001\022\016\n\nAdditiona"
-    "l\020\002*A\n\tBallEvent\022\021\n\rThrowDetected\020\000\022\017\n\013H"
-    "itDetected\020\001\022\020\n\014MoveDetected\020\002*\215\001\n\016Playe"
-    "rPosition\022\010\n\004Home\020\001\022\r\n\tFirstBase\020\002\022\016\n\nSe"
-    "condBase\020\003\022\r\n\tThirdBase\020\004\022\023\n\017BetwThirdSe"
-    "cond\020\005\022\r\n\tLeftField\020\006\022\016\n\nRightField\020\007\022\017\n"
-    "\013CenterField\020\010*\322\001\n\010TeamRole\022\n\n\006NoRole\020\001\022"
-    "\013\n\007Pitcher\020\002\022\013\n\007Catcher\020\003\022\020\n\014FirstBasema"
-    "n\020\004\022\021\n\rSecondBaseman\020\005\022\020\n\014ThirdBaseman\020\006"
-    "\022\r\n\tShortStop\020\007\022\017\n\013LeftFielder\020\010\022\021\n\rCent"
-    "erFielder\020\t\022\020\n\014RightFielder\020\n\022\016\n\nOutfiel"
-    "der\020\013\022\024\n\020DesignatedHitter\020\014*\207\001\n\nCameraTy"
-    "pe\022\020\n\014BaseLeftMain\020\001\022\021\n\rBaseRightMain\020\002\022"
-    "\017\n\013BaseLeftAdd\020\003\022\020\n\014BaseRightAdd\020\004\022\t\n\005Pi"
-    "tch\020\005\022\013\n\007BatLeft\020\006\022\014\n\010BatRight\020\007\022\013\n\007Fish"
-    "Eye\020\010*\213\002\n\021GameTrackProtocol\022\030\n\024SendCamer"
-    "aParameters\020\001\022\021\n\rRequestStream\020\002\022\024\n\020Noti"
-    "fyOutOfFrame\020\003\022\034\n\030NotifyPedestrianPositi"
-    "on\020\004\022\025\n\021NotifyBallMeasure\020\005\022\026\n\022RequestCa"
-    "meraFrame\020\006\022\026\n\022GetBallCoordinates\020\007\022\025\n\021G"
-    "etBatCoordinates\020\010\022\017\n\013GetTestData\020\t\022\021\n\rR"
-    "estartCamera\020\n\022\023\n\017SendCurrentTime\020\013B\002H\001", 4479);
+    "bounce_enable\030\r \001(\010\022\026\n\016debounce_value\030\016 "
+    "\001(\005\022\024\n\014trigger_mode\030\017 \001(\005\022\020\n\010focusing\030\020 "
+    "\001(\005\022\033\n\023trigger_mode_enable\030\021 \001(\010\"\326\002\n\027Pic"
+    "tureCameraParameters\022\032\n\022picture_param_fl"
+    "ag\030\001 \001(\005\022\025\n\rwhite_balance\030\002 \001(\005\022&\n\007wb_re"
+    "ct\030\003 \001(\0132\025.gt.internal.msg.Rect\022\r\n\005gamma"
+    "\030\004 \001(\001\022\r\n\005sharp\030\005 \001(\001\022\022\n\nsaturation\030\006 \001("
+    "\005\022\024\n\014r_saturation\030\007 \001(\005\022\024\n\014g_saturation\030"
+    "\010 \001(\005\022\024\n\014b_saturation\030\t \001(\005\022\013\n\003hue\030\n \001(\005"
+    "\022\023\n\013shadow_coef\030\013 \001(\001\022\030\n\020shadow_threshol"
+    "d\030\014 \001(\001\022 \n\030shadow_gauss_window_size\030\r \001("
+    "\005\022\016\n\006rotate\030\016 \001(\005\"\251\001\n\026AutoExposureParame"
+    "ters\022\014\n\004gain\030\001 \001(\001\022\020\n\010exposure\030\002 \001(\001\022\026\n\016"
+    "min_gain_coeff\030\003 \001(\001\022\026\n\016max_gain_coeff\030\004"
+    " \001(\001\022\023\n\013max_percent\030\005 \001(\001\022\024\n\014min_rel_coe"
+    "f\030\006 \001(\001\022\024\n\014max_rel_coef\030\007 \001(\001\"\243\001\n\026Stream"
+    "CameraParameters\022\021\n\traw_frame\030\001 \001(\005\022\034\n\024s"
+    "end_frame_rate_main\030\004 \001(\005\022\033\n\023send_frame_"
+    "rate_add\030\006 \001(\005\022\035\n\025port_send_stream_main\030"
+    "\010 \001(\005\022\034\n\024port_send_stream_add\030\t \001(\005\"f\n\023S"
+    "treamCameraCommand\022)\n\004type\030\001 \002(\0162\033.gt.in"
+    "ternal.msg.StreamType\022\026\n\016video_duration\030"
+    "\002 \001(\005\022\014\n\004desc\030\003 \001(\t\"\235\002\n\025CalibrationParam"
+    "eters\022%\n\003xyz\030\001 \002(\0132\030.gt.internal.msg.Poi"
+    "nt3d\022(\n\006angles\030\002 \002(\0132\030.gt.internal.msg.P"
+    "oint3d\022\r\n\005focus\030\003 \002(\001\022\017\n\007samples\030\004 \002(\001\022\r"
+    "\n\005lines\030\005 \002(\001\022\016\n\006sample\030\006 \002(\001\022\014\n\004line\030\007 "
+    "\002(\001\022\022\n\npixel_size\030\010 \002(\001\022\n\n\002k1\030\t \002(\001\022\n\n\002k"
+    "2\030\n \002(\001\022\n\n\002k3\030\013 \002(\001\022\n\n\002p1\030\014 \002(\001\022\n\n\002p2\030\r "
+    "\002(\001\022\n\n\002b1\030\016 \002(\001\022\n\n\002b2\030\017 \002(\001\"\217\001\n\013BallMeas"
+    "ure\022$\n\002xy\030\001 \002(\0132\030.gt.internal.msg.Point2"
+    "d\022\r\n\005valid\030\002 \002(\010\022\014\n\004time\030\003 \002(\004\022)\n\005event\030"
+    "\004 \002(\0162\032.gt.internal.msg.BallEvent\022\022\n\nis_"
+    "rebound\030\005 \002(\010\"r\n\nBatMeasure\022\021\n\twas_swing"
+    "\030\001 \002(\010\022*\n\010measures\030\002 \003(\0132\030.gt.internal.m"
+    "sg.Point2d\022%\n\006bboxes\030\003 \003(\0132\025.gt.internal"
+    ".msg.Rect\"\247\001\n\016OutOfFrameInfo\022(\n\003dir\030\001 \002("
+    "\0162\033.gt.internal.msg.OutOfFrame\0222\n\014ball_m"
+    "easure\030\002 \001(\0132\034.gt.internal.msg.BallMeasu"
+    "re\0227\n\013ped_measure\030\003 \001(\0132\".gt.internal.ms"
+    "g.PedestrianMeasure\"N\n\rRecognizeData\022*\n\004"
+    "data\030\001 \003(\0132\034.gt.internal.msg.BallMeasure"
+    "\022\021\n\tstartTime\030\002 \001(\004\"\275\001\n\021PedestrianMeasur"
+    "e\022 \n\001r\030\001 \002(\0132\025.gt.internal.msg.Rect\022#\n\001p"
+    "\030\002 \002(\0132\030.gt.internal.msg.Point3d\022,\n\003pos\030"
+    "\003 \002(\0162\037.gt.internal.msg.PlayerPosition\022\'"
+    "\n\004role\030\004 \001(\0162\031.gt.internal.msg.TeamRole\022"
+    "\n\n\002id\030\005 \002(\t\"\216\005\n\rCameraOptions\022<\n\thw_para"
+    "ms\030\001 \001(\0132).gt.internal.msg.HardwareCamer"
+    "aParameters\022:\n\010p_params\030\002 \001(\0132(.gt.inter"
+    "nal.msg.PictureCameraParameters\022@\n\017auto_"
+    "exp_params\030\003 \001(\0132\'.gt.internal.msg.AutoE"
+    "xposureParameters\022<\n\014calib_params\030\004 \001(\0132"
+    "&.gt.internal.msg.CalibrationParameters\022"
+    "*\n\010rec_rois\030\005 \001(\0132\030.gt.internal.msg.RecR"
+    "OIs\022\035\n\025ball_recognize_enable\030\006 \001(\010\022\024\n\014de"
+    "bug_enable\030\007 \001(\010\0228\n\nrec_params\030\010 \001(\0132$.g"
+    "t.internal.msg.RecognizeParameters\022\014\n\004de"
+    "sc\030\t \001(\t\022-\n\010cam_type\030\n \001(\0162\033.gt.internal"
+    ".msg.CameraType\022\n\n\002id\030\013 \002(\t\022\027\n\017save_para"
+    "meters\030\014 \001(\010\022>\n\rstream_params\030\r \001(\0132\'.gt"
+    ".internal.msg.StreamCameraParameters\022\034\n\024"
+    "auto_exposure_enable\030\016 \001(\010\022\025\n\rmain_add_m"
+    "ode\030\017 \002(\010\022\021\n\tmain_each\030\020 \001(\005\"B\n\rServerOp"
+    "tions\022\025\n\rwrite_to_disk\030\001 \001(\010\022\032\n\022write_un"
+    "compressed\030\002 \001(\010\"F\n\tFrameTime\022\025\n\rcompute"
+    "r_time\030\001 \001(\004\022\023\n\013camera_time\030\002 \001(\004\022\r\n\005fra"
+    "me\030\003 \001(\014\"\034\n\tDebugInfo\022\017\n\007message\030\001 \002(\t*4"
+    "\n\016CameraPosition\022\r\n\tUndefined\020\000\022\010\n\004Left\020"
+    "\001\022\t\n\005Right\020\002*\?\n\nOutOfFrame\022\013\n\007LeftOut\020\000\022"
+    "\014\n\010RightOut\020\001\022\t\n\005UpOut\020\002\022\013\n\007DownOut\020\003*&\n"
+    "\nStreamType\022\010\n\004Main\020\001\022\016\n\nAdditional\020\002*A\n"
+    "\tBallEvent\022\021\n\rThrowDetected\020\000\022\017\n\013HitDete"
+    "cted\020\001\022\020\n\014MoveDetected\020\002*\215\001\n\016PlayerPosit"
+    "ion\022\010\n\004Home\020\001\022\r\n\tFirstBase\020\002\022\016\n\nSecondBa"
+    "se\020\003\022\r\n\tThirdBase\020\004\022\023\n\017BetwThirdSecond\020\005"
+    "\022\r\n\tLeftField\020\006\022\016\n\nRightField\020\007\022\017\n\013Cente"
+    "rField\020\010*\322\001\n\010TeamRole\022\n\n\006NoRole\020\001\022\013\n\007Pit"
+    "cher\020\002\022\013\n\007Catcher\020\003\022\020\n\014FirstBaseman\020\004\022\021\n"
+    "\rSecondBaseman\020\005\022\020\n\014ThirdBaseman\020\006\022\r\n\tSh"
+    "ortStop\020\007\022\017\n\013LeftFielder\020\010\022\021\n\rCenterFiel"
+    "der\020\t\022\020\n\014RightFielder\020\n\022\016\n\nOutfielder\020\013\022"
+    "\024\n\020DesignatedHitter\020\014*\207\001\n\nCameraType\022\020\n\014"
+    "BaseLeftMain\020\001\022\021\n\rBaseRightMain\020\002\022\017\n\013Bas"
+    "eLeftAdd\020\003\022\020\n\014BaseRightAdd\020\004\022\t\n\005Pitch\020\005\022"
+    "\013\n\007BatLeft\020\006\022\014\n\010BatRight\020\007\022\013\n\007FishEye\020\010*"
+    "\213\002\n\021GameTrackProtocol\022\030\n\024SendCameraParam"
+    "eters\020\001\022\021\n\rRequestStream\020\002\022\024\n\020NotifyOutO"
+    "fFrame\020\003\022\034\n\030NotifyPedestrianPosition\020\004\022\025"
+    "\n\021NotifyBallMeasure\020\005\022\026\n\022RequestCameraFr"
+    "ame\020\006\022\026\n\022GetBallCoordinates\020\007\022\025\n\021GetBatC"
+    "oordinates\020\010\022\017\n\013GetTestData\020\t\022\021\n\rRestart"
+    "Camera\020\n\022\023\n\017SendCurrentTime\020\013B\002H\001", 4673);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "msg.internal.proto", &protobuf_RegisterTypes);
   Point2d::default_instance_ = new Point2d();
@@ -2779,6 +2793,8 @@ const int HardwareCameraParameters::kGainFieldNumber;
 const int HardwareCameraParameters::kDebounceEnableFieldNumber;
 const int HardwareCameraParameters::kDebounceValueFieldNumber;
 const int HardwareCameraParameters::kTriggerModeFieldNumber;
+const int HardwareCameraParameters::kFocusingFieldNumber;
+const int HardwareCameraParameters::kTriggerModeEnableFieldNumber;
 #endif  // !_MSC_VER
 
 HardwareCameraParameters::HardwareCameraParameters()
@@ -2811,9 +2827,11 @@ void HardwareCameraParameters::SharedCtor() {
   width_ = 0;
   height_ = 0;
   gain_ = 0;
-  debounce_enable_ = 0;
+  debounce_enable_ = false;
   debounce_value_ = 0;
   trigger_mode_ = 0;
+  focusing_ = 0;
+  trigger_mode_enable_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -2862,9 +2880,11 @@ void HardwareCameraParameters::Clear() {
   if (_has_bits_[0 / 32] & 255) {
     ZR_(exposure_, max_pixel_clock_);
   }
-  if (_has_bits_[8 / 32] & 32512) {
-    ZR_(width_, trigger_mode_);
+  if (_has_bits_[8 / 32] & 65280) {
+    ZR_(width_, debounce_enable_);
+    focusing_ = 0;
   }
+  trigger_mode_enable_ = false;
 
 #undef OFFSET_OF_FIELD_
 #undef ZR_
@@ -2879,7 +2899,7 @@ bool HardwareCameraParameters::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:gt.internal.msg.HardwareCameraParameters)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(16383);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -3062,12 +3082,12 @@ bool HardwareCameraParameters::MergePartialFromCodedStream(
         break;
       }
 
-      // optional int32 debounce_enable = 13;
+      // optional bool debounce_enable = 13;
       case 13: {
         if (tag == 104) {
          parse_debounce_enable:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &debounce_enable_)));
           set_has_debounce_enable();
         } else {
@@ -3100,6 +3120,36 @@ bool HardwareCameraParameters::MergePartialFromCodedStream(
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &trigger_mode_)));
           set_has_trigger_mode();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(128)) goto parse_focusing;
+        break;
+      }
+
+      // optional int32 focusing = 16;
+      case 16: {
+        if (tag == 128) {
+         parse_focusing:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &focusing_)));
+          set_has_focusing();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(136)) goto parse_trigger_mode_enable;
+        break;
+      }
+
+      // optional bool trigger_mode_enable = 17;
+      case 17: {
+        if (tag == 136) {
+         parse_trigger_mode_enable:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &trigger_mode_enable_)));
+          set_has_trigger_mode_enable();
         } else {
           goto handle_unusual;
         }
@@ -3192,9 +3242,9 @@ void HardwareCameraParameters::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(12, this->gain(), output);
   }
 
-  // optional int32 debounce_enable = 13;
+  // optional bool debounce_enable = 13;
   if (has_debounce_enable()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(13, this->debounce_enable(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteBool(13, this->debounce_enable(), output);
   }
 
   // optional int32 debounce_value = 14;
@@ -3205,6 +3255,16 @@ void HardwareCameraParameters::SerializeWithCachedSizes(
   // optional int32 trigger_mode = 15;
   if (has_trigger_mode()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(15, this->trigger_mode(), output);
+  }
+
+  // optional int32 focusing = 16;
+  if (has_focusing()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(16, this->focusing(), output);
+  }
+
+  // optional bool trigger_mode_enable = 17;
+  if (has_trigger_mode_enable()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(17, this->trigger_mode_enable(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -3277,9 +3337,9 @@ void HardwareCameraParameters::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(12, this->gain(), target);
   }
 
-  // optional int32 debounce_enable = 13;
+  // optional bool debounce_enable = 13;
   if (has_debounce_enable()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(13, this->debounce_enable(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(13, this->debounce_enable(), target);
   }
 
   // optional int32 debounce_value = 14;
@@ -3290,6 +3350,16 @@ void HardwareCameraParameters::SerializeWithCachedSizes(
   // optional int32 trigger_mode = 15;
   if (has_trigger_mode()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(15, this->trigger_mode(), target);
+  }
+
+  // optional int32 focusing = 16;
+  if (has_focusing()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(16, this->focusing(), target);
+  }
+
+  // optional bool trigger_mode_enable = 17;
+  if (has_trigger_mode_enable()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(17, this->trigger_mode_enable(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -3378,11 +3448,9 @@ int HardwareCameraParameters::ByteSize() const {
           this->gain());
     }
 
-    // optional int32 debounce_enable = 13;
+    // optional bool debounce_enable = 13;
     if (has_debounce_enable()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->debounce_enable());
+      total_size += 1 + 1;
     }
 
     // optional int32 debounce_value = 14;
@@ -3397,6 +3465,20 @@ int HardwareCameraParameters::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->trigger_mode());
+    }
+
+    // optional int32 focusing = 16;
+    if (has_focusing()) {
+      total_size += 2 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->focusing());
+    }
+
+  }
+  if (_has_bits_[16 / 32] & (0xffu << (16 % 32))) {
+    // optional bool trigger_mode_enable = 17;
+    if (has_trigger_mode_enable()) {
+      total_size += 2 + 1;
     }
 
   }
@@ -3473,6 +3555,14 @@ void HardwareCameraParameters::MergeFrom(const HardwareCameraParameters& from) {
     if (from.has_trigger_mode()) {
       set_trigger_mode(from.trigger_mode());
     }
+    if (from.has_focusing()) {
+      set_focusing(from.focusing());
+    }
+  }
+  if (from._has_bits_[16 / 32] & (0xffu << (16 % 32))) {
+    if (from.has_trigger_mode_enable()) {
+      set_trigger_mode_enable(from.trigger_mode_enable());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -3511,6 +3601,8 @@ void HardwareCameraParameters::Swap(HardwareCameraParameters* other) {
     std::swap(debounce_enable_, other->debounce_enable_);
     std::swap(debounce_value_, other->debounce_value_);
     std::swap(trigger_mode_, other->trigger_mode_);
+    std::swap(focusing_, other->focusing_);
+    std::swap(trigger_mode_enable_, other->trigger_mode_enable_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -3532,8 +3624,6 @@ void HardwareCameraParameters::Swap(HardwareCameraParameters* other) {
 const int PictureCameraParameters::kPictureParamFlagFieldNumber;
 const int PictureCameraParameters::kWhiteBalanceFieldNumber;
 const int PictureCameraParameters::kWbRectFieldNumber;
-const int PictureCameraParameters::kAutoExposureInternalFieldNumber;
-const int PictureCameraParameters::kFocusingFieldNumber;
 const int PictureCameraParameters::kGammaFieldNumber;
 const int PictureCameraParameters::kSharpFieldNumber;
 const int PictureCameraParameters::kSaturationFieldNumber;
@@ -3569,8 +3659,6 @@ void PictureCameraParameters::SharedCtor() {
   picture_param_flag_ = 0;
   white_balance_ = 0;
   wb_rect_ = NULL;
-  auto_exposure_internal_ = 0;
-  focusing_ = 0;
   gamma_ = 0;
   sharp_ = 0;
   saturation_ = 0;
@@ -3630,13 +3718,13 @@ void PictureCameraParameters::Clear() {
 
   if (_has_bits_[0 / 32] & 255) {
     ZR_(picture_param_flag_, white_balance_);
-    ZR_(auto_exposure_internal_, saturation_);
+    ZR_(gamma_, g_saturation_);
     if (has_wb_rect()) {
       if (wb_rect_ != NULL) wb_rect_->::gt::internal::msg::Rect::Clear();
     }
   }
-  if (_has_bits_[8 / 32] & 65280) {
-    ZR_(r_saturation_, rotate_);
+  if (_has_bits_[8 / 32] & 16128) {
+    ZR_(b_saturation_, rotate_);
   }
 
 #undef OFFSET_OF_FIELD_
@@ -3652,7 +3740,7 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:gt.internal.msg.PictureCameraParameters)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(16383);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -3694,43 +3782,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(32)) goto parse_auto_exposure_internal;
+        if (input->ExpectTag(33)) goto parse_gamma;
         break;
       }
 
-      // optional int32 auto_exposure_internal = 4;
+      // optional double gamma = 4;
       case 4: {
-        if (tag == 32) {
-         parse_auto_exposure_internal:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &auto_exposure_internal_)));
-          set_has_auto_exposure_internal();
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(40)) goto parse_focusing;
-        break;
-      }
-
-      // optional int32 focusing = 5;
-      case 5: {
-        if (tag == 40) {
-         parse_focusing:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &focusing_)));
-          set_has_focusing();
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(49)) goto parse_gamma;
-        break;
-      }
-
-      // optional double gamma = 6;
-      case 6: {
-        if (tag == 49) {
+        if (tag == 33) {
          parse_gamma:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -3739,13 +3797,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(57)) goto parse_sharp;
+        if (input->ExpectTag(41)) goto parse_sharp;
         break;
       }
 
-      // optional double sharp = 7;
-      case 7: {
-        if (tag == 57) {
+      // optional double sharp = 5;
+      case 5: {
+        if (tag == 41) {
          parse_sharp:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -3754,13 +3812,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(64)) goto parse_saturation;
+        if (input->ExpectTag(48)) goto parse_saturation;
         break;
       }
 
-      // optional int32 saturation = 8;
-      case 8: {
-        if (tag == 64) {
+      // optional int32 saturation = 6;
+      case 6: {
+        if (tag == 48) {
          parse_saturation:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -3769,13 +3827,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(72)) goto parse_r_saturation;
+        if (input->ExpectTag(56)) goto parse_r_saturation;
         break;
       }
 
-      // optional int32 r_saturation = 9;
-      case 9: {
-        if (tag == 72) {
+      // optional int32 r_saturation = 7;
+      case 7: {
+        if (tag == 56) {
          parse_r_saturation:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -3784,13 +3842,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(80)) goto parse_g_saturation;
+        if (input->ExpectTag(64)) goto parse_g_saturation;
         break;
       }
 
-      // optional int32 g_saturation = 10;
-      case 10: {
-        if (tag == 80) {
+      // optional int32 g_saturation = 8;
+      case 8: {
+        if (tag == 64) {
          parse_g_saturation:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -3799,13 +3857,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(88)) goto parse_b_saturation;
+        if (input->ExpectTag(72)) goto parse_b_saturation;
         break;
       }
 
-      // optional int32 b_saturation = 11;
-      case 11: {
-        if (tag == 88) {
+      // optional int32 b_saturation = 9;
+      case 9: {
+        if (tag == 72) {
          parse_b_saturation:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -3814,13 +3872,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(96)) goto parse_hue;
+        if (input->ExpectTag(80)) goto parse_hue;
         break;
       }
 
-      // optional int32 hue = 12;
-      case 12: {
-        if (tag == 96) {
+      // optional int32 hue = 10;
+      case 10: {
+        if (tag == 80) {
          parse_hue:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -3829,13 +3887,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(105)) goto parse_shadow_coef;
+        if (input->ExpectTag(89)) goto parse_shadow_coef;
         break;
       }
 
-      // optional double shadow_coef = 13;
-      case 13: {
-        if (tag == 105) {
+      // optional double shadow_coef = 11;
+      case 11: {
+        if (tag == 89) {
          parse_shadow_coef:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -3844,13 +3902,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(113)) goto parse_shadow_threshold;
+        if (input->ExpectTag(97)) goto parse_shadow_threshold;
         break;
       }
 
-      // optional double shadow_threshold = 14;
-      case 14: {
-        if (tag == 113) {
+      // optional double shadow_threshold = 12;
+      case 12: {
+        if (tag == 97) {
          parse_shadow_threshold:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -3859,13 +3917,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(120)) goto parse_shadow_gauss_window_size;
+        if (input->ExpectTag(104)) goto parse_shadow_gauss_window_size;
         break;
       }
 
-      // optional int32 shadow_gauss_window_size = 15;
-      case 15: {
-        if (tag == 120) {
+      // optional int32 shadow_gauss_window_size = 13;
+      case 13: {
+        if (tag == 104) {
          parse_shadow_gauss_window_size:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -3874,13 +3932,13 @@ bool PictureCameraParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(128)) goto parse_rotate;
+        if (input->ExpectTag(112)) goto parse_rotate;
         break;
       }
 
-      // optional int32 rotate = 16;
-      case 16: {
-        if (tag == 128) {
+      // optional int32 rotate = 14;
+      case 14: {
+        if (tag == 112) {
          parse_rotate:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -3934,69 +3992,59 @@ void PictureCameraParameters::SerializeWithCachedSizes(
       3, this->wb_rect(), output);
   }
 
-  // optional int32 auto_exposure_internal = 4;
-  if (has_auto_exposure_internal()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->auto_exposure_internal(), output);
-  }
-
-  // optional int32 focusing = 5;
-  if (has_focusing()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->focusing(), output);
-  }
-
-  // optional double gamma = 6;
+  // optional double gamma = 4;
   if (has_gamma()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->gamma(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->gamma(), output);
   }
 
-  // optional double sharp = 7;
+  // optional double sharp = 5;
   if (has_sharp()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(7, this->sharp(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->sharp(), output);
   }
 
-  // optional int32 saturation = 8;
+  // optional int32 saturation = 6;
   if (has_saturation()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(8, this->saturation(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(6, this->saturation(), output);
   }
 
-  // optional int32 r_saturation = 9;
+  // optional int32 r_saturation = 7;
   if (has_r_saturation()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(9, this->r_saturation(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->r_saturation(), output);
   }
 
-  // optional int32 g_saturation = 10;
+  // optional int32 g_saturation = 8;
   if (has_g_saturation()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(10, this->g_saturation(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(8, this->g_saturation(), output);
   }
 
-  // optional int32 b_saturation = 11;
+  // optional int32 b_saturation = 9;
   if (has_b_saturation()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(11, this->b_saturation(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(9, this->b_saturation(), output);
   }
 
-  // optional int32 hue = 12;
+  // optional int32 hue = 10;
   if (has_hue()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(12, this->hue(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(10, this->hue(), output);
   }
 
-  // optional double shadow_coef = 13;
+  // optional double shadow_coef = 11;
   if (has_shadow_coef()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(13, this->shadow_coef(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(11, this->shadow_coef(), output);
   }
 
-  // optional double shadow_threshold = 14;
+  // optional double shadow_threshold = 12;
   if (has_shadow_threshold()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(14, this->shadow_threshold(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(12, this->shadow_threshold(), output);
   }
 
-  // optional int32 shadow_gauss_window_size = 15;
+  // optional int32 shadow_gauss_window_size = 13;
   if (has_shadow_gauss_window_size()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(15, this->shadow_gauss_window_size(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(13, this->shadow_gauss_window_size(), output);
   }
 
-  // optional int32 rotate = 16;
+  // optional int32 rotate = 14;
   if (has_rotate()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(16, this->rotate(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(14, this->rotate(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -4026,69 +4074,59 @@ void PictureCameraParameters::SerializeWithCachedSizes(
         3, this->wb_rect(), target);
   }
 
-  // optional int32 auto_exposure_internal = 4;
-  if (has_auto_exposure_internal()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->auto_exposure_internal(), target);
-  }
-
-  // optional int32 focusing = 5;
-  if (has_focusing()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->focusing(), target);
-  }
-
-  // optional double gamma = 6;
+  // optional double gamma = 4;
   if (has_gamma()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->gamma(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->gamma(), target);
   }
 
-  // optional double sharp = 7;
+  // optional double sharp = 5;
   if (has_sharp()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(7, this->sharp(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->sharp(), target);
   }
 
-  // optional int32 saturation = 8;
+  // optional int32 saturation = 6;
   if (has_saturation()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(8, this->saturation(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(6, this->saturation(), target);
   }
 
-  // optional int32 r_saturation = 9;
+  // optional int32 r_saturation = 7;
   if (has_r_saturation()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(9, this->r_saturation(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->r_saturation(), target);
   }
 
-  // optional int32 g_saturation = 10;
+  // optional int32 g_saturation = 8;
   if (has_g_saturation()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(10, this->g_saturation(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(8, this->g_saturation(), target);
   }
 
-  // optional int32 b_saturation = 11;
+  // optional int32 b_saturation = 9;
   if (has_b_saturation()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(11, this->b_saturation(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(9, this->b_saturation(), target);
   }
 
-  // optional int32 hue = 12;
+  // optional int32 hue = 10;
   if (has_hue()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(12, this->hue(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(10, this->hue(), target);
   }
 
-  // optional double shadow_coef = 13;
+  // optional double shadow_coef = 11;
   if (has_shadow_coef()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(13, this->shadow_coef(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(11, this->shadow_coef(), target);
   }
 
-  // optional double shadow_threshold = 14;
+  // optional double shadow_threshold = 12;
   if (has_shadow_threshold()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(14, this->shadow_threshold(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(12, this->shadow_threshold(), target);
   }
 
-  // optional int32 shadow_gauss_window_size = 15;
+  // optional int32 shadow_gauss_window_size = 13;
   if (has_shadow_gauss_window_size()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(15, this->shadow_gauss_window_size(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(13, this->shadow_gauss_window_size(), target);
   }
 
-  // optional int32 rotate = 16;
+  // optional int32 rotate = 14;
   if (has_rotate()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(16, this->rotate(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(14, this->rotate(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -4124,87 +4162,73 @@ int PictureCameraParameters::ByteSize() const {
           this->wb_rect());
     }
 
-    // optional int32 auto_exposure_internal = 4;
-    if (has_auto_exposure_internal()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->auto_exposure_internal());
-    }
-
-    // optional int32 focusing = 5;
-    if (has_focusing()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->focusing());
-    }
-
-    // optional double gamma = 6;
+    // optional double gamma = 4;
     if (has_gamma()) {
       total_size += 1 + 8;
     }
 
-    // optional double sharp = 7;
+    // optional double sharp = 5;
     if (has_sharp()) {
       total_size += 1 + 8;
     }
 
-    // optional int32 saturation = 8;
+    // optional int32 saturation = 6;
     if (has_saturation()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->saturation());
     }
 
-  }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    // optional int32 r_saturation = 9;
+    // optional int32 r_saturation = 7;
     if (has_r_saturation()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->r_saturation());
     }
 
-    // optional int32 g_saturation = 10;
+    // optional int32 g_saturation = 8;
     if (has_g_saturation()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->g_saturation());
     }
 
-    // optional int32 b_saturation = 11;
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    // optional int32 b_saturation = 9;
     if (has_b_saturation()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->b_saturation());
     }
 
-    // optional int32 hue = 12;
+    // optional int32 hue = 10;
     if (has_hue()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->hue());
     }
 
-    // optional double shadow_coef = 13;
+    // optional double shadow_coef = 11;
     if (has_shadow_coef()) {
       total_size += 1 + 8;
     }
 
-    // optional double shadow_threshold = 14;
+    // optional double shadow_threshold = 12;
     if (has_shadow_threshold()) {
       total_size += 1 + 8;
     }
 
-    // optional int32 shadow_gauss_window_size = 15;
+    // optional int32 shadow_gauss_window_size = 13;
     if (has_shadow_gauss_window_size()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->shadow_gauss_window_size());
     }
 
-    // optional int32 rotate = 16;
+    // optional int32 rotate = 14;
     if (has_rotate()) {
-      total_size += 2 +
+      total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->rotate());
     }
@@ -4245,12 +4269,6 @@ void PictureCameraParameters::MergeFrom(const PictureCameraParameters& from) {
     if (from.has_wb_rect()) {
       mutable_wb_rect()->::gt::internal::msg::Rect::MergeFrom(from.wb_rect());
     }
-    if (from.has_auto_exposure_internal()) {
-      set_auto_exposure_internal(from.auto_exposure_internal());
-    }
-    if (from.has_focusing()) {
-      set_focusing(from.focusing());
-    }
     if (from.has_gamma()) {
       set_gamma(from.gamma());
     }
@@ -4260,14 +4278,14 @@ void PictureCameraParameters::MergeFrom(const PictureCameraParameters& from) {
     if (from.has_saturation()) {
       set_saturation(from.saturation());
     }
-  }
-  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
     if (from.has_r_saturation()) {
       set_r_saturation(from.r_saturation());
     }
     if (from.has_g_saturation()) {
       set_g_saturation(from.g_saturation());
     }
+  }
+  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
     if (from.has_b_saturation()) {
       set_b_saturation(from.b_saturation());
     }
@@ -4315,8 +4333,6 @@ void PictureCameraParameters::Swap(PictureCameraParameters* other) {
     std::swap(picture_param_flag_, other->picture_param_flag_);
     std::swap(white_balance_, other->white_balance_);
     std::swap(wb_rect_, other->wb_rect_);
-    std::swap(auto_exposure_internal_, other->auto_exposure_internal_);
-    std::swap(focusing_, other->focusing_);
     std::swap(gamma_, other->gamma_);
     std::swap(sharp_, other->sharp_);
     std::swap(saturation_, other->saturation_);
@@ -5521,6 +5537,11 @@ void StreamCameraCommand::Swap(StreamCameraCommand* other) {
 const int CalibrationParameters::kXyzFieldNumber;
 const int CalibrationParameters::kAnglesFieldNumber;
 const int CalibrationParameters::kFocusFieldNumber;
+const int CalibrationParameters::kSamplesFieldNumber;
+const int CalibrationParameters::kLinesFieldNumber;
+const int CalibrationParameters::kSampleFieldNumber;
+const int CalibrationParameters::kLineFieldNumber;
+const int CalibrationParameters::kPixelSizeFieldNumber;
 const int CalibrationParameters::kK1FieldNumber;
 const int CalibrationParameters::kK2FieldNumber;
 const int CalibrationParameters::kK3FieldNumber;
@@ -5553,6 +5574,11 @@ void CalibrationParameters::SharedCtor() {
   xyz_ = NULL;
   angles_ = NULL;
   focus_ = 0;
+  samples_ = 0;
+  lines_ = 0;
+  sample_ = 0;
+  line_ = 0;
+  pixel_size_ = 0;
   k1_ = 0;
   k2_ = 0;
   k3_ = 0;
@@ -5608,7 +5634,7 @@ void CalibrationParameters::Clear() {
   } while (0)
 
   if (_has_bits_[0 / 32] & 255) {
-    ZR_(focus_, p2_);
+    ZR_(focus_, pixel_size_);
     if (has_xyz()) {
       if (xyz_ != NULL) xyz_->::gt::internal::msg::Point3d::Clear();
     }
@@ -5616,7 +5642,9 @@ void CalibrationParameters::Clear() {
       if (angles_ != NULL) angles_->::gt::internal::msg::Point3d::Clear();
     }
   }
-  ZR_(b1_, b2_);
+  if (_has_bits_[8 / 32] & 32512) {
+    ZR_(k1_, b2_);
+  }
 
 #undef OFFSET_OF_FIELD_
 #undef ZR_
@@ -5671,13 +5699,88 @@ bool CalibrationParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(33)) goto parse_k1;
+        if (input->ExpectTag(33)) goto parse_samples;
         break;
       }
 
-      // required double k1 = 4;
+      // required double samples = 4;
       case 4: {
         if (tag == 33) {
+         parse_samples:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &samples_)));
+          set_has_samples();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(41)) goto parse_lines;
+        break;
+      }
+
+      // required double lines = 5;
+      case 5: {
+        if (tag == 41) {
+         parse_lines:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &lines_)));
+          set_has_lines();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(49)) goto parse_sample;
+        break;
+      }
+
+      // required double sample = 6;
+      case 6: {
+        if (tag == 49) {
+         parse_sample:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &sample_)));
+          set_has_sample();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(57)) goto parse_line;
+        break;
+      }
+
+      // required double line = 7;
+      case 7: {
+        if (tag == 57) {
+         parse_line:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &line_)));
+          set_has_line();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(65)) goto parse_pixel_size;
+        break;
+      }
+
+      // required double pixel_size = 8;
+      case 8: {
+        if (tag == 65) {
+         parse_pixel_size:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &pixel_size_)));
+          set_has_pixel_size();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(73)) goto parse_k1;
+        break;
+      }
+
+      // required double k1 = 9;
+      case 9: {
+        if (tag == 73) {
          parse_k1:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -5686,13 +5789,13 @@ bool CalibrationParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(41)) goto parse_k2;
+        if (input->ExpectTag(81)) goto parse_k2;
         break;
       }
 
-      // required double k2 = 5;
-      case 5: {
-        if (tag == 41) {
+      // required double k2 = 10;
+      case 10: {
+        if (tag == 81) {
          parse_k2:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -5701,13 +5804,13 @@ bool CalibrationParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(49)) goto parse_k3;
+        if (input->ExpectTag(89)) goto parse_k3;
         break;
       }
 
-      // required double k3 = 6;
-      case 6: {
-        if (tag == 49) {
+      // required double k3 = 11;
+      case 11: {
+        if (tag == 89) {
          parse_k3:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -5716,13 +5819,13 @@ bool CalibrationParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(57)) goto parse_p1;
+        if (input->ExpectTag(97)) goto parse_p1;
         break;
       }
 
-      // required double p1 = 7;
-      case 7: {
-        if (tag == 57) {
+      // required double p1 = 12;
+      case 12: {
+        if (tag == 97) {
          parse_p1:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -5731,13 +5834,13 @@ bool CalibrationParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(65)) goto parse_p2;
+        if (input->ExpectTag(105)) goto parse_p2;
         break;
       }
 
-      // required double p2 = 8;
-      case 8: {
-        if (tag == 65) {
+      // required double p2 = 13;
+      case 13: {
+        if (tag == 105) {
          parse_p2:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -5746,13 +5849,13 @@ bool CalibrationParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(73)) goto parse_b1;
+        if (input->ExpectTag(113)) goto parse_b1;
         break;
       }
 
-      // required double b1 = 9;
-      case 9: {
-        if (tag == 73) {
+      // required double b1 = 14;
+      case 14: {
+        if (tag == 113) {
          parse_b1:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -5761,13 +5864,13 @@ bool CalibrationParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(81)) goto parse_b2;
+        if (input->ExpectTag(121)) goto parse_b2;
         break;
       }
 
-      // required double b2 = 10;
-      case 10: {
-        if (tag == 81) {
+      // required double b2 = 15;
+      case 15: {
+        if (tag == 121) {
          parse_b2:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -5822,39 +5925,64 @@ void CalibrationParameters::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->focus(), output);
   }
 
-  // required double k1 = 4;
+  // required double samples = 4;
+  if (has_samples()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->samples(), output);
+  }
+
+  // required double lines = 5;
+  if (has_lines()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->lines(), output);
+  }
+
+  // required double sample = 6;
+  if (has_sample()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->sample(), output);
+  }
+
+  // required double line = 7;
+  if (has_line()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(7, this->line(), output);
+  }
+
+  // required double pixel_size = 8;
+  if (has_pixel_size()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(8, this->pixel_size(), output);
+  }
+
+  // required double k1 = 9;
   if (has_k1()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->k1(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(9, this->k1(), output);
   }
 
-  // required double k2 = 5;
+  // required double k2 = 10;
   if (has_k2()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->k2(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(10, this->k2(), output);
   }
 
-  // required double k3 = 6;
+  // required double k3 = 11;
   if (has_k3()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->k3(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(11, this->k3(), output);
   }
 
-  // required double p1 = 7;
+  // required double p1 = 12;
   if (has_p1()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(7, this->p1(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(12, this->p1(), output);
   }
 
-  // required double p2 = 8;
+  // required double p2 = 13;
   if (has_p2()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(8, this->p2(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(13, this->p2(), output);
   }
 
-  // required double b1 = 9;
+  // required double b1 = 14;
   if (has_b1()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(9, this->b1(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(14, this->b1(), output);
   }
 
-  // required double b2 = 10;
+  // required double b2 = 15;
   if (has_b2()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(10, this->b2(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(15, this->b2(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -5886,39 +6014,64 @@ void CalibrationParameters::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->focus(), target);
   }
 
-  // required double k1 = 4;
+  // required double samples = 4;
+  if (has_samples()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->samples(), target);
+  }
+
+  // required double lines = 5;
+  if (has_lines()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->lines(), target);
+  }
+
+  // required double sample = 6;
+  if (has_sample()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->sample(), target);
+  }
+
+  // required double line = 7;
+  if (has_line()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(7, this->line(), target);
+  }
+
+  // required double pixel_size = 8;
+  if (has_pixel_size()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(8, this->pixel_size(), target);
+  }
+
+  // required double k1 = 9;
   if (has_k1()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->k1(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(9, this->k1(), target);
   }
 
-  // required double k2 = 5;
+  // required double k2 = 10;
   if (has_k2()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->k2(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(10, this->k2(), target);
   }
 
-  // required double k3 = 6;
+  // required double k3 = 11;
   if (has_k3()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->k3(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(11, this->k3(), target);
   }
 
-  // required double p1 = 7;
+  // required double p1 = 12;
   if (has_p1()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(7, this->p1(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(12, this->p1(), target);
   }
 
-  // required double p2 = 8;
+  // required double p2 = 13;
   if (has_p2()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(8, this->p2(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(13, this->p2(), target);
   }
 
-  // required double b1 = 9;
+  // required double b1 = 14;
   if (has_b1()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(9, this->b1(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(14, this->b1(), target);
   }
 
-  // required double b2 = 10;
+  // required double b2 = 15;
   if (has_b2()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(10, this->b2(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(15, this->b2(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -5952,39 +6105,64 @@ int CalibrationParameters::ByteSize() const {
       total_size += 1 + 8;
     }
 
-    // required double k1 = 4;
-    if (has_k1()) {
+    // required double samples = 4;
+    if (has_samples()) {
       total_size += 1 + 8;
     }
 
-    // required double k2 = 5;
-    if (has_k2()) {
+    // required double lines = 5;
+    if (has_lines()) {
       total_size += 1 + 8;
     }
 
-    // required double k3 = 6;
-    if (has_k3()) {
+    // required double sample = 6;
+    if (has_sample()) {
       total_size += 1 + 8;
     }
 
-    // required double p1 = 7;
-    if (has_p1()) {
+    // required double line = 7;
+    if (has_line()) {
       total_size += 1 + 8;
     }
 
-    // required double p2 = 8;
-    if (has_p2()) {
+    // required double pixel_size = 8;
+    if (has_pixel_size()) {
       total_size += 1 + 8;
     }
 
   }
   if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    // required double b1 = 9;
+    // required double k1 = 9;
+    if (has_k1()) {
+      total_size += 1 + 8;
+    }
+
+    // required double k2 = 10;
+    if (has_k2()) {
+      total_size += 1 + 8;
+    }
+
+    // required double k3 = 11;
+    if (has_k3()) {
+      total_size += 1 + 8;
+    }
+
+    // required double p1 = 12;
+    if (has_p1()) {
+      total_size += 1 + 8;
+    }
+
+    // required double p2 = 13;
+    if (has_p2()) {
+      total_size += 1 + 8;
+    }
+
+    // required double b1 = 14;
     if (has_b1()) {
       total_size += 1 + 8;
     }
 
-    // required double b2 = 10;
+    // required double b2 = 15;
     if (has_b2()) {
       total_size += 1 + 8;
     }
@@ -6025,6 +6203,23 @@ void CalibrationParameters::MergeFrom(const CalibrationParameters& from) {
     if (from.has_focus()) {
       set_focus(from.focus());
     }
+    if (from.has_samples()) {
+      set_samples(from.samples());
+    }
+    if (from.has_lines()) {
+      set_lines(from.lines());
+    }
+    if (from.has_sample()) {
+      set_sample(from.sample());
+    }
+    if (from.has_line()) {
+      set_line(from.line());
+    }
+    if (from.has_pixel_size()) {
+      set_pixel_size(from.pixel_size());
+    }
+  }
+  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
     if (from.has_k1()) {
       set_k1(from.k1());
     }
@@ -6040,8 +6235,6 @@ void CalibrationParameters::MergeFrom(const CalibrationParameters& from) {
     if (from.has_p2()) {
       set_p2(from.p2());
     }
-  }
-  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
     if (from.has_b1()) {
       set_b1(from.b1());
     }
@@ -6065,7 +6258,7 @@ void CalibrationParameters::CopyFrom(const CalibrationParameters& from) {
 }
 
 bool CalibrationParameters::IsInitialized() const {
-  if ((_has_bits_[0] & 0x000003ff) != 0x000003ff) return false;
+  if ((_has_bits_[0] & 0x00007fff) != 0x00007fff) return false;
 
   if (has_xyz()) {
     if (!this->xyz().IsInitialized()) return false;
@@ -6081,6 +6274,11 @@ void CalibrationParameters::Swap(CalibrationParameters* other) {
     std::swap(xyz_, other->xyz_);
     std::swap(angles_, other->angles_);
     std::swap(focus_, other->focus_);
+    std::swap(samples_, other->samples_);
+    std::swap(lines_, other->lines_);
+    std::swap(sample_, other->sample_);
+    std::swap(line_, other->line_);
+    std::swap(pixel_size_, other->pixel_size_);
     std::swap(k1_, other->k1_);
     std::swap(k2_, other->k2_);
     std::swap(k3_, other->k3_);
@@ -6510,6 +6708,7 @@ void BallMeasure::Swap(BallMeasure* other) {
 #ifndef _MSC_VER
 const int BatMeasure::kWasSwingFieldNumber;
 const int BatMeasure::kMeasuresFieldNumber;
+const int BatMeasure::kBboxesFieldNumber;
 #endif  // !_MSC_VER
 
 BatMeasure::BatMeasure()
@@ -6568,6 +6767,7 @@ BatMeasure* BatMeasure::New() const {
 void BatMeasure::Clear() {
   was_swing_ = false;
   measures_.Clear();
+  bboxes_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -6606,6 +6806,20 @@ bool BatMeasure::MergePartialFromCodedStream(
           goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_measures;
+        if (input->ExpectTag(26)) goto parse_bboxes;
+        break;
+      }
+
+      // repeated .gt.internal.msg.Rect bboxes = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_bboxes:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_bboxes()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_bboxes;
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -6646,6 +6860,12 @@ void BatMeasure::SerializeWithCachedSizes(
       2, this->measures(i), output);
   }
 
+  // repeated .gt.internal.msg.Rect bboxes = 3;
+  for (int i = 0; i < this->bboxes_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, this->bboxes(i), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -6666,6 +6886,13 @@ void BatMeasure::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         2, this->measures(i), target);
+  }
+
+  // repeated .gt.internal.msg.Rect bboxes = 3;
+  for (int i = 0; i < this->bboxes_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, this->bboxes(i), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -6694,6 +6921,14 @@ int BatMeasure::ByteSize() const {
         this->measures(i));
   }
 
+  // repeated .gt.internal.msg.Rect bboxes = 3;
+  total_size += 1 * this->bboxes_size();
+  for (int i = 0; i < this->bboxes_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->bboxes(i));
+  }
+
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -6720,6 +6955,7 @@ void BatMeasure::MergeFrom(const ::google::protobuf::Message& from) {
 void BatMeasure::MergeFrom(const BatMeasure& from) {
   GOOGLE_CHECK_NE(&from, this);
   measures_.MergeFrom(from.measures_);
+  bboxes_.MergeFrom(from.bboxes_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_was_swing()) {
       set_was_swing(from.was_swing());
@@ -6744,6 +6980,7 @@ bool BatMeasure::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
 
   if (!::google::protobuf::internal::AllAreInitialized(this->measures())) return false;
+  if (!::google::protobuf::internal::AllAreInitialized(this->bboxes())) return false;
   return true;
 }
 
@@ -6751,6 +6988,7 @@ void BatMeasure::Swap(BatMeasure* other) {
   if (other != this) {
     std::swap(was_swing_, other->was_swing_);
     measures_.Swap(&other->measures_);
+    bboxes_.Swap(&other->bboxes_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -7792,14 +8030,17 @@ const int CameraOptions::kPParamsFieldNumber;
 const int CameraOptions::kAutoExpParamsFieldNumber;
 const int CameraOptions::kCalibParamsFieldNumber;
 const int CameraOptions::kRecRoisFieldNumber;
-const int CameraOptions::kBallRecognizeFlagFieldNumber;
-const int CameraOptions::kDebugFlagFieldNumber;
+const int CameraOptions::kBallRecognizeEnableFieldNumber;
+const int CameraOptions::kDebugEnableFieldNumber;
 const int CameraOptions::kRecParamsFieldNumber;
 const int CameraOptions::kDescFieldNumber;
 const int CameraOptions::kCamTypeFieldNumber;
 const int CameraOptions::kIdFieldNumber;
 const int CameraOptions::kSaveParametersFieldNumber;
 const int CameraOptions::kStreamParamsFieldNumber;
+const int CameraOptions::kAutoExposureEnableFieldNumber;
+const int CameraOptions::kMainAddModeFieldNumber;
+const int CameraOptions::kMainEachFieldNumber;
 #endif  // !_MSC_VER
 
 CameraOptions::CameraOptions()
@@ -7833,14 +8074,17 @@ void CameraOptions::SharedCtor() {
   auto_exp_params_ = NULL;
   calib_params_ = NULL;
   rec_rois_ = NULL;
-  ball_recognize_flag_ = 0;
-  debug_flag_ = 0;
+  ball_recognize_enable_ = false;
+  debug_enable_ = false;
   rec_params_ = NULL;
   desc_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   cam_type_ = 1;
   id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   save_parameters_ = false;
   stream_params_ = NULL;
+  auto_exposure_enable_ = false;
+  main_add_mode_ = false;
+  main_each_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -7900,7 +8144,7 @@ void CameraOptions::Clear() {
   } while (0)
 
   if (_has_bits_[0 / 32] & 255) {
-    ZR_(ball_recognize_flag_, debug_flag_);
+    ZR_(ball_recognize_enable_, debug_enable_);
     if (has_hw_params()) {
       if (hw_params_ != NULL) hw_params_->::gt::internal::msg::HardwareCameraParameters::Clear();
     }
@@ -7920,7 +8164,9 @@ void CameraOptions::Clear() {
       if (rec_params_ != NULL) rec_params_->::gt::internal::msg::RecognizeParameters::Clear();
     }
   }
-  if (_has_bits_[8 / 32] & 7936) {
+  if (_has_bits_[8 / 32] & 65280) {
+    ZR_(save_parameters_, auto_exposure_enable_);
+    ZR_(main_add_mode_, main_each_);
     if (has_desc()) {
       if (desc_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         desc_->clear();
@@ -7932,7 +8178,6 @@ void CameraOptions::Clear() {
         id_->clear();
       }
     }
-    save_parameters_ = false;
     if (has_stream_params()) {
       if (stream_params_ != NULL) stream_params_->::gt::internal::msg::StreamCameraParameters::Clear();
     }
@@ -7951,7 +8196,7 @@ bool CameraOptions::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:gt.internal.msg.CameraOptions)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(16383);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -8015,33 +8260,33 @@ bool CameraOptions::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(48)) goto parse_ball_recognize_flag;
+        if (input->ExpectTag(48)) goto parse_ball_recognize_enable;
         break;
       }
 
-      // optional int32 ball_recognize_flag = 6;
+      // optional bool ball_recognize_enable = 6;
       case 6: {
         if (tag == 48) {
-         parse_ball_recognize_flag:
+         parse_ball_recognize_enable:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &ball_recognize_flag_)));
-          set_has_ball_recognize_flag();
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &ball_recognize_enable_)));
+          set_has_ball_recognize_enable();
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(56)) goto parse_debug_flag;
+        if (input->ExpectTag(56)) goto parse_debug_enable;
         break;
       }
 
-      // optional int32 debug_flag = 7;
+      // optional bool debug_enable = 7;
       case 7: {
         if (tag == 56) {
-         parse_debug_flag:
+         parse_debug_enable:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &debug_flag_)));
-          set_has_debug_flag();
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &debug_enable_)));
+          set_has_debug_enable();
         } else {
           goto handle_unusual;
         }
@@ -8140,6 +8385,51 @@ bool CameraOptions::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(112)) goto parse_auto_exposure_enable;
+        break;
+      }
+
+      // optional bool auto_exposure_enable = 14;
+      case 14: {
+        if (tag == 112) {
+         parse_auto_exposure_enable:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &auto_exposure_enable_)));
+          set_has_auto_exposure_enable();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(120)) goto parse_main_add_mode;
+        break;
+      }
+
+      // required bool main_add_mode = 15;
+      case 15: {
+        if (tag == 120) {
+         parse_main_add_mode:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &main_add_mode_)));
+          set_has_main_add_mode();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(128)) goto parse_main_each;
+        break;
+      }
+
+      // optional int32 main_each = 16;
+      case 16: {
+        if (tag == 128) {
+         parse_main_each:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &main_each_)));
+          set_has_main_each();
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -8199,14 +8489,14 @@ void CameraOptions::SerializeWithCachedSizes(
       5, this->rec_rois(), output);
   }
 
-  // optional int32 ball_recognize_flag = 6;
-  if (has_ball_recognize_flag()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(6, this->ball_recognize_flag(), output);
+  // optional bool ball_recognize_enable = 6;
+  if (has_ball_recognize_enable()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->ball_recognize_enable(), output);
   }
 
-  // optional int32 debug_flag = 7;
-  if (has_debug_flag()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->debug_flag(), output);
+  // optional bool debug_enable = 7;
+  if (has_debug_enable()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(7, this->debug_enable(), output);
   }
 
   // optional .gt.internal.msg.RecognizeParameters rec_params = 8;
@@ -8250,6 +8540,21 @@ void CameraOptions::SerializeWithCachedSizes(
   if (has_stream_params()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       13, this->stream_params(), output);
+  }
+
+  // optional bool auto_exposure_enable = 14;
+  if (has_auto_exposure_enable()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(14, this->auto_exposure_enable(), output);
+  }
+
+  // required bool main_add_mode = 15;
+  if (has_main_add_mode()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(15, this->main_add_mode(), output);
+  }
+
+  // optional int32 main_each = 16;
+  if (has_main_each()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(16, this->main_each(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -8297,14 +8602,14 @@ void CameraOptions::SerializeWithCachedSizes(
         5, this->rec_rois(), target);
   }
 
-  // optional int32 ball_recognize_flag = 6;
-  if (has_ball_recognize_flag()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(6, this->ball_recognize_flag(), target);
+  // optional bool ball_recognize_enable = 6;
+  if (has_ball_recognize_enable()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->ball_recognize_enable(), target);
   }
 
-  // optional int32 debug_flag = 7;
-  if (has_debug_flag()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->debug_flag(), target);
+  // optional bool debug_enable = 7;
+  if (has_debug_enable()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(7, this->debug_enable(), target);
   }
 
   // optional .gt.internal.msg.RecognizeParameters rec_params = 8;
@@ -8354,6 +8659,21 @@ void CameraOptions::SerializeWithCachedSizes(
         13, this->stream_params(), target);
   }
 
+  // optional bool auto_exposure_enable = 14;
+  if (has_auto_exposure_enable()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(14, this->auto_exposure_enable(), target);
+  }
+
+  // required bool main_add_mode = 15;
+  if (has_main_add_mode()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(15, this->main_add_mode(), target);
+  }
+
+  // optional int32 main_each = 16;
+  if (has_main_each()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(16, this->main_each(), target);
+  }
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -8401,18 +8721,14 @@ int CameraOptions::ByteSize() const {
           this->rec_rois());
     }
 
-    // optional int32 ball_recognize_flag = 6;
-    if (has_ball_recognize_flag()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->ball_recognize_flag());
+    // optional bool ball_recognize_enable = 6;
+    if (has_ball_recognize_enable()) {
+      total_size += 1 + 1;
     }
 
-    // optional int32 debug_flag = 7;
-    if (has_debug_flag()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->debug_flag());
+    // optional bool debug_enable = 7;
+    if (has_debug_enable()) {
+      total_size += 1 + 1;
     }
 
     // optional .gt.internal.msg.RecognizeParameters rec_params = 8;
@@ -8454,6 +8770,23 @@ int CameraOptions::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->stream_params());
+    }
+
+    // optional bool auto_exposure_enable = 14;
+    if (has_auto_exposure_enable()) {
+      total_size += 1 + 1;
+    }
+
+    // required bool main_add_mode = 15;
+    if (has_main_add_mode()) {
+      total_size += 1 + 1;
+    }
+
+    // optional int32 main_each = 16;
+    if (has_main_each()) {
+      total_size += 2 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->main_each());
     }
 
   }
@@ -8498,11 +8831,11 @@ void CameraOptions::MergeFrom(const CameraOptions& from) {
     if (from.has_rec_rois()) {
       mutable_rec_rois()->::gt::internal::msg::RecROIs::MergeFrom(from.rec_rois());
     }
-    if (from.has_ball_recognize_flag()) {
-      set_ball_recognize_flag(from.ball_recognize_flag());
+    if (from.has_ball_recognize_enable()) {
+      set_ball_recognize_enable(from.ball_recognize_enable());
     }
-    if (from.has_debug_flag()) {
-      set_debug_flag(from.debug_flag());
+    if (from.has_debug_enable()) {
+      set_debug_enable(from.debug_enable());
     }
     if (from.has_rec_params()) {
       mutable_rec_params()->::gt::internal::msg::RecognizeParameters::MergeFrom(from.rec_params());
@@ -8524,6 +8857,15 @@ void CameraOptions::MergeFrom(const CameraOptions& from) {
     if (from.has_stream_params()) {
       mutable_stream_params()->::gt::internal::msg::StreamCameraParameters::MergeFrom(from.stream_params());
     }
+    if (from.has_auto_exposure_enable()) {
+      set_auto_exposure_enable(from.auto_exposure_enable());
+    }
+    if (from.has_main_add_mode()) {
+      set_main_add_mode(from.main_add_mode());
+    }
+    if (from.has_main_each()) {
+      set_main_each(from.main_each());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -8541,7 +8883,7 @@ void CameraOptions::CopyFrom(const CameraOptions& from) {
 }
 
 bool CameraOptions::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000400) != 0x00000400) return false;
+  if ((_has_bits_[0] & 0x00004400) != 0x00004400) return false;
 
   if (has_p_params()) {
     if (!this->p_params().IsInitialized()) return false;
@@ -8562,14 +8904,17 @@ void CameraOptions::Swap(CameraOptions* other) {
     std::swap(auto_exp_params_, other->auto_exp_params_);
     std::swap(calib_params_, other->calib_params_);
     std::swap(rec_rois_, other->rec_rois_);
-    std::swap(ball_recognize_flag_, other->ball_recognize_flag_);
-    std::swap(debug_flag_, other->debug_flag_);
+    std::swap(ball_recognize_enable_, other->ball_recognize_enable_);
+    std::swap(debug_enable_, other->debug_enable_);
     std::swap(rec_params_, other->rec_params_);
     std::swap(desc_, other->desc_);
     std::swap(cam_type_, other->cam_type_);
     std::swap(id_, other->id_);
     std::swap(save_parameters_, other->save_parameters_);
     std::swap(stream_params_, other->stream_params_);
+    std::swap(auto_exposure_enable_, other->auto_exposure_enable_);
+    std::swap(main_add_mode_, other->main_add_mode_);
+    std::swap(main_each_, other->main_each_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

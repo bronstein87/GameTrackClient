@@ -88,15 +88,15 @@ bool AutoExposureHandler::correct(Mat image)
     const float* ranges[] = {lranges};
     // create matrix for histogram
     cv::Mat hist;
-    int channels[] = {2}; // hsv
+    int channels[] = {0}; // hsv
     
     calcHist( &image, 1, channels, Mat(), // do not use mask
               hist, 1, histSize, ranges);
     normalize(hist, hist, 1, 0, NORM_L1);
     percent = hist.at <float> (255.0);
-    double rel = percent / params.maxPercent;
-
-    if (!(rel <= params.maxRelCoef && rel >= params.minRelCoef))
+    double rel = percent / params->max_percent();
+    qDebug()<< rel << percent << params->max_percent();
+    if (!(rel <= params->max_rel_coef() && rel >= params->min_rel_coef()))
     {
         ++processCounter;
         if (processCounter > maxFrameCoeff && divideCoeff < divideCoeffMax)
@@ -108,43 +108,31 @@ bool AutoExposureHandler::correct(Mat image)
         {
             divideCoeff = divideCoeffDefault;
         }
-        double neededExposure = params.exposure / rel;
-        double exposureStep = neededExposure - params.exposure;
-        if (params.light == Day)
-        {
-            params.exposure = params.exposure + exposureStep / divideCoeff;
+        double neededExposure = params->exposure() / rel;
+        double exposureStep = neededExposure - params->exposure();
 
-            if (params.exposure > lowExp && params.gain <= params.maxGainCoeff)
-            {
-                params.gain = params.gain + (exposureStep / divideCoeff) * 15;
-            }
-        }
-        else
-        {
-            params.exposure = params.exposure + exposureStep / divideCoeff;
-            if (params.exposure > lowExp && params.gain <= params.maxGainCoeff)
-            {
-                params.gain = params.gain + (exposureStep / divideCoeff) * 15;
-            }
-        }
+        params->set_exposure(params->exposure() + exposureStep / divideCoeff);
 
-        if (params.exposure > maxExp)
+        if (params->exposure() > lowExp && params->gain() <= params->max_gain_coeff())
         {
-            params.exposure = maxExp;
+            params->set_gain(params->gain() + (exposureStep / divideCoeff) * 15);
         }
-        if (params.gain > params.maxGainCoeff)
+            qDebug()<< rel << percent << params->max_percent() << (exposureStep / divideCoeff) * 15 << divideCoeff;
+
+        if (params->exposure() > maxExp)
         {
-             params.gain = params.maxGainCoeff;
+            params->set_exposure(maxExp);
+        }
+        if (params->gain() > params->max_gain_coeff())
+        {
+            params->set_gain(params->max_gain_coeff());
         }
 
-        emit currentStateReady(QString("AUTOEXP : count max pixel: %1, new exp: %2, maxPer: %3, gain: %4")
-                               .arg(percent)
-                               .arg(params.exposure)
-                               .arg(params.maxPercent)
-                               .arg(params.gain));
-//        qDebug() << "autoexposure, rel, maxpercent, percent" << params.exposure << rel
-//                 <<  params.maxPercent << percent << divideCoeff;
-
+//        emit currentStateReady(QString("AUTOEXP : count max pixel: %1, new exp: %2, maxPer: %3, gain: %4")
+//                               .arg(percent)
+//                               .arg(params->exposure())
+//                               .arg(params->max_percent())
+//                               .arg(params->gain()));
         return true;
     }
     else

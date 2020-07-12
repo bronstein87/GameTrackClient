@@ -18,31 +18,30 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QSettings>
-#include <ballrecognizer.h>
+#include <ballrecognizerpp.h>
 #include <QtConcurrent/QtConcurrent>
 #include <mainstructs.h>
 #include <mathfunc.h>
+#include <proto/msg.internal.pb.h>
+#include <proto/proto_helper.h>
+#include <logger.h>
+#include <battracker.h>
+#include <pedestriantracker.h>
+#include <QJsonDocument>
+
+#define AUTOEXP_MAIN_THREAD
+
 using namespace BOKZMath;
-
-
-
-
+using namespace gt::internal;
 using namespace imageprocext;
 
-struct VideoToSend
-{
-    QLinkedList <FrameTime> video;
-    qint32 leftToAppend = 60;
-};
+
+
 
 class Camera : public QObject
 {
     Q_OBJECT
 public:
-
-    constexpr const static qint32 maxNumberOfMeasures = 100;
-
-    constexpr const static qint32 measureDim = 4;
 
     explicit Camera(const QString& pattern, bool init = true, qint32 port = -1, QObject *parent = 0);
 
@@ -56,6 +55,8 @@ public:
 
     void setROI(IS_SIZE_2D size);
 
+    void setTriggerModeEnable(bool enable);
+
     void setTriggerMode(qint32 mode = IS_SET_TRIGGER_OFF);
 
     void tryToStartCamera();
@@ -64,17 +65,9 @@ public:
 
     void startRecognition();
 
-    void procImageQueueRec();
-
     void startLiveVideo();
 
     void stopLiveVideo();
-
-    void debugRecognizeWithVideo(const QString& path);
-
-    void debugRecognizeWithVideoOneThread(const QString& path, qint32 cameraNum);
-
-    void debugRecognizeProc();
 
     void unlockAllBuffer();
 
@@ -88,129 +81,89 @@ public:
 
     void setAutoExposure(bool ok);
 
-    void setHandlePicture(bool ok) {options.pictureParamFlag = ok;}
+    void setHandlePicture(bool ok) {options.mutable_p_params()->set_picture_param_flag(ok);}
 
-    void setSharpness(double sharp) {options.sharp = sharp;}
+    void setSharpness(double sharp) {options.mutable_p_params()->set_sharp(sharp);}
 
     void setGain(double gain);
 
-    void setGamma(double gamma) {options.gamma = gamma;}
+    void setGamma(double gamma) {options.mutable_p_params()->set_gamma(gamma);}
 
-    void setEqualization(bool ok) {options.equalization = ok;}
+    void setWhiteBalance(bool ok) {options.mutable_p_params()->set_white_balance(ok);}
 
-    void setWhiteBalance(bool ok) {options.whiteBalance = ok;}
+    void setSaturation(qint32 value) {options.mutable_p_params()->set_saturation(value);}
 
-    void setIRCorrection(qint32 value) {options.IRCorrection = value;}
+    void setHue(qint32 value) {options.mutable_p_params()->set_hue(value);}
 
-    void setSaturation(qint32 value) {options.saturation = value;}
+    void setRSaturation(qint32 value) {options.mutable_p_params()->set_r_saturation(value);}
 
-    void setHue(qint32 value) {options.hue = value;}
+    void setGSaturation(qint32 value) {options.mutable_p_params()->set_g_saturation(value);}
 
-    void setRSaturation(qint32 value) {options.rSaturation = value;}
+    void setBSaturation(qint32 value) {options.mutable_p_params()->set_b_saturation(value);}
 
-    void setGSaturation(qint32 value) {options.gSaturation = value;}
+    void setShadowCoef(double value) {options.mutable_p_params()->set_shadow_coef(value);}
 
-    void setBSaturation(qint32 value) {options.bSaturation = value;}
+    void setShadowThreshold(double value) {options.mutable_p_params()->set_shadow_threshold(value);}
 
-    void setShadowCoef(double value) {options.shadowCoef = value;}
+    void setShadowWindowSize(qint32 value) {options.mutable_p_params()->set_shadow_gauss_window_size(value);}
 
-    void setShadowThreshold(double value) {options.shadowThreshold = value;}
+    void setRawFrame(qint32 value) {options.mutable_stream_params()->set_raw_frame(value);}
 
-    void setShadowWindowSize(qint32 value) {options.shadowGaussWindowSize = value;}
+    void setRotate(qint32 value) {options.mutable_p_params()->set_rotate(value);}
 
-    void setRawFrame(qint32 value) {options.rawFrame = value;}
+    void setWBROI(cv::Rect r) {options.mutable_p_params()->set_allocated_wb_rect(ProtoHelper::cvRectToGt(r));}
 
-    void setVideoDuration(qint32 value) {options.videoDuration = value;}
-
-    void setRotate(qint32 value) {options.rotate = value;}
-
-    void setDebounceEnable(qint32 value);
+    void setDebounceEnable(bool enable);
 
     void setDebounceValue(qint32 value);
 
-    QLinkedList <FrameTime>::iterator getLastFrame(bool& ok);
+    void setHWParams(const msg::CameraOptions& _options, bool initialize);
 
-    bool getNextFrame(QLinkedList <FrameTime>::iterator& it);
+    void setBallRecognizeFlag(qint32 value);
 
-    bool getReadyVideo(QLinkedList <FrameTime>& video);
+    void setBallRecognizeFlagDebug(bool value);
 
-    void handleCantTakeVideo();
+    QLinkedList <FrameInfo>::iterator getLastFrame(bool& ok, bool main);
 
+    void updateFrameState(QLinkedList<FrameInfo>::iterator& it, bool handled, bool sent);
 
-    void setBallRecognizeFlag(qint32 value)
-    {
-        streamIsActive = 0;
-        QThread::msleep(100);
-        if (value)
-        {
-            sendVideoTimer.setInterval(100);
-            sendVideoTimer.start();
-            emit messageFromCameraReady("Включаю режим распознавания...");
-            startRecognition();
-        }
-        else
-        {
-            sendVideoTimer.stop();
-            videos.clear();
-            emit messageFromCameraReady("Выхожу из режима распознавания.");
-            options.ballRecognizeFlag = 0;
-        }
-    }
+    bool getNextFrame(QLinkedList <FrameInfo>::iterator& it, bool main);
 
-
-    void setBallRecognizeFlagDebug(qint32 value)
-    {
-        options.debugRecFlag = value;
-        recognizer.setDebug(value);
-    }
-
-    void setBallRecognizeStep(qint32 value) {options.ballRecognizeStep = value;}
-
-    void setWBROI(Rect r) {options.wbRect = r;}
-
-    qint32 getFrameRate() {return options.frameRate;}
-
-    qint32 getVideoDuration() {return options.videoDuration;}
-    
-    void assignCameraOptions(const CameraOptions& options);
+    void assignCameraOptions(const msg::CameraOptions& _options);
 
     void fillCurrentCameraParameters();
-
-    const CurrentCameraParams& getCurrentCameraParameters() {return currentParameters;}
-
-    void handlePicture(Mat &rawframe, Mat& frame);
-
-    qint32 getHeight() const {return options.AOIHeight;}
-
-    qint32 getWidth() const {return options.AOIWidth;}
-
-    qint32 getFps() const {return options.frameRate;}
-
-    qint32 getRotate() const {return options.rotate;}
 
     QString getFocusing();
 
     ObjectiveController& getObjectiveControllerHandler()  {return controller;}
 
+    const msg::CameraOptions& getOptions() {return options;}
+
     void saveSettings();
+
+    void debugPedestrianDraw(const QString& path);
 
     ~Camera();
 
+
+
 signals:
 
-    void frameReady(cv::Mat frame, QTime t, quint64 internalT);
+    void frameReady(const FrameInfo& ft);
 
     void messageFromCameraReady(const QString& str);
 
-    void parametersChanged();
+    void parametersChanged(msg::CameraOptions& options);
 
-    void currentTimeReady(quint64 t);
+    void currentTimeReady(quint64 t, QTime ct);
 
-    void ballCoordinatesReady(double array[maxNumberOfMeasures][measureDim], qint32 frameCount, qint32 size);
+    void ballCoordinatesReady(const msg::RecognizeData& measures);
 
-    void hitCoordinatesReady(double array[maxNumberOfMeasures][measureDim], qint32 size);
+    void hitCoordinatesReady(const msg::RecognizeData& measures);
 
-    void videoReadyToSend();
+    void ballMeasureReady(const msg::BallMeasure& measure);
+
+    void ballOutOfFrame(const  msg::OutOfFrame& msg, const Point2f& point);
 
 private:
 
@@ -226,30 +179,43 @@ private:
 
     void debugRecognizeWithVideoInternal(const QString& path);
 
+    void getHWExposure(qint32 errorCode);
+
+    void getHWExposureRange(qint32 errorCode);
+
+    void getHWPixelClock(qint32 errorCode);
+
+    void getHWPixelClockRange(qint32 errorCode);
+
+    void getHWFrameTimeRange(qint32 errorCode);
+
+    void getHWFrameTime(qint32 errorCode);
+
+    void getHWTriggerDebounce(qint32 errorCode);
+
+    void getHWDebounceValue(qint32 errorCode);
+
+    void updateHWParameters();
+
     ObjectiveController controller;
     qint32	m_nNumberOfBuffers = -1;
-    QVector <qint32> m_viSeqMemId;		// camera memory - buffer IDs
+    QVector <qint32> m_viSeqMemId;  // camera memory - buffer IDs
     QVector <char*> m_vpcSeqImgMem;	// camera memory - pointers to buffer
-    QLinkedList <FrameTime> bufferFrames;
+    QLinkedList <FrameInfo> bufferFrames;
     QAtomicInt streamIsActive;
-    qint32 maxBufferSize = 1000;
+    constexpr const static qint32 maxBufferSize = 1000;
     quint32 hCam = 0;
     qint32 format = IS_CM_SENSOR_RAW8;//;/*IS_CM_RGB8_PACKED;*/
     qint32 bitCount = 8;
-    CameraOptions options;
+    msg::CameraOptions options;
     QMutex optionMutex;
     QMutex recMutex;
     AutoExposureHandler autoExpHandler;
-    CurrentCameraParams currentParameters;
-    BallRecognizer recognizer;
-    QMetaObject::Connection conn;
-    QString str;
-    qint32 cameraNumN;
-    QLinkedList <VideoToSend> videos;    
-    QTimer sendVideoTimer;
-    bool videoTaken = false;
-
-
+    BallRecognizerPP recognizer;
+    PedestrianTracker pedTracker;
+    BatTracker batTracker; // tmp
+    QTimer autoExpTimer;
+    constexpr static const qint32 delayTreshold = 300;
 };
 
 #endif // CAMERA_H

@@ -6,7 +6,7 @@
 ObjectiveController::ObjectiveController(const QString& pattern, qint32 port, QObject *parent) : pattern(pattern),
     QObject(parent)
 {
-    connectToController(pattern, port);
+     connectToController(pattern, port);
 }
 
 bool ObjectiveController::testControllerActive()
@@ -43,6 +43,7 @@ void ObjectiveController::setDiaphragmLevel(const QString& value)
 void ObjectiveController::setFocusing(const QString& value)
 {
     error.clear();
+    qDebug() << "OBJECTIVE" << value;
     if (testControllerActive())
     { 
         if (value.size() == focusCommandSize && value.at(0) == 'M' && value.at(value.size() - 1) == '#')
@@ -117,7 +118,6 @@ void ObjectiveController::connectToController(const QString& ptrn, qint32 port)
         if (objective.open(QIODevice::ReadWrite))
         {
             objective.setBaudRate(38400);
-            qDebug() << "controller connected";
         }
         else
         {

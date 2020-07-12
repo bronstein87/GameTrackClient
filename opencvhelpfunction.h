@@ -5,5 +5,5 @@
 using namespace cv;
 
 
-void checkRectangleSize(Rect& r, qint32 width, qint32 height);
+void checkRectangleSize(cv::Rect& r, qint32 width, qint32 height);
 #endif // OPENCVHELPFUNCTION_H

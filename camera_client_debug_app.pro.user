@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.5.2, 2020-01-17T19:10:41. -->
+<!-- Written by QtCreator 4.5.2, 2020-06-18T17:05:09. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -303,10 +303,10 @@
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">camera_client_debug_app</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/nvidia/CLIENT_APP/camera_client_debug_app/camera_client_debug_app.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">camera_client_debug_app2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/nvidia/CLIENT_APP/GameTrackClient/camera_client_debug_app.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">10.0.0.1 57575</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">10.57.57.57:57575</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">camera_client_debug_app.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>

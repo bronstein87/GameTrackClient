@@ -5,8 +5,9 @@
 #include <opencv2/photo/photo.hpp>
 #include <QObject>
 #include <QString>
+#include <proto/msg.internal.pb.h>
 using namespace cv;
-
+using namespace gt::internal;
 
 // ВО ВСЕХ ФУНКЦИЯХ СДЕЛАТ БЕЗ split (вообще без копирования), обращаться к пикселям в исходном изображении
 namespace imageprocext
@@ -27,41 +28,20 @@ class AutoExposureHandler : public QObject
 {
     Q_OBJECT
 
-    signals:
-        void currentStateReady(const QString& msg);
+signals:
+    void currentStateReady(const QString& msg);
 
-    public:
-
-    enum LightningParameter
-    {
-        Invalid,
-        Day,
-        Evening
-    };
-
-    #pragma pack(push, 1)
-    struct AutoExposureParameters
-    {
-        LightningParameter light = Day;
-        double gain = 30;
-        double exposure = 1;
-        double minGainCoeff = 30;
-        double maxGainCoeff= 80;
-        double maxPercent = 0.05;
-        double minRelCoef = 0.9;
-        double maxRelCoef = 1.1;
-    };
-    #pragma pack(pop)
-
-
-
+public:
 
 
     explicit AutoExposureHandler(QObject *parent = nullptr);
 
-    void setOptions(const AutoExposureParameters& params);
     bool correct(Mat image);
-    AutoExposureParameters params;
+
+    msg::AutoExposureParameters* params;
+
+private:
+
     double percent;
     constexpr const static double lowExp = 1.0;
     constexpr const static double maxExp = 3.0;

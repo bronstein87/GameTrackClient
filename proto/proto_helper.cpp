@@ -1,5 +1,6 @@
 #include <proto/proto_helper.h>
-
+namespace ProtoHelper
+{
 std::vector<std::string> updateMessage(google::protobuf::Message *outMessage, const google::protobuf::Message *inMessage, const std::string& parentName)
 {
     std::vector <const google::protobuf::FieldDescriptor*> descs;
@@ -151,4 +152,25 @@ google::protobuf::Message *searchForField(google::protobuf::Message *inMessage, 
      }
      indexInMessage = outMessage->GetDescriptor()->FindFieldByName(strings.back())->index();
      return outMessage;
+}
+
+cv::Rect gtRectToCv(gt::internal::msg::Rect r)
+{
+    cv::Rect outRect;
+    outRect.x = r.xy().x();
+    outRect.y = r.xy().y();
+    outRect.width = r.wh().x();
+    outRect.height = r.wh().y();
+    return outRect;
+}
+
+gt::internal::msg::Rect* cvRectToGt(cv::Rect r)
+{
+    gt::internal::msg::Rect* outRect = new gt::internal::msg::Rect;
+    outRect->mutable_xy()->set_x(r.x);
+    outRect->mutable_xy()->set_y(r.y);
+    outRect->mutable_wh()->set_x(r.width);
+    outRect->mutable_wh()->set_y(r.height);
+    return outRect;
+}
 }

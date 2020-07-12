@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QHostAddress address = QHostAddress(), quint16 port = 0, QWidget *parent = 0);
+    explicit MainWindow(const QString ipPort, QWidget *parent = 0);
     ~MainWindow();
 
 private slots:

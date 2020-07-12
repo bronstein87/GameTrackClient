@@ -1,20 +1,63 @@
 #include "rtspvideohandler.h"
 
-RtspVideoHandler::RtspVideoHandler(const RtspVideoHandlerParams &p, CameraClient* clnt, QObject *parent) : params(p), client(clnt), QObject(parent)
-{
 
+
+
+GstPadProbeReturn
+RtspVideoHandler::extend_rtp_header_probe (GstPad* pad,
+                                           GstPadProbeInfo* info,
+                                           gpointer         user_data)
+{
+    Q_UNUSED(pad);
+    RtspVideoHandler* handler = (RtspVideoHandler*)user_data;
+    GstBuffer *buffer;
+    GstRTPBuffer rtpBuffer = GST_RTP_BUFFER_INIT;
+
+    buffer = GST_PAD_PROBE_INFO_BUFFER (info);
+    buffer = gst_buffer_make_writable (buffer);
+
+    if (buffer == NULL)
+    {
+        return GST_PAD_PROBE_OK;
+    }
+    if (gst_rtp_buffer_map (buffer,GST_MAP_WRITE, &rtpBuffer))
+    {
+        static guint32 tstmp = -1;
+        guint32 ts = gst_rtp_buffer_get_timestamp(&rtpBuffer);
+        if (tstmp != ts)
+        {
+            QMutexLocker lock(&handler->mutex);
+            Q_ASSERT(!handler->tsRtpHeader.isEmpty());
+            quint64 data = handler->tsRtpHeader.first();
+            handler->tsRtpHeader.removeFirst();
+            lock.unlock();
+            if (gst_rtp_buffer_add_extension_onebyte_header(&rtpBuffer, 1, &data, sizeof(data)) != TRUE)
+            {
+                g_printerr("cannot add extension to rtp header");
+            }
+        }
+        tstmp = ts;
+        gst_rtp_buffer_unmap (&rtpBuffer);
+    }
+
+    return GST_PAD_PROBE_OK;
+}
+
+RtspVideoHandler::RtspVideoHandler(const RtspVideoHandlerParams &p, QObject *parent) : params(p),  QObject(parent)
+{
+    init();
 }
 
 RtspVideoHandler::RtspVideoHandler(QObject *parent) : QObject(parent)
 {
-
+    init();
 }
 
 
-RtspVideoHandler::RtspVideoHandler(const RtspVideoHandlerParams& p, const QLinkedList <FrameTime>& resFrames, QObject* parent)
+RtspVideoHandler::RtspVideoHandler(const RtspVideoHandlerParams& p, const QLinkedList <FrameInfo>& resFrames, QObject* parent)
     : params(p), framesToSend(resFrames), QObject(parent)
 {
-
+    init();
 }
 
 
@@ -25,33 +68,22 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
     GstBuffer* buffer;
     guint size;
     GstFlowReturn ret;
-
-    bool sendFirst = false;
+    QElapsedTimer t;
+    t.start();
     if (!getValidIterator)
     {
-        it = params.cam->getLastFrame(getValidIterator);
-        sendFirst = true;
+        it = params.cam->getLastFrame(getValidIterator, onlyMain);
         if (!getValidIterator)
+        {
             return;
+        }
     }
-    if (params.cam->getNextFrame(it) || sendFirst)
+    if (!it->sent || params.cam->getNextFrame(it, onlyMain))
     {
-        size = params.w * params.h * 3;
-        Mat frame;
-        QElapsedTimer t;
-        t.start();
-        frame = (*it).frame;
-        if (params.rotate)
-        {
-            cvtColor((*it).frame, frame, CV_BayerBG2RGB);
-        }
-        else
-        {
-            cvtColor((*it).frame, frame, CV_BayerBG2BGR);
-        }
-
+        size = params.w * params.h * 4;
+        Mat frame;//COLOR_BayerBG2RGBA
+        cvtColor(it->frame, frame, COLOR_BayerRG2RGBA);
         buffer = gst_buffer_new_wrapped(frame.data, size);
-
         if (startTime == -1)
         {
             startTime = it->time;
@@ -63,11 +95,24 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
         qint64 duration = ((double)1 / params.framerate) * GST_SECOND;
         GST_BUFFER_DURATION(buffer) = duration;
         GST_BUFFER_OFFSET(buffer) = currentFrameCount;
-        //qDebug() << t.elapsed() << currentFrameCount;
+        QMutexLocker lock(&mutex);
+        if (needFrameCount != -1 && currentFrameCount >= needFrameCount)
+        {
+            tsRtpHeader.append(0);
+        }
+        else
+        {
+            tsRtpHeader.append(it->time);
+        }
+        lock.unlock();
+
         g_signal_emit_by_name (appsrc, "push-buffer", buffer, &ret);
+        params.cam->updateFrameState(it, it->handled, true);
+
         frame.addref();
         gst_buffer_unref (buffer);
         ++currentFrameCount;
+        //qDebug() << currentFrameCount;
     }
 
 }
@@ -87,25 +132,18 @@ void RtspVideoHandler::needDataArray(GstElement *appsrc, guint unused, gpointer 
     }
     else
     {
-        ++it;
+        it = framesToSend.erase(it);
     }
 
     if (it == framesToSend.end())
     {
-        it = --framesToSend.end();
+        g_signal_emit_by_name (appsrc, "push-buffer", gst_buffer_new(), &ret);
+        //it = --framesToSend.end();
     }
-
 
     size = params.w * params.h * 3;
     Mat frame;
-    if (params.rotate)
-    {
-        cvtColor((*it).frame, frame, CV_BayerBG2RGB);
-    }
-    else
-    {
-        cvtColor((*it).frame, frame, CV_BayerBG2BGR);
-    }
+    frame = (*it).frame;
     buffer = gst_buffer_new_wrapped(frame.data, size);
     if (startTime == -1)
     {
@@ -118,6 +156,7 @@ void RtspVideoHandler::needDataArray(GstElement *appsrc, guint unused, gpointer 
     qint64 duration = ((double)1 / params.framerate) * GST_SECOND;
     GST_BUFFER_DURATION(buffer) = duration;
     GST_BUFFER_OFFSET(buffer) = currentFrameCount;
+
     g_signal_emit_by_name (appsrc, "push-buffer", buffer, &ret);
     frame.addref();
     gst_buffer_unref (buffer);
@@ -132,30 +171,24 @@ void RtspVideoHandler::mediaConfigure (GstRTSPMediaFactory* factory, GstRTSPMedi
 {
     Q_UNUSED(factory);
     Q_UNUSED(user_data);
-    GstElement *element, *appsrc;
+    GstElement *element, *appsrc, *rtph264pay;
+    GstPad *pad;
     /* get the element used for providing the streams of the media */
     element = gst_rtsp_media_get_element (media);
 
-    /* get our appsrc, we named it 'mysrc' with the name property */
     appsrc = gst_bin_get_by_name_recurse_up (GST_BIN (element), "vsrc");
+    rtph264pay = gst_bin_get_by_name_recurse_up (GST_BIN (element), "pay0");
+    pad = gst_element_get_static_pad (rtph264pay, "src");
+    gst_pad_add_probe (pad, GST_PAD_PROBE_TYPE_BUFFER,
+                       (GstPadProbeCallback) extend_rtp_header_probe, this, NULL);
+    gst_object_unref (pad);
 
     /* this instructs appsrc that we will be dealing with timed buffer */
     gst_util_set_object_arg (G_OBJECT (appsrc), "format", "time");
     /* configure the caps of the video */
-    //    g_object_set (G_OBJECT (appsrc), "caps",
-    //                  gst_caps_new_simple ("video/x-raw(memory:NVMM)",
-    //                                       "format", G_TYPE_STRING, "BGR",
-    //                                       "width", G_TYPE_INT, params.w,
-    //                                       "height", G_TYPE_INT, params.h,
-    //                                       "framerate", GST_TYPE_FRACTION, params.framerate, 1, NULL)
-    //                  , NULL);
-
-    //g_object_set (appsrc, "do-timestamp", true, NULL);
-    // g_object_set(appsrc, "is-live", true, NULL);
-    //g_object_set(appsrc, "min-latency", 0, NULL);
     g_object_set (G_OBJECT (appsrc), "caps",
                   gst_caps_new_simple ("video/x-raw",
-                                       "format", G_TYPE_STRING, "BGR",
+                                       "format", G_TYPE_STRING, "RGBA",
                                        "width", G_TYPE_INT, params.w,
                                        "height", G_TYPE_INT, params.h,
                                        "framerate", GST_TYPE_FRACTION, params.framerate, 1, NULL)
@@ -165,6 +198,7 @@ void RtspVideoHandler::mediaConfigure (GstRTSPMediaFactory* factory, GstRTSPMedi
     g_signal_connect (appsrc, "need-data", (GCallback) needDataCallBack, this);
     gst_object_unref (appsrc);
     gst_object_unref (element);
+    gst_object_unref(rtph264pay);
 }
 
 void RtspVideoHandler::handleClient(GstRTSPServer *self, GstRTSPClient *object, gpointer data)
@@ -185,23 +219,45 @@ void RtspVideoHandler::closedClient(GstRTSPClient *self, gpointer data)
     closeServer();
 }
 
+void RtspVideoHandler::init()
+{
+    timeoutTimer.setInterval(5000);
+    connect(this, &RtspVideoHandler::serverStarted, this, [this]()
+    {
+        timeoutTimer.start();
+    });
+
+    connect(&timeoutTimer, &QTimer::timeout, this, [this]()
+    {
+        // qDebug() << "try timeout";
+        if (noClientConnected())
+        {
+            qDebug() << "timeout";
+            closeServer();
+        }
+        timeoutTimer.stop();
+    });
+}
+
 
 
 void RtspVideoHandler::reset()
 {
+    framesToSend.clear();
     getValidIterator = false;
     currentFrameCount = 0;
-    it = QLinkedList <FrameTime>::iterator();
+    it = QLinkedList <FrameInfo>::iterator();
     startTime = -1;
 }
 
-void RtspVideoHandler::sendVideo(qint32 port, const QString& pipeLine, qint32 frameCount)
+void RtspVideoHandler::sendVideo(qint32 port, const QString& pipeLine, qint32 frameCount, bool _onlyMain)
 {
     reset();
     if (frameCount != -1)
     {
         needFrameCount = frameCount;
     }
+    onlyMain = _onlyMain;
     setenv("GST_DEBUG","4", 0);
     loop = g_main_loop_new (NULL, FALSE);
 
@@ -215,21 +271,27 @@ void RtspVideoHandler::sendVideo(qint32 port, const QString& pipeLine, qint32 fr
     gst_rtsp_media_factory_set_launch (factory,
                                        QString("( %1 )").arg(pipeLine).toStdString().c_str());
 
+
     g_signal_connect (factory, "media-configure", (GCallback) mediaConfigureCallBack, this);
 
     gst_rtsp_mount_points_add_factory (mounts, "/vd", factory);
 
     g_object_unref (mounts);
 
-//    GstRTSPThreadPool* tp = gst_rtsp_server_get_thread_pool (server);
-//    qDebug() << gst_rtsp_thread_pool_get_max_threads(tp) << "MAX THREADS";
-//    gst_rtsp_thread_pool_set_max_threads(tp, 0);
+    //    GstRTSPThreadPool* tp = gst_rtsp_server_get_thread_pool (server);
+    //    qDebug() << gst_rtsp_thread_pool_get_max_threads(tp) << "MAX THREADS";
+    //    gst_rtsp_thread_pool_set_max_threads(tp, 0);
     serverId = gst_rtsp_server_attach (server, NULL);
 
     emit serverStarted();
     QApplication::processEvents();
     qDebug() << "server STARTED";
     g_main_loop_run (loop);
+}
+
+void RtspVideoHandler::setTimeout(qint32 ms)
+{
+    timeoutTimer.setInterval(ms);
 }
 
 void RtspVideoHandler::closeServer()

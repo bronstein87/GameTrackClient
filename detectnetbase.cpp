@@ -38,3 +38,19 @@ void DetectNetBase::readFrameInGPUMemory(Mat img)
         }
     }
 }
+
+DetectNetBase::IOUResult DetectNetBase::calculateIOU(Rect2d r1, Rect2d r2)
+{
+    double xA = max(r1.x, r2.x);
+    double yA = max(r1.y, r2.y);
+    double xB = min(r1.x + r1.width, r2.x + r2.width);
+    double yB = min(r1.y + r1.height, r2.y + r2.height);
+
+    double interArea = max(0., xB - xA + 1) * max(0., yB - yA + 1);
+
+    IOUResult res;
+    res.iou = interArea / float(r1.area() + r2.area() - interArea);
+    res.partR1 = interArea / r1.area();
+    res.partR2 = interArea / r2.area();
+    return res;
+}

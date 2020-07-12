@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <QTextStream>
 #include <QMutex>
+#include <QDebug>
 
 class Logger : public QObject
 {
