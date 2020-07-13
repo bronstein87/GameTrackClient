@@ -93,9 +93,22 @@ bool AutoExposureHandler::correct(Mat image)
     calcHist( &image, 1, channels, Mat(), // do not use mask
               hist, 1, histSize, ranges);
     normalize(hist, hist, 1, 0, NORM_L1);
+
     percent = hist.at <float> (255.0);
+
+    double mean = cv::mean(image)[0];
+    double relMean = mean / maxMean;
     double rel = percent / params->max_percent();
-    qDebug()<< rel << percent << params->max_percent();
+    if (relMean > 1 && rel > 1)
+    {
+        rel = relMean > rel ? relMean : rel;
+    }
+    else
+    {
+        rel = relMean;
+    }
+    qDebug() << relMean << rel << percent << params->max_percent() << mean << params->max_rel_coef()
+             << params->min_rel_coef();
     if (!(rel <= params->max_rel_coef() && rel >= params->min_rel_coef()))
     {
         ++processCounter;
@@ -117,7 +130,11 @@ bool AutoExposureHandler::correct(Mat image)
         {
             params->set_gain(params->gain() + (exposureStep / divideCoeff) * 15);
         }
-            qDebug()<< rel << percent << params->max_percent() << (exposureStep / divideCoeff) * 15 << divideCoeff;
+        else if (params->exposure() < lowExp)
+        {
+            params->set_gain(params->min_gain_coeff());
+        }
+        qDebug()<< rel << percent << params->max_percent() << exposureStep << (exposureStep / divideCoeff) * 15 << divideCoeff;
 
         if (params->exposure() > maxExp)
         {
@@ -128,11 +145,11 @@ bool AutoExposureHandler::correct(Mat image)
             params->set_gain(params->max_gain_coeff());
         }
 
-//        emit currentStateReady(QString("AUTOEXP : count max pixel: %1, new exp: %2, maxPer: %3, gain: %4")
-//                               .arg(percent)
-//                               .arg(params->exposure())
-//                               .arg(params->max_percent())
-//                               .arg(params->gain()));
+        //        emit currentStateReady(QString("AUTOEXP : count max pixel: %1, new exp: %2, maxPer: %3, gain: %4")
+        //                               .arg(percent)
+        //                               .arg(params->exposure())
+        //                               .arg(params->max_percent())
+        //                               .arg(params->gain()));
         return true;
     }
     else

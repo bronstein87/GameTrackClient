@@ -45,6 +45,7 @@ private:
     double percent;
     constexpr const static double lowExp = 1.0;
     constexpr const static double maxExp = 3.0;
+    constexpr const static double maxMean = 115;
     const int divideCoeffDefault = 8;
     int divideCoeff = 8;
     const int divideCoeffMax = 24;

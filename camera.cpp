@@ -189,7 +189,7 @@ void Camera::procImageQueue()
                                                       .arg(tLagElapsed));
                 }
                 emit currentTimeReady(imageInfo.u64TimestampDevice, t);
-                 qDebug() << "raw" << t << imageInfo.u64TimestampDevice;
+                // qDebug() << "raw" << t << imageInfo.u64TimestampDevice;
                 FrameInfo ft;
                 ft.time = timeStampPrevious = imageInfo.u64TimestampDevice;
                 ft.computerTime = t.msecsSinceStartOfDay();
@@ -1263,7 +1263,7 @@ bool Camera::getNextFrame(QLinkedList<FrameInfo>::iterator& it, bool main)
 
     auto last = bufferFrames.last();
     auto test = itTmp;
-    qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
+    //qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
     //qDebug() << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
     it = itTmp;
     return true;
