@@ -227,11 +227,15 @@ enum GameTrackProtocol {
   GetBatCoordinates = 8,
   GetTestData = 9,
   RestartCamera = 10,
-  SendCurrentTime = 11
+  SendCurrentTime = 11,
+  SetDebugMode = 12,
+  RequestNextFrameDebugMode = 13,
+  RequestPreviousFrameDebugMode = 15,
+  NotifyMomentStartDetected = 14
 };
 bool GameTrackProtocol_IsValid(int value);
 const GameTrackProtocol GameTrackProtocol_MIN = SendCameraParameters;
-const GameTrackProtocol GameTrackProtocol_MAX = SendCurrentTime;
+const GameTrackProtocol GameTrackProtocol_MAX = RequestPreviousFrameDebugMode;
 const int GameTrackProtocol_ARRAYSIZE = GameTrackProtocol_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* GameTrackProtocol_descriptor();
@@ -1375,6 +1379,13 @@ class AutoExposureParameters : public ::google::protobuf::Message {
   inline double max_rel_coef() const;
   inline void set_max_rel_coef(double value);
 
+  // optional double mean = 8;
+  inline bool has_mean() const;
+  inline void clear_mean();
+  static const int kMeanFieldNumber = 8;
+  inline double mean() const;
+  inline void set_mean(double value);
+
   // @@protoc_insertion_point(class_scope:gt.internal.msg.AutoExposureParameters)
  private:
   inline void set_has_gain();
@@ -1391,6 +1402,8 @@ class AutoExposureParameters : public ::google::protobuf::Message {
   inline void clear_has_min_rel_coef();
   inline void set_has_max_rel_coef();
   inline void clear_has_max_rel_coef();
+  inline void set_has_mean();
+  inline void clear_has_mean();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -1403,6 +1416,7 @@ class AutoExposureParameters : public ::google::protobuf::Message {
   double max_percent_;
   double min_rel_coef_;
   double max_rel_coef_;
+  double mean_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -1610,6 +1624,13 @@ class StreamCameraCommand : public ::google::protobuf::Message {
   inline ::std::string* release_desc();
   inline void set_allocated_desc(::std::string* desc);
 
+  // optional bool stop = 4;
+  inline bool has_stop() const;
+  inline void clear_stop();
+  static const int kStopFieldNumber = 4;
+  inline bool stop() const;
+  inline void set_stop(bool value);
+
   // @@protoc_insertion_point(class_scope:gt.internal.msg.StreamCameraCommand)
  private:
   inline void set_has_type();
@@ -1618,6 +1639,8 @@ class StreamCameraCommand : public ::google::protobuf::Message {
   inline void clear_has_video_duration();
   inline void set_has_desc();
   inline void clear_has_desc();
+  inline void set_has_stop();
+  inline void clear_has_stop();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -1626,6 +1649,7 @@ class StreamCameraCommand : public ::google::protobuf::Message {
   int type_;
   ::google::protobuf::int32 video_duration_;
   ::std::string* desc_;
+  bool stop_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -2252,24 +2276,24 @@ class RecognizeData : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::BallMeasure >*
       mutable_data();
 
-  // optional uint64 startTime = 2;
-  inline bool has_starttime() const;
-  inline void clear_starttime();
+  // optional uint64 start_time = 2;
+  inline bool has_start_time() const;
+  inline void clear_start_time();
   static const int kStartTimeFieldNumber = 2;
-  inline ::google::protobuf::uint64 starttime() const;
-  inline void set_starttime(::google::protobuf::uint64 value);
+  inline ::google::protobuf::uint64 start_time() const;
+  inline void set_start_time(::google::protobuf::uint64 value);
 
   // @@protoc_insertion_point(class_scope:gt.internal.msg.RecognizeData)
  private:
-  inline void set_has_starttime();
-  inline void clear_has_starttime();
+  inline void set_has_start_time();
+  inline void clear_has_start_time();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
   ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::BallMeasure > data_;
-  ::google::protobuf::uint64 starttime_;
+  ::google::protobuf::uint64 start_time_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -2596,6 +2620,13 @@ class CameraOptions : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 main_each() const;
   inline void set_main_each(::google::protobuf::int32 value);
 
+  // optional bool debug_mode = 17;
+  inline bool has_debug_mode() const;
+  inline void clear_debug_mode();
+  static const int kDebugModeFieldNumber = 17;
+  inline bool debug_mode() const;
+  inline void set_debug_mode(bool value);
+
   // @@protoc_insertion_point(class_scope:gt.internal.msg.CameraOptions)
  private:
   inline void set_has_hw_params();
@@ -2630,6 +2661,8 @@ class CameraOptions : public ::google::protobuf::Message {
   inline void clear_has_main_add_mode();
   inline void set_has_main_each();
   inline void clear_has_main_each();
+  inline void set_has_debug_mode();
+  inline void clear_has_debug_mode();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -2649,8 +2682,9 @@ class CameraOptions : public ::google::protobuf::Message {
   int cam_type_;
   ::std::string* id_;
   ::gt::internal::msg::StreamCameraParameters* stream_params_;
-  bool main_add_mode_;
   ::google::protobuf::int32 main_each_;
+  bool main_add_mode_;
+  bool debug_mode_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -2918,16 +2952,26 @@ class DebugInfo : public ::google::protobuf::Message {
   inline ::std::string* release_message();
   inline void set_allocated_message(::std::string* message);
 
+  // optional int32 skipDebugFrames = 2;
+  inline bool has_skipdebugframes() const;
+  inline void clear_skipdebugframes();
+  static const int kSkipDebugFramesFieldNumber = 2;
+  inline ::google::protobuf::int32 skipdebugframes() const;
+  inline void set_skipdebugframes(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:gt.internal.msg.DebugInfo)
  private:
   inline void set_has_message();
   inline void clear_has_message();
+  inline void set_has_skipdebugframes();
+  inline void clear_has_skipdebugframes();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
   ::std::string* message_;
+  ::google::protobuf::int32 skipdebugframes_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -4529,6 +4573,30 @@ inline void AutoExposureParameters::set_max_rel_coef(double value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.AutoExposureParameters.max_rel_coef)
 }
 
+// optional double mean = 8;
+inline bool AutoExposureParameters::has_mean() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void AutoExposureParameters::set_has_mean() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void AutoExposureParameters::clear_has_mean() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void AutoExposureParameters::clear_mean() {
+  mean_ = 0;
+  clear_has_mean();
+}
+inline double AutoExposureParameters::mean() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.AutoExposureParameters.mean)
+  return mean_;
+}
+inline void AutoExposureParameters::set_mean(double value) {
+  set_has_mean();
+  mean_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.AutoExposureParameters.mean)
+}
+
 // -------------------------------------------------------------------
 
 // StreamCameraParameters
@@ -4780,6 +4848,30 @@ inline void StreamCameraCommand::set_allocated_desc(::std::string* desc) {
     desc_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
   // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.StreamCameraCommand.desc)
+}
+
+// optional bool stop = 4;
+inline bool StreamCameraCommand::has_stop() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void StreamCameraCommand::set_has_stop() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void StreamCameraCommand::clear_has_stop() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void StreamCameraCommand::clear_stop() {
+  stop_ = false;
+  clear_has_stop();
+}
+inline bool StreamCameraCommand::stop() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.StreamCameraCommand.stop)
+  return stop_;
+}
+inline void StreamCameraCommand::set_stop(bool value) {
+  set_has_stop();
+  stop_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.StreamCameraCommand.stop)
 }
 
 // -------------------------------------------------------------------
@@ -5555,28 +5647,28 @@ RecognizeData::mutable_data() {
   return &data_;
 }
 
-// optional uint64 startTime = 2;
-inline bool RecognizeData::has_starttime() const {
+// optional uint64 start_time = 2;
+inline bool RecognizeData::has_start_time() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void RecognizeData::set_has_starttime() {
+inline void RecognizeData::set_has_start_time() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void RecognizeData::clear_has_starttime() {
+inline void RecognizeData::clear_has_start_time() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void RecognizeData::clear_starttime() {
-  starttime_ = GOOGLE_ULONGLONG(0);
-  clear_has_starttime();
+inline void RecognizeData::clear_start_time() {
+  start_time_ = GOOGLE_ULONGLONG(0);
+  clear_has_start_time();
 }
-inline ::google::protobuf::uint64 RecognizeData::starttime() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.RecognizeData.startTime)
-  return starttime_;
+inline ::google::protobuf::uint64 RecognizeData::start_time() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.RecognizeData.start_time)
+  return start_time_;
 }
-inline void RecognizeData::set_starttime(::google::protobuf::uint64 value) {
-  set_has_starttime();
-  starttime_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.RecognizeData.startTime)
+inline void RecognizeData::set_start_time(::google::protobuf::uint64 value) {
+  set_has_start_time();
+  start_time_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.RecognizeData.start_time)
 }
 
 // -------------------------------------------------------------------
@@ -6403,6 +6495,30 @@ inline void CameraOptions::set_main_each(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.CameraOptions.main_each)
 }
 
+// optional bool debug_mode = 17;
+inline bool CameraOptions::has_debug_mode() const {
+  return (_has_bits_[0] & 0x00010000u) != 0;
+}
+inline void CameraOptions::set_has_debug_mode() {
+  _has_bits_[0] |= 0x00010000u;
+}
+inline void CameraOptions::clear_has_debug_mode() {
+  _has_bits_[0] &= ~0x00010000u;
+}
+inline void CameraOptions::clear_debug_mode() {
+  debug_mode_ = false;
+  clear_has_debug_mode();
+}
+inline bool CameraOptions::debug_mode() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.CameraOptions.debug_mode)
+  return debug_mode_;
+}
+inline void CameraOptions::set_debug_mode(bool value) {
+  set_has_debug_mode();
+  debug_mode_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.CameraOptions.debug_mode)
+}
+
 // -------------------------------------------------------------------
 
 // ServerOptions
@@ -6661,6 +6777,30 @@ inline void DebugInfo::set_allocated_message(::std::string* message) {
     message_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
   // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.DebugInfo.message)
+}
+
+// optional int32 skipDebugFrames = 2;
+inline bool DebugInfo::has_skipdebugframes() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void DebugInfo::set_has_skipdebugframes() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void DebugInfo::clear_has_skipdebugframes() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void DebugInfo::clear_skipdebugframes() {
+  skipdebugframes_ = 0;
+  clear_has_skipdebugframes();
+}
+inline ::google::protobuf::int32 DebugInfo::skipdebugframes() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.DebugInfo.skipDebugFrames)
+  return skipdebugframes_;
+}
+inline void DebugInfo::set_skipdebugframes(::google::protobuf::int32 value) {
+  set_has_skipdebugframes();
+  skipdebugframes_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.DebugInfo.skipDebugFrames)
 }
 
 

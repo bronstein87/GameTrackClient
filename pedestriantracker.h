@@ -21,7 +21,6 @@ using namespace gt::internal;
 
 
 
-
 class PedestrianTracker : public DetectNetBase
 {
     Q_OBJECT
@@ -80,6 +79,9 @@ public:
         Point3f onSpace;
     };
 
+
+
+
     struct Player
     {
         Player() : id(QUuid::createUuid()) {}
@@ -93,7 +95,7 @@ public:
         Rect2d rTrack;
         Rect2d rUse;
         bool rTrackCropped = false;
-        Ptr<TrackerMOSSE> tracker;
+        Ptr <TrackerMOSSE> tracker;
         double lastConfidence = 0;
         double lastTrackConfidence = -1.;
         PlayerIntersectState intersectState = NoIntersect;
@@ -109,9 +111,6 @@ public:
         QVector <QPair <quint64, MovePosition>> moves;
         cv::Scalar color;
     };
-
-
-
 
     using PPlayer = QSharedPointer<Player>;
     using LostPlayersArea = QPair <Rect2d, QVector <PPlayer>>;
@@ -135,6 +134,22 @@ public:
     {
         Detect,
         Track,
+    };
+
+
+
+
+    struct PedestrianTrackerState
+    {
+        QLinkedList <PPlayer> nonStructuredPlayers;
+        QVector <LostPlayersArea> intersectPlayers;
+        QMap <TeamRole, QVector <PPlayer> > unconfirmedPlayers;
+        TrackMode mode = Players;
+        State state = Detect;
+        Mat inputImg;
+        quint64 lastTime;
+        qint32 detectCounter = 0;
+        qint32 trackCounter = 0;
     };
 
     explicit PedestrianTracker(qint32 width = 1920, qint32 height = 1080, QObject *parent = nullptr);
@@ -162,6 +177,10 @@ public:
     void setDebugBuffer (QLinkedList <FrameInfo>* _buffer){buffer = _buffer;}
 
     QLinkedList <PPlayer>& getPlayersInfo() {return nonStructuredPlayers;}
+
+    PedestrianTrackerState saveState();
+
+    void resetState(PedestrianTrackerState& state);
 
 
 signals:
@@ -198,23 +217,28 @@ private:
     void assignPosition(PPlayer player, bool &changed);
 
 
-    qint32 detectCounter = 0;
-    qint32 trackCounter = 0;
-    double trackerThreshold = 3.5;
-    double minIOUIntersect = 0.2;
-    double minIntersect = 0.25;
-    double trackConfidenceUpdateCoeff = 0.7;
 
-    Rect2d trackZone;
+
+    constexpr const static double trackerThreshold = 3.5;
+    constexpr const static double minIOUIntersect = 0.2;
+    constexpr const static double minIntersect = 0.25;
+    constexpr const static double trackConfidenceUpdateCoeff = 0.7;
+
     qint32 detectDuration = 8;
     qint32 trackDuration = 20;
-    QMap <TeamRole, PPlayer> attackInfo;
-    QMap <TeamRole, PPlayer> defenceInfo;
+
+
+    //    QMap <TeamRole, PPlayer> attackInfo;
+    //    QMap <TeamRole, PPlayer> defenceInfo;
+
+
+    qint32 detectCounter = 0;
+    qint32 trackCounter = 0;
+    Rect2d trackZone;
 
     QMap <TeamRole, QVector <PPlayer> > unconfirmedPlayers;
     QLinkedList <PPlayer> nonStructuredPlayers;
     QVector <LostPlayersArea> intersectPlayers;
-    QVector <PPlayer> outOfFramePlayers;
     TrackMode mode = Players;
     State state = Detect;
     QMutex mutex;

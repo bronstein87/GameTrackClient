@@ -63,7 +63,13 @@ public:
 
     void procImageQueue();
 
+    void procImageImitation();
+
     void startRecognition();
+
+    void resetWaitForCommand() {waitForCommand = false;}
+
+    void setFramePosition(qint32 offset) {moveFrames = offset;}
 
     void startLiveVideo();
 
@@ -215,7 +221,12 @@ private:
     PedestrianTracker pedTracker;
     BatTracker batTracker; // tmp
     QTimer autoExpTimer;
-    constexpr static const qint32 delayTreshold = 300;
+    constexpr static const qint32 delayTreshold = 1;
+
+    QString debugVideoPath;
+    QString debugTimePath;
+    qint32 moveFrames = 0;
+    bool waitForCommand = false;
 };
 
 #endif // CAMERA_H

@@ -97,7 +97,7 @@ bool AutoExposureHandler::correct(Mat image)
     percent = hist.at <float> (255.0);
 
     double mean = cv::mean(image)[0];
-    double relMean = mean / maxMean;
+    double relMean = mean / params->mean();
     double rel = percent / params->max_percent();
     if (relMean > 1 && rel > 1)
     {
@@ -107,8 +107,7 @@ bool AutoExposureHandler::correct(Mat image)
     {
         rel = relMean;
     }
-    qDebug() << relMean << rel << percent << params->max_percent() << mean << params->max_rel_coef()
-             << params->min_rel_coef();
+    //qDebug() << relMean << rel << percent << params->max_percent() << mean << params->mean();
     if (!(rel <= params->max_rel_coef() && rel >= params->min_rel_coef()))
     {
         ++processCounter;
@@ -123,18 +122,20 @@ bool AutoExposureHandler::correct(Mat image)
         }
         double neededExposure = params->exposure() / rel;
         double exposureStep = neededExposure - params->exposure();
+        double gainStep = (exposureStep / divideCoeff) * 15;
+        gainStep = gainStep < 1 ? 1 : gainStep;
 
         params->set_exposure(params->exposure() + exposureStep / divideCoeff);
 
         if (params->exposure() > lowExp && params->gain() <= params->max_gain_coeff())
         {
-            params->set_gain(params->gain() + (exposureStep / divideCoeff) * 15);
+            params->set_gain(params->gain() + gainStep);
         }
         else if (params->exposure() < lowExp)
         {
             params->set_gain(params->min_gain_coeff());
         }
-        qDebug()<< rel << percent << params->max_percent() << exposureStep << (exposureStep / divideCoeff) * 15 << divideCoeff;
+        //qDebug()<< neededExposure << exposureStep << gainStep << divideCoeff;
 
         if (params->exposure() > maxExp)
         {

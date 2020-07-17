@@ -278,9 +278,6 @@ void RtspVideoHandler::sendVideo(qint32 port, const QString& pipeLine, qint32 fr
 
     g_object_unref (mounts);
 
-    //    GstRTSPThreadPool* tp = gst_rtsp_server_get_thread_pool (server);
-    //    qDebug() << gst_rtsp_thread_pool_get_max_threads(tp) << "MAX THREADS";
-    //    gst_rtsp_thread_pool_set_max_threads(tp, 0);
     serverId = gst_rtsp_server_attach (server, NULL);
 
     emit serverStarted();
@@ -298,11 +295,11 @@ void RtspVideoHandler::closeServer()
 {
     if (server != nullptr)
     {
+        qDebug() << "rtsp destructor";
         reset();
         if (rtspClient != nullptr)
         {
             gst_rtsp_client_close(rtspClient);
-            rtspClient = nullptr;
         }
         g_source_remove (serverId);
         GstRTSPMountPoints *mounts = nullptr;
@@ -314,11 +311,18 @@ void RtspVideoHandler::closeServer()
         qDebug() << loop;
         if (loop != nullptr)
         {
-            qDebug() <<"stop";
+            qDebug() << "stop";
             g_main_loop_quit(loop);
             loop = nullptr;
         }
+    }
+}
 
+void RtspVideoHandler::disconnectClient()
+{
+    if (rtspClient != nullptr)
+    {
+        gst_rtsp_client_close(rtspClient);
     }
 }
 

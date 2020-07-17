@@ -46,6 +46,8 @@ public:
 
     void closeServer();
 
+    void disconnectClient();
+
     ~ RtspVideoHandler();
 signals:
 
@@ -114,12 +116,9 @@ private:
     QLinkedList <quint64> tsRtpHeader;
     QMutex mutex;
 
-
-
     GMainLoop* loop = nullptr;
     GstRTSPServer* server = nullptr;
     GstRTSPClient* rtspClient = nullptr;
-
 
     qint32 currentFrameCount = 0;
     qint32 needFrameCount = -1;

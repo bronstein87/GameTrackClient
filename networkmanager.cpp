@@ -55,6 +55,15 @@ void NetworkManager::setHandler(qint32 id, std::function<void (const MessageData
     }
 }
 
+NetworkManager::~NetworkManager()
+{
+    auto socket = qobject_cast <QTcpSocket*> (endPoint);
+    if (socket)
+    {
+        socket->disconnect();
+    }
+}
+
 void NetworkManager::initSocket(const QString &address)
 {
     QStringList ipPort = address.split(":");

@@ -45,6 +45,8 @@ public:
 
     void initialize(){initSocket(address);}
 
+    ~NetworkManager();
+
 signals:
 
     void messageReady(const QString& message);
@@ -64,8 +66,8 @@ private:
 
     static constexpr const qint32 headerSize = 8;
     QMap <qint32, QVector <std::function <void (const MessageData&)>>> messageHandlers;
-    QMap <QObject*, RawBuffer> rawBuffers;
     QObject* endPoint;
+    QMap <QObject*, RawBuffer> rawBuffers;
     EndPointType type;
     QString address;
 

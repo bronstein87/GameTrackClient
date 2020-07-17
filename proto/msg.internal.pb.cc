@@ -252,7 +252,7 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PictureCameraParameters));
   AutoExposureParameters_descriptor_ = file->message_type(7);
-  static const int AutoExposureParameters_offsets_[7] = {
+  static const int AutoExposureParameters_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AutoExposureParameters, gain_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AutoExposureParameters, exposure_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AutoExposureParameters, min_gain_coeff_),
@@ -260,6 +260,7 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AutoExposureParameters, max_percent_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AutoExposureParameters, min_rel_coef_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AutoExposureParameters, max_rel_coef_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AutoExposureParameters, mean_),
   };
   AutoExposureParameters_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -292,10 +293,11 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(StreamCameraParameters));
   StreamCameraCommand_descriptor_ = file->message_type(9);
-  static const int StreamCameraCommand_offsets_[3] = {
+  static const int StreamCameraCommand_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamCameraCommand, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamCameraCommand, video_duration_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamCameraCommand, desc_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamCameraCommand, stop_),
   };
   StreamCameraCommand_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -393,7 +395,7 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
   RecognizeData_descriptor_ = file->message_type(14);
   static const int RecognizeData_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecognizeData, data_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecognizeData, starttime_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecognizeData, start_time_),
   };
   RecognizeData_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -426,7 +428,7 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PedestrianMeasure));
   CameraOptions_descriptor_ = file->message_type(16);
-  static const int CameraOptions_offsets_[16] = {
+  static const int CameraOptions_offsets_[17] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, hw_params_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, p_params_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, auto_exp_params_),
@@ -443,6 +445,7 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, auto_exposure_enable_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, main_add_mode_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, main_each_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraOptions, debug_mode_),
   };
   CameraOptions_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -489,8 +492,9 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(FrameTime));
   DebugInfo_descriptor_ = file->message_type(19);
-  static const int DebugInfo_offsets_[1] = {
+  static const int DebugInfo_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DebugInfo, message_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DebugInfo, skipdebugframes_),
   };
   DebugInfo_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -652,88 +656,93 @@ void protobuf_AddDesc_msg_2einternal_2eproto() {
     "\010 \001(\005\022\024\n\014b_saturation\030\t \001(\005\022\013\n\003hue\030\n \001(\005"
     "\022\023\n\013shadow_coef\030\013 \001(\001\022\030\n\020shadow_threshol"
     "d\030\014 \001(\001\022 \n\030shadow_gauss_window_size\030\r \001("
-    "\005\022\016\n\006rotate\030\016 \001(\005\"\251\001\n\026AutoExposureParame"
+    "\005\022\016\n\006rotate\030\016 \001(\005\"\267\001\n\026AutoExposureParame"
     "ters\022\014\n\004gain\030\001 \001(\001\022\020\n\010exposure\030\002 \001(\001\022\026\n\016"
     "min_gain_coeff\030\003 \001(\001\022\026\n\016max_gain_coeff\030\004"
     " \001(\001\022\023\n\013max_percent\030\005 \001(\001\022\024\n\014min_rel_coe"
-    "f\030\006 \001(\001\022\024\n\014max_rel_coef\030\007 \001(\001\"\243\001\n\026Stream"
-    "CameraParameters\022\021\n\traw_frame\030\001 \001(\005\022\034\n\024s"
-    "end_frame_rate_main\030\004 \001(\005\022\033\n\023send_frame_"
-    "rate_add\030\006 \001(\005\022\035\n\025port_send_stream_main\030"
-    "\010 \001(\005\022\034\n\024port_send_stream_add\030\t \001(\005\"f\n\023S"
-    "treamCameraCommand\022)\n\004type\030\001 \002(\0162\033.gt.in"
-    "ternal.msg.StreamType\022\026\n\016video_duration\030"
-    "\002 \001(\005\022\014\n\004desc\030\003 \001(\t\"\235\002\n\025CalibrationParam"
-    "eters\022%\n\003xyz\030\001 \002(\0132\030.gt.internal.msg.Poi"
-    "nt3d\022(\n\006angles\030\002 \002(\0132\030.gt.internal.msg.P"
-    "oint3d\022\r\n\005focus\030\003 \002(\001\022\017\n\007samples\030\004 \002(\001\022\r"
-    "\n\005lines\030\005 \002(\001\022\016\n\006sample\030\006 \002(\001\022\014\n\004line\030\007 "
-    "\002(\001\022\022\n\npixel_size\030\010 \002(\001\022\n\n\002k1\030\t \002(\001\022\n\n\002k"
-    "2\030\n \002(\001\022\n\n\002k3\030\013 \002(\001\022\n\n\002p1\030\014 \002(\001\022\n\n\002p2\030\r "
-    "\002(\001\022\n\n\002b1\030\016 \002(\001\022\n\n\002b2\030\017 \002(\001\"\217\001\n\013BallMeas"
-    "ure\022$\n\002xy\030\001 \002(\0132\030.gt.internal.msg.Point2"
-    "d\022\r\n\005valid\030\002 \002(\010\022\014\n\004time\030\003 \002(\004\022)\n\005event\030"
-    "\004 \002(\0162\032.gt.internal.msg.BallEvent\022\022\n\nis_"
-    "rebound\030\005 \002(\010\"r\n\nBatMeasure\022\021\n\twas_swing"
-    "\030\001 \002(\010\022*\n\010measures\030\002 \003(\0132\030.gt.internal.m"
-    "sg.Point2d\022%\n\006bboxes\030\003 \003(\0132\025.gt.internal"
-    ".msg.Rect\"\247\001\n\016OutOfFrameInfo\022(\n\003dir\030\001 \002("
-    "\0162\033.gt.internal.msg.OutOfFrame\0222\n\014ball_m"
-    "easure\030\002 \001(\0132\034.gt.internal.msg.BallMeasu"
-    "re\0227\n\013ped_measure\030\003 \001(\0132\".gt.internal.ms"
-    "g.PedestrianMeasure\"N\n\rRecognizeData\022*\n\004"
-    "data\030\001 \003(\0132\034.gt.internal.msg.BallMeasure"
-    "\022\021\n\tstartTime\030\002 \001(\004\"\275\001\n\021PedestrianMeasur"
-    "e\022 \n\001r\030\001 \002(\0132\025.gt.internal.msg.Rect\022#\n\001p"
-    "\030\002 \002(\0132\030.gt.internal.msg.Point3d\022,\n\003pos\030"
-    "\003 \002(\0162\037.gt.internal.msg.PlayerPosition\022\'"
-    "\n\004role\030\004 \001(\0162\031.gt.internal.msg.TeamRole\022"
-    "\n\n\002id\030\005 \002(\t\"\216\005\n\rCameraOptions\022<\n\thw_para"
-    "ms\030\001 \001(\0132).gt.internal.msg.HardwareCamer"
-    "aParameters\022:\n\010p_params\030\002 \001(\0132(.gt.inter"
-    "nal.msg.PictureCameraParameters\022@\n\017auto_"
-    "exp_params\030\003 \001(\0132\'.gt.internal.msg.AutoE"
-    "xposureParameters\022<\n\014calib_params\030\004 \001(\0132"
-    "&.gt.internal.msg.CalibrationParameters\022"
-    "*\n\010rec_rois\030\005 \001(\0132\030.gt.internal.msg.RecR"
-    "OIs\022\035\n\025ball_recognize_enable\030\006 \001(\010\022\024\n\014de"
-    "bug_enable\030\007 \001(\010\0228\n\nrec_params\030\010 \001(\0132$.g"
-    "t.internal.msg.RecognizeParameters\022\014\n\004de"
-    "sc\030\t \001(\t\022-\n\010cam_type\030\n \001(\0162\033.gt.internal"
-    ".msg.CameraType\022\n\n\002id\030\013 \002(\t\022\027\n\017save_para"
-    "meters\030\014 \001(\010\022>\n\rstream_params\030\r \001(\0132\'.gt"
-    ".internal.msg.StreamCameraParameters\022\034\n\024"
-    "auto_exposure_enable\030\016 \001(\010\022\025\n\rmain_add_m"
-    "ode\030\017 \002(\010\022\021\n\tmain_each\030\020 \001(\005\"B\n\rServerOp"
-    "tions\022\025\n\rwrite_to_disk\030\001 \001(\010\022\032\n\022write_un"
-    "compressed\030\002 \001(\010\"F\n\tFrameTime\022\025\n\rcompute"
-    "r_time\030\001 \001(\004\022\023\n\013camera_time\030\002 \001(\004\022\r\n\005fra"
-    "me\030\003 \001(\014\"\034\n\tDebugInfo\022\017\n\007message\030\001 \002(\t*4"
-    "\n\016CameraPosition\022\r\n\tUndefined\020\000\022\010\n\004Left\020"
-    "\001\022\t\n\005Right\020\002*\?\n\nOutOfFrame\022\013\n\007LeftOut\020\000\022"
-    "\014\n\010RightOut\020\001\022\t\n\005UpOut\020\002\022\013\n\007DownOut\020\003*&\n"
-    "\nStreamType\022\010\n\004Main\020\001\022\016\n\nAdditional\020\002*A\n"
-    "\tBallEvent\022\021\n\rThrowDetected\020\000\022\017\n\013HitDete"
-    "cted\020\001\022\020\n\014MoveDetected\020\002*\215\001\n\016PlayerPosit"
-    "ion\022\010\n\004Home\020\001\022\r\n\tFirstBase\020\002\022\016\n\nSecondBa"
-    "se\020\003\022\r\n\tThirdBase\020\004\022\023\n\017BetwThirdSecond\020\005"
-    "\022\r\n\tLeftField\020\006\022\016\n\nRightField\020\007\022\017\n\013Cente"
-    "rField\020\010*\322\001\n\010TeamRole\022\n\n\006NoRole\020\001\022\013\n\007Pit"
-    "cher\020\002\022\013\n\007Catcher\020\003\022\020\n\014FirstBaseman\020\004\022\021\n"
-    "\rSecondBaseman\020\005\022\020\n\014ThirdBaseman\020\006\022\r\n\tSh"
-    "ortStop\020\007\022\017\n\013LeftFielder\020\010\022\021\n\rCenterFiel"
-    "der\020\t\022\020\n\014RightFielder\020\n\022\016\n\nOutfielder\020\013\022"
-    "\024\n\020DesignatedHitter\020\014*\207\001\n\nCameraType\022\020\n\014"
-    "BaseLeftMain\020\001\022\021\n\rBaseRightMain\020\002\022\017\n\013Bas"
-    "eLeftAdd\020\003\022\020\n\014BaseRightAdd\020\004\022\t\n\005Pitch\020\005\022"
-    "\013\n\007BatLeft\020\006\022\014\n\010BatRight\020\007\022\013\n\007FishEye\020\010*"
-    "\213\002\n\021GameTrackProtocol\022\030\n\024SendCameraParam"
-    "eters\020\001\022\021\n\rRequestStream\020\002\022\024\n\020NotifyOutO"
-    "fFrame\020\003\022\034\n\030NotifyPedestrianPosition\020\004\022\025"
-    "\n\021NotifyBallMeasure\020\005\022\026\n\022RequestCameraFr"
-    "ame\020\006\022\026\n\022GetBallCoordinates\020\007\022\025\n\021GetBatC"
-    "oordinates\020\010\022\017\n\013GetTestData\020\t\022\021\n\rRestart"
-    "Camera\020\n\022\023\n\017SendCurrentTime\020\013B\002H\001", 4673);
+    "f\030\006 \001(\001\022\024\n\014max_rel_coef\030\007 \001(\001\022\014\n\004mean\030\010 "
+    "\001(\001\"\243\001\n\026StreamCameraParameters\022\021\n\traw_fr"
+    "ame\030\001 \001(\005\022\034\n\024send_frame_rate_main\030\004 \001(\005\022"
+    "\033\n\023send_frame_rate_add\030\006 \001(\005\022\035\n\025port_sen"
+    "d_stream_main\030\010 \001(\005\022\034\n\024port_send_stream_"
+    "add\030\t \001(\005\"t\n\023StreamCameraCommand\022)\n\004type"
+    "\030\001 \002(\0162\033.gt.internal.msg.StreamType\022\026\n\016v"
+    "ideo_duration\030\002 \001(\005\022\014\n\004desc\030\003 \001(\t\022\014\n\004sto"
+    "p\030\004 \001(\010\"\235\002\n\025CalibrationParameters\022%\n\003xyz"
+    "\030\001 \002(\0132\030.gt.internal.msg.Point3d\022(\n\006angl"
+    "es\030\002 \002(\0132\030.gt.internal.msg.Point3d\022\r\n\005fo"
+    "cus\030\003 \002(\001\022\017\n\007samples\030\004 \002(\001\022\r\n\005lines\030\005 \002("
+    "\001\022\016\n\006sample\030\006 \002(\001\022\014\n\004line\030\007 \002(\001\022\022\n\npixel"
+    "_size\030\010 \002(\001\022\n\n\002k1\030\t \002(\001\022\n\n\002k2\030\n \002(\001\022\n\n\002k"
+    "3\030\013 \002(\001\022\n\n\002p1\030\014 \002(\001\022\n\n\002p2\030\r \002(\001\022\n\n\002b1\030\016 "
+    "\002(\001\022\n\n\002b2\030\017 \002(\001\"\217\001\n\013BallMeasure\022$\n\002xy\030\001 "
+    "\002(\0132\030.gt.internal.msg.Point2d\022\r\n\005valid\030\002"
+    " \002(\010\022\014\n\004time\030\003 \002(\004\022)\n\005event\030\004 \002(\0162\032.gt.i"
+    "nternal.msg.BallEvent\022\022\n\nis_rebound\030\005 \002("
+    "\010\"r\n\nBatMeasure\022\021\n\twas_swing\030\001 \002(\010\022*\n\010me"
+    "asures\030\002 \003(\0132\030.gt.internal.msg.Point2d\022%"
+    "\n\006bboxes\030\003 \003(\0132\025.gt.internal.msg.Rect\"\247\001"
+    "\n\016OutOfFrameInfo\022(\n\003dir\030\001 \002(\0162\033.gt.inter"
+    "nal.msg.OutOfFrame\0222\n\014ball_measure\030\002 \001(\013"
+    "2\034.gt.internal.msg.BallMeasure\0227\n\013ped_me"
+    "asure\030\003 \001(\0132\".gt.internal.msg.Pedestrian"
+    "Measure\"O\n\rRecognizeData\022*\n\004data\030\001 \003(\0132\034"
+    ".gt.internal.msg.BallMeasure\022\022\n\nstart_ti"
+    "me\030\002 \001(\004\"\275\001\n\021PedestrianMeasure\022 \n\001r\030\001 \002("
+    "\0132\025.gt.internal.msg.Rect\022#\n\001p\030\002 \002(\0132\030.gt"
+    ".internal.msg.Point3d\022,\n\003pos\030\003 \002(\0162\037.gt."
+    "internal.msg.PlayerPosition\022\'\n\004role\030\004 \001("
+    "\0162\031.gt.internal.msg.TeamRole\022\n\n\002id\030\005 \002(\t"
+    "\"\242\005\n\rCameraOptions\022<\n\thw_params\030\001 \001(\0132)."
+    "gt.internal.msg.HardwareCameraParameters"
+    "\022:\n\010p_params\030\002 \001(\0132(.gt.internal.msg.Pic"
+    "tureCameraParameters\022@\n\017auto_exp_params\030"
+    "\003 \001(\0132\'.gt.internal.msg.AutoExposurePara"
+    "meters\022<\n\014calib_params\030\004 \001(\0132&.gt.intern"
+    "al.msg.CalibrationParameters\022*\n\010rec_rois"
+    "\030\005 \001(\0132\030.gt.internal.msg.RecROIs\022\035\n\025ball"
+    "_recognize_enable\030\006 \001(\010\022\024\n\014debug_enable\030"
+    "\007 \001(\010\0228\n\nrec_params\030\010 \001(\0132$.gt.internal."
+    "msg.RecognizeParameters\022\014\n\004desc\030\t \001(\t\022-\n"
+    "\010cam_type\030\n \001(\0162\033.gt.internal.msg.Camera"
+    "Type\022\n\n\002id\030\013 \002(\t\022\027\n\017save_parameters\030\014 \001("
+    "\010\022>\n\rstream_params\030\r \001(\0132\'.gt.internal.m"
+    "sg.StreamCameraParameters\022\034\n\024auto_exposu"
+    "re_enable\030\016 \001(\010\022\025\n\rmain_add_mode\030\017 \002(\010\022\021"
+    "\n\tmain_each\030\020 \001(\005\022\022\n\ndebug_mode\030\021 \001(\010\"B\n"
+    "\rServerOptions\022\025\n\rwrite_to_disk\030\001 \001(\010\022\032\n"
+    "\022write_uncompressed\030\002 \001(\010\"F\n\tFrameTime\022\025"
+    "\n\rcomputer_time\030\001 \001(\004\022\023\n\013camera_time\030\002 \001"
+    "(\004\022\r\n\005frame\030\003 \001(\014\"5\n\tDebugInfo\022\017\n\007messag"
+    "e\030\001 \002(\t\022\027\n\017skipDebugFrames\030\002 \001(\005*4\n\016Came"
+    "raPosition\022\r\n\tUndefined\020\000\022\010\n\004Left\020\001\022\t\n\005R"
+    "ight\020\002*\?\n\nOutOfFrame\022\013\n\007LeftOut\020\000\022\014\n\010Rig"
+    "htOut\020\001\022\t\n\005UpOut\020\002\022\013\n\007DownOut\020\003*&\n\nStrea"
+    "mType\022\010\n\004Main\020\001\022\016\n\nAdditional\020\002*A\n\tBallE"
+    "vent\022\021\n\rThrowDetected\020\000\022\017\n\013HitDetected\020\001"
+    "\022\020\n\014MoveDetected\020\002*\215\001\n\016PlayerPosition\022\010\n"
+    "\004Home\020\001\022\r\n\tFirstBase\020\002\022\016\n\nSecondBase\020\003\022\r"
+    "\n\tThirdBase\020\004\022\023\n\017BetwThirdSecond\020\005\022\r\n\tLe"
+    "ftField\020\006\022\016\n\nRightField\020\007\022\017\n\013CenterField"
+    "\020\010*\322\001\n\010TeamRole\022\n\n\006NoRole\020\001\022\013\n\007Pitcher\020\002"
+    "\022\013\n\007Catcher\020\003\022\020\n\014FirstBaseman\020\004\022\021\n\rSecon"
+    "dBaseman\020\005\022\020\n\014ThirdBaseman\020\006\022\r\n\tShortSto"
+    "p\020\007\022\017\n\013LeftFielder\020\010\022\021\n\rCenterFielder\020\t\022"
+    "\020\n\014RightFielder\020\n\022\016\n\nOutfielder\020\013\022\024\n\020Des"
+    "ignatedHitter\020\014*\207\001\n\nCameraType\022\020\n\014BaseLe"
+    "ftMain\020\001\022\021\n\rBaseRightMain\020\002\022\017\n\013BaseLeftA"
+    "dd\020\003\022\020\n\014BaseRightAdd\020\004\022\t\n\005Pitch\020\005\022\013\n\007Bat"
+    "Left\020\006\022\014\n\010BatRight\020\007\022\013\n\007FishEye\020\010*\376\002\n\021Ga"
+    "meTrackProtocol\022\030\n\024SendCameraParameters\020"
+    "\001\022\021\n\rRequestStream\020\002\022\024\n\020NotifyOutOfFrame"
+    "\020\003\022\034\n\030NotifyPedestrianPosition\020\004\022\025\n\021Noti"
+    "fyBallMeasure\020\005\022\026\n\022RequestCameraFrame\020\006\022"
+    "\026\n\022GetBallCoordinates\020\007\022\025\n\021GetBatCoordin"
+    "ates\020\010\022\017\n\013GetTestData\020\t\022\021\n\rRestartCamera"
+    "\020\n\022\023\n\017SendCurrentTime\020\013\022\020\n\014SetDebugMode\020"
+    "\014\022\035\n\031RequestNextFrameDebugMode\020\r\022!\n\035Requ"
+    "estPreviousFrameDebugMode\020\017\022\035\n\031NotifyMom"
+    "entStartDetected\020\016B\002H\001", 4862);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "msg.internal.proto", &protobuf_RegisterTypes);
   Point2d::default_instance_ = new Point2d();
@@ -926,6 +935,10 @@ bool GameTrackProtocol_IsValid(int value) {
     case 9:
     case 10:
     case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
       return true;
     default:
       return false;
@@ -4369,6 +4382,7 @@ const int AutoExposureParameters::kMaxGainCoeffFieldNumber;
 const int AutoExposureParameters::kMaxPercentFieldNumber;
 const int AutoExposureParameters::kMinRelCoefFieldNumber;
 const int AutoExposureParameters::kMaxRelCoefFieldNumber;
+const int AutoExposureParameters::kMeanFieldNumber;
 #endif  // !_MSC_VER
 
 AutoExposureParameters::AutoExposureParameters()
@@ -4396,6 +4410,7 @@ void AutoExposureParameters::SharedCtor() {
   max_percent_ = 0;
   min_rel_coef_ = 0;
   max_rel_coef_ = 0;
+  mean_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -4441,8 +4456,8 @@ void AutoExposureParameters::Clear() {
     ::memset(&first, 0, n);                                \
   } while (0)
 
-  if (_has_bits_[0 / 32] & 127) {
-    ZR_(gain_, max_rel_coef_);
+  if (_has_bits_[0 / 32] & 255) {
+    ZR_(gain_, mean_);
   }
 
 #undef OFFSET_OF_FIELD_
@@ -4562,6 +4577,21 @@ bool AutoExposureParameters::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(65)) goto parse_mean;
+        break;
+      }
+
+      // optional double mean = 8;
+      case 8: {
+        if (tag == 65) {
+         parse_mean:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &mean_)));
+          set_has_mean();
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -4626,6 +4656,11 @@ void AutoExposureParameters::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(7, this->max_rel_coef(), output);
   }
 
+  // optional double mean = 8;
+  if (has_mean()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(8, this->mean(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -4669,6 +4704,11 @@ void AutoExposureParameters::SerializeWithCachedSizes(
   // optional double max_rel_coef = 7;
   if (has_max_rel_coef()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(7, this->max_rel_coef(), target);
+  }
+
+  // optional double mean = 8;
+  if (has_mean()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(8, this->mean(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -4715,6 +4755,11 @@ int AutoExposureParameters::ByteSize() const {
 
     // optional double max_rel_coef = 7;
     if (has_max_rel_coef()) {
+      total_size += 1 + 8;
+    }
+
+    // optional double mean = 8;
+    if (has_mean()) {
       total_size += 1 + 8;
     }
 
@@ -4766,6 +4811,9 @@ void AutoExposureParameters::MergeFrom(const AutoExposureParameters& from) {
     if (from.has_max_rel_coef()) {
       set_max_rel_coef(from.max_rel_coef());
     }
+    if (from.has_mean()) {
+      set_mean(from.mean());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -4796,6 +4844,7 @@ void AutoExposureParameters::Swap(AutoExposureParameters* other) {
     std::swap(max_percent_, other->max_percent_);
     std::swap(min_rel_coef_, other->min_rel_coef_);
     std::swap(max_rel_coef_, other->max_rel_coef_);
+    std::swap(mean_, other->mean_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -5207,6 +5256,7 @@ void StreamCameraParameters::Swap(StreamCameraParameters* other) {
 const int StreamCameraCommand::kTypeFieldNumber;
 const int StreamCameraCommand::kVideoDurationFieldNumber;
 const int StreamCameraCommand::kDescFieldNumber;
+const int StreamCameraCommand::kStopFieldNumber;
 #endif  // !_MSC_VER
 
 StreamCameraCommand::StreamCameraCommand()
@@ -5231,6 +5281,7 @@ void StreamCameraCommand::SharedCtor() {
   type_ = 1;
   video_duration_ = 0;
   desc_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  stop_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -5269,7 +5320,7 @@ StreamCameraCommand* StreamCameraCommand::New() const {
 }
 
 void StreamCameraCommand::Clear() {
-  if (_has_bits_[0 / 32] & 7) {
+  if (_has_bits_[0 / 32] & 15) {
     type_ = 1;
     video_duration_ = 0;
     if (has_desc()) {
@@ -5277,6 +5328,7 @@ void StreamCameraCommand::Clear() {
         desc_->clear();
       }
     }
+    stop_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -5339,6 +5391,21 @@ bool StreamCameraCommand::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(32)) goto parse_stop;
+        break;
+      }
+
+      // optional bool stop = 4;
+      case 4: {
+        if (tag == 32) {
+         parse_stop:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &stop_)));
+          set_has_stop();
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -5389,6 +5456,11 @@ void StreamCameraCommand::SerializeWithCachedSizes(
       3, this->desc(), output);
   }
 
+  // optional bool stop = 4;
+  if (has_stop()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->stop(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -5421,6 +5493,11 @@ void StreamCameraCommand::SerializeWithCachedSizes(
         3, this->desc(), target);
   }
 
+  // optional bool stop = 4;
+  if (has_stop()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->stop(), target);
+  }
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -5451,6 +5528,11 @@ int StreamCameraCommand::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->desc());
+    }
+
+    // optional bool stop = 4;
+    if (has_stop()) {
+      total_size += 1 + 1;
     }
 
   }
@@ -5489,6 +5571,9 @@ void StreamCameraCommand::MergeFrom(const StreamCameraCommand& from) {
     if (from.has_desc()) {
       set_desc(from.desc());
     }
+    if (from.has_stop()) {
+      set_stop(from.stop());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -5516,6 +5601,7 @@ void StreamCameraCommand::Swap(StreamCameraCommand* other) {
     std::swap(type_, other->type_);
     std::swap(video_duration_, other->video_duration_);
     std::swap(desc_, other->desc_);
+    std::swap(stop_, other->stop_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -7354,7 +7440,7 @@ RecognizeData::RecognizeData(const RecognizeData& from)
 
 void RecognizeData::SharedCtor() {
   _cached_size_ = 0;
-  starttime_ = GOOGLE_ULONGLONG(0);
+  start_time_ = GOOGLE_ULONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -7390,7 +7476,7 @@ RecognizeData* RecognizeData::New() const {
 }
 
 void RecognizeData::Clear() {
-  starttime_ = GOOGLE_ULONGLONG(0);
+  start_time_ = GOOGLE_ULONGLONG(0);
   data_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -7416,18 +7502,18 @@ bool RecognizeData::MergePartialFromCodedStream(
           goto handle_unusual;
         }
         if (input->ExpectTag(10)) goto parse_data;
-        if (input->ExpectTag(16)) goto parse_startTime;
+        if (input->ExpectTag(16)) goto parse_start_time;
         break;
       }
 
-      // optional uint64 startTime = 2;
+      // optional uint64 start_time = 2;
       case 2: {
         if (tag == 16) {
-         parse_startTime:
+         parse_start_time:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
-                 input, &starttime_)));
-          set_has_starttime();
+                 input, &start_time_)));
+          set_has_start_time();
         } else {
           goto handle_unusual;
         }
@@ -7466,9 +7552,9 @@ void RecognizeData::SerializeWithCachedSizes(
       1, this->data(i), output);
   }
 
-  // optional uint64 startTime = 2;
-  if (has_starttime()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(2, this->starttime(), output);
+  // optional uint64 start_time = 2;
+  if (has_start_time()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(2, this->start_time(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -7488,9 +7574,9 @@ void RecognizeData::SerializeWithCachedSizes(
         1, this->data(i), target);
   }
 
-  // optional uint64 startTime = 2;
-  if (has_starttime()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(2, this->starttime(), target);
+  // optional uint64 start_time = 2;
+  if (has_start_time()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(2, this->start_time(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -7505,11 +7591,11 @@ int RecognizeData::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    // optional uint64 startTime = 2;
-    if (has_starttime()) {
+    // optional uint64 start_time = 2;
+    if (has_start_time()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt64Size(
-          this->starttime());
+          this->start_time());
     }
 
   }
@@ -7548,8 +7634,8 @@ void RecognizeData::MergeFrom(const RecognizeData& from) {
   GOOGLE_CHECK_NE(&from, this);
   data_.MergeFrom(from.data_);
   if (from._has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    if (from.has_starttime()) {
-      set_starttime(from.starttime());
+    if (from.has_start_time()) {
+      set_start_time(from.start_time());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -7576,7 +7662,7 @@ bool RecognizeData::IsInitialized() const {
 void RecognizeData::Swap(RecognizeData* other) {
   if (other != this) {
     data_.Swap(&other->data_);
-    std::swap(starttime_, other->starttime_);
+    std::swap(start_time_, other->start_time_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -8041,6 +8127,7 @@ const int CameraOptions::kStreamParamsFieldNumber;
 const int CameraOptions::kAutoExposureEnableFieldNumber;
 const int CameraOptions::kMainAddModeFieldNumber;
 const int CameraOptions::kMainEachFieldNumber;
+const int CameraOptions::kDebugModeFieldNumber;
 #endif  // !_MSC_VER
 
 CameraOptions::CameraOptions()
@@ -8085,6 +8172,7 @@ void CameraOptions::SharedCtor() {
   auto_exposure_enable_ = false;
   main_add_mode_ = false;
   main_each_ = 0;
+  debug_mode_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -8166,7 +8254,7 @@ void CameraOptions::Clear() {
   }
   if (_has_bits_[8 / 32] & 65280) {
     ZR_(save_parameters_, auto_exposure_enable_);
-    ZR_(main_add_mode_, main_each_);
+    ZR_(main_each_, main_add_mode_);
     if (has_desc()) {
       if (desc_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         desc_->clear();
@@ -8182,6 +8270,7 @@ void CameraOptions::Clear() {
       if (stream_params_ != NULL) stream_params_->::gt::internal::msg::StreamCameraParameters::Clear();
     }
   }
+  debug_mode_ = false;
 
 #undef OFFSET_OF_FIELD_
 #undef ZR_
@@ -8430,6 +8519,21 @@ bool CameraOptions::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(136)) goto parse_debug_mode;
+        break;
+      }
+
+      // optional bool debug_mode = 17;
+      case 17: {
+        if (tag == 136) {
+         parse_debug_mode:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &debug_mode_)));
+          set_has_debug_mode();
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -8557,6 +8661,11 @@ void CameraOptions::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(16, this->main_each(), output);
   }
 
+  // optional bool debug_mode = 17;
+  if (has_debug_mode()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(17, this->debug_mode(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -8672,6 +8781,11 @@ void CameraOptions::SerializeWithCachedSizes(
   // optional int32 main_each = 16;
   if (has_main_each()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(16, this->main_each(), target);
+  }
+
+  // optional bool debug_mode = 17;
+  if (has_debug_mode()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(17, this->debug_mode(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -8790,6 +8904,13 @@ int CameraOptions::ByteSize() const {
     }
 
   }
+  if (_has_bits_[16 / 32] & (0xffu << (16 % 32))) {
+    // optional bool debug_mode = 17;
+    if (has_debug_mode()) {
+      total_size += 2 + 1;
+    }
+
+  }
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -8867,6 +8988,11 @@ void CameraOptions::MergeFrom(const CameraOptions& from) {
       set_main_each(from.main_each());
     }
   }
+  if (from._has_bits_[16 / 32] & (0xffu << (16 % 32))) {
+    if (from.has_debug_mode()) {
+      set_debug_mode(from.debug_mode());
+    }
+  }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -8915,6 +9041,7 @@ void CameraOptions::Swap(CameraOptions* other) {
     std::swap(auto_exposure_enable_, other->auto_exposure_enable_);
     std::swap(main_add_mode_, other->main_add_mode_);
     std::swap(main_each_, other->main_each_);
+    std::swap(debug_mode_, other->debug_mode_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -9528,6 +9655,7 @@ void FrameTime::Swap(FrameTime* other) {
 
 #ifndef _MSC_VER
 const int DebugInfo::kMessageFieldNumber;
+const int DebugInfo::kSkipDebugFramesFieldNumber;
 #endif  // !_MSC_VER
 
 DebugInfo::DebugInfo()
@@ -9550,6 +9678,7 @@ void DebugInfo::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   message_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  skipdebugframes_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -9588,10 +9717,13 @@ DebugInfo* DebugInfo::New() const {
 }
 
 void DebugInfo::Clear() {
-  if (has_message()) {
-    if (message_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-      message_->clear();
+  if (_has_bits_[0 / 32] & 3) {
+    if (has_message()) {
+      if (message_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+        message_->clear();
+      }
     }
+    skipdebugframes_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -9616,6 +9748,21 @@ bool DebugInfo::MergePartialFromCodedStream(
             this->message().data(), this->message().length(),
             ::google::protobuf::internal::WireFormat::PARSE,
             "message");
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_skipDebugFrames;
+        break;
+      }
+
+      // optional int32 skipDebugFrames = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_skipDebugFrames:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &skipdebugframes_)));
+          set_has_skipdebugframes();
         } else {
           goto handle_unusual;
         }
@@ -9658,6 +9805,11 @@ void DebugInfo::SerializeWithCachedSizes(
       1, this->message(), output);
   }
 
+  // optional int32 skipDebugFrames = 2;
+  if (has_skipdebugframes()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->skipdebugframes(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -9679,6 +9831,11 @@ void DebugInfo::SerializeWithCachedSizes(
         1, this->message(), target);
   }
 
+  // optional int32 skipDebugFrames = 2;
+  if (has_skipdebugframes()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->skipdebugframes(), target);
+  }
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -9696,6 +9853,13 @@ int DebugInfo::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->message());
+    }
+
+    // optional int32 skipDebugFrames = 2;
+    if (has_skipdebugframes()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->skipdebugframes());
     }
 
   }
@@ -9728,6 +9892,9 @@ void DebugInfo::MergeFrom(const DebugInfo& from) {
     if (from.has_message()) {
       set_message(from.message());
     }
+    if (from.has_skipdebugframes()) {
+      set_skipdebugframes(from.skipdebugframes());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -9753,6 +9920,7 @@ bool DebugInfo::IsInitialized() const {
 void DebugInfo::Swap(DebugInfo* other) {
   if (other != this) {
     std::swap(message_, other->message_);
+    std::swap(skipdebugframes_, other->skipdebugframes_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

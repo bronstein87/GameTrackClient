@@ -43,11 +43,11 @@ Camera::Camera(const QString& pattern, bool init, qint32 port, QObject* parent) 
 
     if (init)
     {
+        if (!options.has_debug_mode())
+        {
+            options.set_debug_mode(false);
+        }
         //1936, 1216
-        //options.mutable_hw_params()->set_width(1936);
-       // options.mutable_hw_params()->set_height(1216);
-        options.mutable_hw_params()->set_width(1920);
-        options.mutable_hw_params()->set_height(1080);
         initializeCameraInterface();
         setHWParams(options, true);
         fillCurrentCameraParameters();
@@ -62,9 +62,11 @@ Camera::Camera(const QString& pattern, bool init, qint32 port, QObject* parent) 
         options.set_cam_type((CameraType)data["type"].toInt());
         options.mutable_stream_params()->set_port_send_stream_main(data["port1"].toInt());
         options.mutable_stream_params()->set_port_send_stream_add(data["port2"].toInt());
-        qDebug()<<options.mutable_stream_params()->port_send_stream_main() << options.mutable_stream_params()->port_send_stream_add();
+        debugVideoPath = data["debug_path"].toString();
+        qDebug()<< options.mutable_stream_params()->port_send_stream_main()
+                << options.mutable_stream_params()->port_send_stream_add();
 
-        autoExpHandler.params = options.mutable_auto_exp_params();
+        autoExpHandler.setParameters(options.mutable_auto_exp_params());
         recognizer.setROIs(options.mutable_rec_rois());
         recognizer.setRecognizeParams(options.mutable_rec_params());
         connect(&autoExpHandler, &AutoExposureHandler::currentStateReady, this, &Camera::messageFromCameraReady);
@@ -83,7 +85,6 @@ Camera::Camera(const QString& pattern, bool init, qint32 port, QObject* parent) 
 
     connect(&recognizer, &BallRecognizerPP::ballRecognized, this, &Camera::ballMeasureReady);
     connect(&recognizer, &BallRecognizerPP::ballOutOfFrame, this, &Camera::ballOutOfFrame);
-    qDebug () << options.save_parameters() << options.auto_exposure_enable();
 }
 
 
@@ -179,17 +180,18 @@ void Camera::procImageQueue()
 
                 if (timeStampPrevious != -1 && diff > thres)
                 {
-                    if (abs(timePrevious.secsTo(t)) > delayTreshold)
+                    qint32 delta = abs(timePrevious.secsTo(t));
+                    if (delta > delayTreshold)
                     {
                         imageInfo.u64TimestampDevice = timeStampPrevious + thres;
                     }
-                    qDebug() << diff << thres << t << timePrevious << tLagElapsed << "DELAY";
+                    qDebug() << delta << diff << thres << t << timePrevious << tLagElapsed << "DELAY";
                     emit this->messageFromCameraReady(QString("Задержка приема кадра %1 (%2)")
                                                       .arg(diff)
                                                       .arg(tLagElapsed));
                 }
                 emit currentTimeReady(imageInfo.u64TimestampDevice, t);
-                // qDebug() << "raw" << t << imageInfo.u64TimestampDevice;
+                 //qDebug() << "raw" << t << imageInfo.u64TimestampDevice << bufferFrames.size();
                 FrameInfo ft;
                 ft.time = timeStampPrevious = imageInfo.u64TimestampDevice;
                 ft.computerTime = t.msecsSinceStartOfDay();
@@ -221,17 +223,66 @@ void Camera::procImageQueue()
                 is_UnlockSeqBuf (hCam, nMemID, pBuffer);
                 ++i;
             }
-            // auto elapsed = t.elapsed();
-            // qint32 timeBetweenFrames = 1000 / options.hw_params().frame_rate();
-
-            //            if (elapsed < timeBetweenFrames  - 2)
-            //            {
-            //                QThread::msleep(timeBetweenFrames - elapsed - 2);
-            //            }
         }
     }
     while (streamIsActive);
     bufferFrames.clear();
+}
+
+void Camera::procImageImitation()
+{
+    VideoCapture capture = VideoCapture(debugVideoPath.toStdString());
+    Mat m;
+    //QFile file(debugTimePath);
+    //file.open(QIODevice::ReadOnly);
+    //QTextStream in (&file);
+
+    if (capture.isOpened())
+    {
+        qint32 skip = 0;
+        qint32 frameNumber = 0;
+        qint32 delta = (1. / options.hw_params().frame_rate()) * 1e7;
+        bool  isDebuging = true;
+        while (isDebuging)
+        {
+            if (!waitForCommand)
+            {
+                if (moveFrames != 0)
+                {
+                    capture.set(CAP_PROP_POS_FRAMES, capture.get(CAP_PROP_POS_FRAMES) + moveFrames);
+                    moveFrames = 0;
+                }
+                isDebuging = isDebuging && capture.read((m));
+                if (isDebuging)
+                {
+                    FrameInfo ft;
+                    m.copyTo(ft.frame);
+
+                    if (skip == 1)
+                    {
+                        skip = 0;
+                    }
+                    else if (skip == 0)
+                    {
+                        pedTracker.track(ft.frame, ft.time);
+                        pedTracker.drawROIs(ft.frame);
+                        ft.time = delta * frameNumber;
+                        ++frameNumber;
+                        bufferFrames.append(ft);
+                        waitForCommand = true;
+                    }
+
+                    if (bufferFrames.size() >= maxBufferSize)
+                    {
+                        bufferFrames.removeFirst();
+                    }
+                    ++skip;
+                }
+
+            }
+
+        }
+    }
 }
 
 
@@ -688,7 +739,7 @@ void Camera::assignCameraOptions(const msg::CameraOptions& _options)
     if (_options.has_auto_exp_params())
     {
         options.mutable_auto_exp_params()->MergeFrom(_options.auto_exp_params());
-        autoExpHandler.params = options.mutable_auto_exp_params();
+        autoExpHandler.setParameters(options.mutable_auto_exp_params());
     }
 
     if (_options.has_save_parameters())
@@ -1010,8 +1061,8 @@ void Camera::doAutoExposure()
                 {
 
                     QMutexLocker lockOpt(&optionMutex);
-                    setExposure(autoExpHandler.params->exposure());
-                    setGain(autoExpHandler.params->gain());
+                    setExposure(autoExpHandler.getParameters()->exposure());
+                    setGain(autoExpHandler.getParameters()->gain());
                     lockOpt.unlock();
 
                     msg::CameraOptions opt;
@@ -1304,6 +1355,7 @@ void Camera::activateObjectiveController(const QString& pattern, qint32 port)
 
 Camera::~Camera()
 {
+    qDebug() << "camera destroy";
     if (streamIsActive)
     {
         streamIsActive = 0;

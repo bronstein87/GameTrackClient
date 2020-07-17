@@ -41,7 +41,6 @@ public:
 
     ~CameraClient();
 
-
 signals:
 
     void readyMessageFromClient(const QString& msg);
@@ -60,6 +59,8 @@ private:
 
     void sendCurrentTimeInternal(quint64 t, QTime ct);
 
+    QScopedPointer <RtspVideoHandler> mainSender;
+    QScopedPointer <RtspVideoHandler> addSender;
     Camera* camera;
     bool rawTCP = false;
     QHostAddress sAddress;
@@ -67,29 +68,9 @@ private:
     QAtomicInteger <quint8> collectData = 0;
     QTimer connectTimer;
     NetworkManager client;
-    QScopedPointer <RtspVideoHandler> mainSender;
-    QScopedPointer <RtspVideoHandler> addSender;
-
-};
-
-class AutoDisconnecter
-{
-public:
-    AutoDisconnecter() {}
-
-    AutoDisconnecter(QMetaObject::Connection conn): connection(conn) {}
-
-    void setConnection(QMetaObject::Connection conn) {connection = conn;}
-
-    ~AutoDisconnecter() {QObject::disconnect(connection);}
-
-private:
-
-    QMetaObject::Connection connection;
-
-
 
 
 };
+
 
 #endif // CAMERACLIENT_H

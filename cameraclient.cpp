@@ -118,39 +118,56 @@ void CameraClient::initializeMessageHandlers()
     client.setHandler(msg::GameTrackProtocol::RequestStream, [this](const NetworkManager::MessageData& data)
     {
         camera->tryToStartCamera();
-        //QThread::msleep();
         msg::StreamCameraCommand command;
         command.ParseFromArray(data.msg.data(), data.msg.size());
         if (command.has_type())
         {
-            RtspVideoHandlerParams params;
-            params.cam = camera;
-            params.w = camera->getOptions().hw_params().width();
-            params.h = camera->getOptions().hw_params().height();
-
-            auto options = camera->getOptions();
-            QString pipeLine = QString("( appsrc name=vsrc "
-                                       "! nvvidconv ! video/x-raw(memory:NVMM),format=NV12 ! omxh264enc MeasureEncoderLatency=true bitrate=20000000 control-rate=2 "
-                                       "! rtph264pay name=pay pt=96 ! identity name=pay0 )")
-                    .arg(params.w)
-                    .arg(params.h);
-            if (command.type() == msg::StreamType::Main)
+            if (command.has_stop() && command.stop())
             {
-                params.framerate = options.stream_params().send_frame_rate_main();
-                pipeLine = pipeLine.arg(params.framerate);
-                mainSender->closeServer();
-                mainSender->setRtspParams(params);
-                qDebug() << pipeLine;
-                QtConcurrent::run(mainSender.data(), &RtspVideoHandler::sendVideo, options.stream_params().port_send_stream_main(), pipeLine, command.video_duration(), true);
+                qDebug() << "stop server";
+                if (command.type() == msg::StreamType::Main)
+                {
+                    mainSender->disconnectClient();
+                }
+                else
+                {
+
+                    addSender->disconnectClient();
+                }
             }
             else
             {
-                params.framerate  = options.stream_params().send_frame_rate_add();
-                pipeLine = pipeLine.arg(params.framerate);
-                addSender->closeServer();
-                QtConcurrent::run(addSender.data(), &RtspVideoHandler::sendVideo, options.stream_params().port_send_stream_add(), pipeLine, command.video_duration(), false);
+                RtspVideoHandlerParams params;
+                params.cam = camera;
+                params.w = camera->getOptions().hw_params().width();
+                params.h = camera->getOptions().hw_params().height();
+
+                auto options = camera->getOptions();
+                QString pipeLine = QString("( appsrc name=vsrc "
+                                           "! nvvidconv ! video/x-raw(memory:NVMM),format=NV12 ! omxh264enc bitrate=20000000 control-rate=2 "
+                                           "! rtph264pay name=pay pt=96 ! identity name=pay0 )")
+                        .arg(params.w)
+                        .arg(params.h);
+                if (command.type() == msg::StreamType::Main)
+                {
+                    params.framerate = options.stream_params().send_frame_rate_main();
+                    pipeLine = pipeLine.arg(params.framerate);
+                    mainSender->disconnectClient();
+                    mainSender->setRtspParams(params);
+                    qDebug() << pipeLine;
+                    QtConcurrent::run(mainSender.data(), &RtspVideoHandler::sendVideo, options.stream_params().port_send_stream_main(), pipeLine, command.video_duration(), true);
+                }
+                else
+                {
+                    params.framerate  = options.stream_params().send_frame_rate_add();
+                    pipeLine = pipeLine.arg(params.framerate);
+                    addSender->disconnectClient();
+                    addSender->setRtspParams(params);
+                    QtConcurrent::run(addSender.data(), &RtspVideoHandler::sendVideo, options.stream_params().port_send_stream_add(), pipeLine, command.video_duration(), false);
+                }
+                client.send(msg::GameTrackProtocol::RequestStream, &command);
             }
-            client.send(msg::GameTrackProtocol::RequestStream, &command);
+
         }
     });
 
@@ -184,10 +201,34 @@ void CameraClient::initializeMessageHandlers()
         });
     });
 
+    client.setHandler(msg::GameTrackProtocol::RequestNextFrameDebugMode, [this](const NetworkManager::MessageData& data)
+    {
+        if (!data.msg.isEmpty())
+        {
+            msg::DebugInfo command;
+            command.ParseFromArray(data.msg.data(), data.msg.size());
+            camera->setFramePosition(command.skipdebugframes());
+
+        }
+        camera->resetWaitForCommand();
+    });
+
+    client.setHandler(msg::GameTrackProtocol::RequestPreviousFrameDebugMode, [this](const NetworkManager::MessageData& data)
+    {
+        if (!data.msg.isEmpty())
+        {
+            msg::DebugInfo command;
+            command.ParseFromArray(data.msg.data(), data.msg.size());
+            camera->setFramePosition(command.skipdebugframes());
+        }
+        camera->resetWaitForCommand();
+    });
+
 }
 
 CameraClient::~CameraClient()
 {
+    qDebug() << "server destroy";
 
 }
 

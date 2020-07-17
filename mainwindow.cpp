@@ -10,12 +10,13 @@ MainWindow::MainWindow(const QString ipPort, QWidget *parent) :
     ui->setupUi(this);
     camHard.reset(new Camera("FT232R", true, -1));
     camera.reset(new CameraClient(camHard.data(), ipPort));
-
     connect(camera.data(), &CameraClient::readyMessageFromClient, this, [](auto msg){qDebug() << msg;});
-    qDebug() << IS_SET_TRIGGER_HI_LO << IS_SET_TRIGGER_LO_HI;
+
 }
 MainWindow::~MainWindow()
 {
+    camera.reset();
+    camHard.reset();
     delete ui;
 }
 
