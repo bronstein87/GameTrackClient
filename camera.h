@@ -204,7 +204,6 @@ private:
     void updateHWParameters();
 
     ObjectiveController controller;
-    qint32	m_nNumberOfBuffers = -1;
     QVector <qint32> m_viSeqMemId;  // camera memory - buffer IDs
     QVector <char*> m_vpcSeqImgMem;	// camera memory - pointers to buffer
     QLinkedList <FrameInfo> bufferFrames;

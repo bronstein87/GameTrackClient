@@ -1,28 +1,33 @@
 #include "pedestriantracker.h"
 #include <QDebug>
 #include <QElapsedTimer>
+#include <opencvhelpfunction.h>
 
 PedestrianTracker::PedestrianTracker(qint32 width, qint32 height, QObject *parent) : DetectNetBase(width, height, parent)
 {
-//    attackInfo.insert(TeamRole::Batter, PPlayer::create());
-//    attackInfo.insert(TeamRole::FirstBase, PPlayer::create());
-//    attackInfo.insert(TeamRole::SecondBase, PPlayer::create());
-//    attackInfo.insert(TeamRole::ThirdBase, PPlayer::create());
+    //    attackInfo.insert(TeamRole::Batter, PPlayer::create());
+    //    attackInfo.insert(TeamRole::FirstBase, PPlayer::create());
+    //    attackInfo.insert(TeamRole::SecondBase, PPlayer::create());
+    //    attackInfo.insert(TeamRole::ThirdBase, PPlayer::create());
 
-//    defenceInfo.insert(TeamRole::Pitcher, PPlayer::create());
-//    defenceInfo.insert(TeamRole::Catcher, PPlayer::create());
-//    defenceInfo.insert(TeamRole::FirstDefence, PPlayer::create());
-//    defenceInfo.insert(TeamRole::SecondDefence, PPlayer::create());
-//    defenceInfo.insert(TeamRole::ThirdDefence, PPlayer::create());
-//    defenceInfo.insert(TeamRole::ShortStop, PPlayer::create());
-//    defenceInfo.insert(TeamRole::LeftFielder, PPlayer::create());
-//    defenceInfo.insert(TeamRole::CenterFielder, PPlayer::create());
-//    defenceInfo.insert(TeamRole::RightFielder, PPlayer::create());
+    //    defenceInfo.insert(TeamRole::Pitcher, PPlayer::create());
+    //    defenceInfo.insert(TeamRole::Catcher, PPlayer::create());
+    //    defenceInfo.insert(TeamRole::FirstDefence, PPlayer::create());
+    //    defenceInfo.insert(TeamRole::SecondDefence, PPlayer::create());
+    //    defenceInfo.insert(TeamRole::ThirdDefence, PPlayer::create());
+    //    defenceInfo.insert(TeamRole::ShortStop, PPlayer::create());
+    //    defenceInfo.insert(TeamRole::LeftFielder, PPlayer::create());
+    //    defenceInfo.insert(TeamRole::CenterFielder, PPlayer::create());
+    //    defenceInfo.insert(TeamRole::RightFielder, PPlayer::create());
 
+    positionCoordinates.insert(GamePositions::Invalid, qMakePair(QString("Invalid"),
+                                                                 Point3f(std::numeric_limits <float>::max(),
+                                                                         std::numeric_limits <float>::max(),
+                                                                         std::numeric_limits <float>::max())));
     positionCoordinates.insert(GamePositions::Home, qMakePair(QString("Home"), Point3f(0, 0, 0)));
-    positionCoordinates.insert(GamePositions::Umpire, qMakePair(QString("Umpire"), Point3f(1.72, 1.72, 0)));
+    positionCoordinates.insert(GamePositions::Umpire, qMakePair(QString("Umpire"), Point3f(-1.72, -1.72, 0)));
     positionCoordinates.insert(GamePositions::LeftSquare, qMakePair(QString("LeftSquare"), Point3f(-1, 1, 0)));
-    positionCoordinates.insert(GamePositions::RightSquare, qMakePair(QString("RightSquare"), Point3f(1, 1, 0)));
+    positionCoordinates.insert(GamePositions::RightSquare, qMakePair(QString("RightSquare"), Point3f(1, -1, 0)));
     positionCoordinates.insert(GamePositions::FirstBase, qMakePair(QString("FirstBase"), Point3f(27.04, 0.04, 0)));
     positionCoordinates.insert(GamePositions::SecondBase, qMakePair(QString("SecondBase"), Point3f(27.23, 27.27, 0)));
     positionCoordinates.insert(GamePositions::ShortStop, qMakePair(QString("ShortStop"), Point3f(14.5, 27.4, 0)));
@@ -30,7 +35,13 @@ PedestrianTracker::PedestrianTracker(qint32 width, qint32 height, QObject *paren
     positionCoordinates.insert(GamePositions::LeftField, qMakePair(QString("LeftField"), Point3f(16, 62, 0)));
     positionCoordinates.insert(GamePositions::CenterField, qMakePair(QString("CenterField"), Point3f(50, 50, 0)));
     positionCoordinates.insert(GamePositions::RightField, qMakePair(QString("RightField"), Point3f(62, 16, 0)));
-
+    positionCoordinates.insert(GamePositions::Pitch, qMakePair(QString("Pitch"), Point3f(12.9145, 13.4031, 0.2717)));
+    positionCoordinates.insert(GamePositions::UmpireFirstBase, qMakePair(QString("UmpireFirstBase"), Point3f(38.4839,	-0.8891, 0)));
+    positionCoordinates.insert(GamePositions::UmpireSecondBase, qMakePair(QString("UmpireSecondBase"), Point3f(-0.9813, 38.5129, -0.0063)));
+    positionCoordinates.insert(GamePositions::UmpirePitchFirst, qMakePair(QString("UmpirePitchFirst"), Point3f(18.2, 21, 0)));
+    positionCoordinates.insert(GamePositions::UmpirePitchSecond, qMakePair(QString("UmpirePitchSecond"), Point3f(21, 18.2, 0)));
+    positionCoordinates.insert(GamePositions::CouchFirst, qMakePair(QString("CouchFirst"), Point3f(24.2, -4.5, 0)));
+    positionCoordinates.insert(GamePositions::CouchSecond, qMakePair(QString("CouchSecond"), Point3f(-4.5, 24.2, 0)));
 
 
 }
@@ -38,7 +49,7 @@ PedestrianTracker::PedestrianTracker(qint32 width, qint32 height, QObject *paren
 
 void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detection* detections)
 {
-    QMutexLocker lock(&mutex);
+    //QMutexLocker lock(&mutex);
     for (auto& j : nonStructuredPlayers)
     {
         j->updated = false;
@@ -58,6 +69,7 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
     {
         for (auto& i : v)
         {
+            checkRectangleSize(i.second, inputImg.cols, inputImg.rows);
             if ((i.second.y + i.second.height / 2) < heightThreshold)
             {
                 continue;
@@ -65,20 +77,24 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
             bool playerFound = false;
             if (!nonStructuredPlayers.empty())
             {
-                QVector < QPair <double, PPlayer> > ious;
+                QVector < QPair <IOUResult, PPlayer> > ious;
                 for (auto& j : nonStructuredPlayers)
                 {
-                    ious.append(qMakePair(calculateIOU(i.second, j->rDet).iou, j));
+                    ious.append(qMakePair(calculateIOU(i.second, j->rDet), j));
                 }
-                sort(ious.begin(), ious.end(), [](auto& a, auto& b){return a.first > b.first;});
+                sort(ious.begin(), ious.end(), [](auto& a, auto& b){return a.first.iou > b.first.iou;});
                 auto max = ious.begin();
                 // вернуть 0.25, добавить проверку площадей
-                if (max->first > minIntersect)
+                qDebug() << "IOU"  << positionCoordinates[max->second->position].first <<
+                            max->first.iou <<  max->first.partR1 <<  max->first.partR2;
+                if (max->first.iou > minIOUIntersect
+                        || (max->first.partR1 > minIOUIntersect
+                        && max->first.partR2 > minIOUIntersect))
                 {
                     auto secondMax = max;
                     ++secondMax;
 
-                    if (secondMax->first > minIntersect /*||  max->second->intersectState > ProbablyIntersect*/)
+                    if (secondMax->first.iou > minIntersect)
                     {
                         if ((max->second->intersectState == DontMoveClose
                              || max->second->intersectState == MoveClose)
@@ -89,7 +105,13 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
                             max->second->lastConfidence = i.first;
                             playerFound = true;
                         }
-                        qDebug() << "TWO PEOPLE";
+                        if (max->first.iou > 0.9 && abs(secondMax->first.partR1 - secondMax->first.partR2) > 0.5)
+                        {
+                            max->second->updated = true;
+                            ++max->second->confirmed;
+                            max->second->lastConfidence = i.first;
+                            playerFound = true;
+                        }
                     }
                     else
                     {
@@ -115,7 +137,23 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
                         max->second->lastConfidence = i.first;
                         max->second->rDet = max->second->rUse = i.second;
                         ++max->second->confirmed;
+                        qDebug() << "found player" << positionCoordinates[max->second->position].first
+                                                             << max->second->rUse.x
+                                                             << max->second->rUse.y
+                                                             << max->second->rUse.width
+                                                             << max->second->rUse.height;
                     }
+                }
+                else
+                {
+                    if (max->first.iou > 0.1 && max->second->position == GamePositions::Pitch)
+                    {
+                        max->second->updated = true;
+                        ++max->second->confirmed;
+                        max->second->lastConfidence = i.first;
+                        playerFound = true;
+                    }
+                    qDebug() << "low intercept" << max->first.iou << max->first.partR1 << max->first.partR2 << positionCoordinates[max->second->position].first;
                 }
 
             }
@@ -148,7 +186,7 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
                                 tracked = second;
                                 nonTracked = first;
                             }
-                            resolveConflict(tracked, nonTracked, i.second);
+                            //resolveConflict(tracked, nonTracked, i.second);
 
                             Point2f trackedCenter = Point2f (tracked->rUse.x + tracked->rUse.width / 2,
                                                              tracked->rUse.y + tracked->rUse.height / 2);
@@ -164,9 +202,9 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
                             bool foundCloserToNonTrackedPredicted = norm(nonTrackedPredictedCenter - foundPlayerCenter) < norm(trackedPredictedCenter - foundPlayerCenter) ? true : false;
 
                             auto hist = calculateBodyHueHist(inputImg, i.second);
-//                            imshow("window1", hist.first);
-//                            imshow("window3", tracked->origHist.first);
-//                            imshow("window4", nonTracked->origHist.first);
+                            //                            imshow("window1", hist.first);
+                            //                            imshow("window3", tracked->origHist.first);
+                            //                            imshow("window4", nonTracked->origHist.first);
                             double trackedHistCorr = compareHist(tracked->origHist.second, hist.second, CV_COMP_CORREL);
                             double nonTrackedHistCorr = compareHist(nonTracked->origHist.second, hist.second, CV_COMP_CORREL);
                             if (nonTrackedHistCorr > trackedHistCorr)
@@ -219,6 +257,11 @@ void PedestrianTracker::assignROIs(const qint32 numDetections, detectNet::Detect
                     RNG rng(nonStructuredPlayers.size());
                     nonStructuredPlayers.back()->color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
                     ++nonStructuredPlayers.back()->confirmed;
+                    qDebug() << "NEW PLAYER" << nonStructuredPlayers.back()->id
+                             << nonStructuredPlayers.back()->rUse.x
+                             << nonStructuredPlayers.back()->rUse.y
+                             << nonStructuredPlayers.back()->rUse.width
+                             << nonStructuredPlayers.back()->rUse.height;
                 }
             }
 
@@ -285,7 +328,7 @@ void PedestrianTracker::finishInitialization()
 }
 
 
-void PedestrianTracker::initTracker(Mat grayResized, PPlayer player)
+bool PedestrianTracker::initTracker(Mat grayResized, PPlayer player)
 {
     player->tracker = TrackerMOSSE::create();
     player->tracker->setLearningRate(0.25);
@@ -293,7 +336,9 @@ void PedestrianTracker::initTracker(Mat grayResized, PPlayer player)
     //player->tracker->setMaxDelta(Point2d(10, 10));
     //player->tracker->setCheckDelta(true);
     player->tracker->setThreshold(trackerThreshold);
-    player->tracker->init(grayResized, player->rTrack);
+    bool inited = player->tracker->init(grayResized, player->rTrack);
+    inited = inited && (player->rTrack.width != 0 && player->rTrack.height != 0);
+    return inited;
 }
 
 void PedestrianTracker::trackPlayerInternal(Mat inputImg, PPlayer player, Mat grayResized, bool& erase)
@@ -314,11 +359,12 @@ void PedestrianTracker::trackPlayerInternal(Mat inputImg, PPlayer player, Mat gr
             || player->intersectState == DontMoveClose
             || player->intersectState == MoveClose)
     {
-
         if (!player->tracker->update(grayResized, player->rTrack))
         {
             qDebug() << "not found" << player->id << player->trackNotFoundCount
-                     << player->tracker->getThreshold() << player->tracker->getConfidenceValue();
+                     << player->tracker->getThreshold()
+                     << player->tracker->getConfidenceValue()
+                     << positionCoordinates[player->position].first;
             if (player->trackNotFoundCount < tryToTrack)
             {
                 initTracker(grayResized, player);
@@ -341,11 +387,10 @@ void PedestrianTracker::trackPlayerInternal(Mat inputImg, PPlayer player, Mat gr
                         + (1. - trackConfidenceUpdateCoeff) * player->tracker->getConfidenceValue();
             }
 
-            player->rUse = player->rTrack;
 
-            double expand = player->rTrack.width * expandBodyROICoeff;
-            player->rUse.x += expand;
-            player->rUse.width -= 2 * expand;
+            player->rUse = player->rTrack;
+            player->rUse.width = player->rUse.width / (1 + 2 * expandBodyROICoeff);
+            player->rUse.x = player->rUse.x + (player->rUse.width * expandBodyROICoeff);
             player->rUse.x /= resampleCoeff;
             player->rUse.y /= resampleCoeff;
             player->rUse.width /= resampleCoeff;
@@ -354,6 +399,7 @@ void PedestrianTracker::trackPlayerInternal(Mat inputImg, PPlayer player, Mat gr
             {
                 player->rUse.height /= bodyCropCoeff;
             }
+            checkRectangleSize(player->rUse, inputImg.cols, inputImg.rows);
             player->rDet = player->rUse;
 
             if (!player->speedUpdateCounter)
@@ -369,7 +415,7 @@ void PedestrianTracker::trackPlayerInternal(Mat inputImg, PPlayer player, Mat gr
             ++player->speedUpdateCounter;
 
             player->trackNotFoundCount = 0;
-            qDebug() << "tracked" << player->id <<  player->tracker->getConfidenceValue();
+            qDebug() << "tracked" << player->id <<  player->tracker->getConfidenceValue() <<  positionCoordinates[player->position].first;
             qint32 horizontalCenter = player->rUse.x + player->rUse.width / 2;
 
             bool outOfFrameFlag = false;
@@ -405,8 +451,8 @@ QPair <Mat, Mat> PedestrianTracker::calculateBodyHueHist(Mat bodyImg, Rect2d r)
     cvtColor(cropped, cropped, COLOR_BGR2HSV);
     std::vector <Mat> splitted;
     split(cropped, splitted);
-    int histSize[] = {256};
-    float hranges[] = { 0, 256 };
+    int histSize[] = {128};
+    float hranges[] = { 0, 128 };
     const float* ranges[] = { hranges };
     Mat hist;
     // we compute the histogram from the 0-th and 1-st channels
@@ -418,22 +464,6 @@ QPair <Mat, Mat> PedestrianTracker::calculateBodyHueHist(Mat bodyImg, Rect2d r)
             false );
 
     normalize(hist, hist, 0, 1, NORM_MINMAX, -1, Mat() );
-
-    //    int hist_w = 512; int hist_h = 400;
-    //    int bin_w = cvRound( (double) hist_w/histSize[0] );
-
-    //     Mat histImage( hist_h, hist_w, CV_8UC3, Scalar( 0,0,0) );
-    //    normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, Mat() );
-
-    //    for( int i = 1; i < histSize[0]; i++ )
-    //    {
-    //        line( histImage, Point( bin_w*(i-1), hist_h - cvRound(hist.at<float>(i-1)) ) ,
-    //                         Point( bin_w*(i), hist_h - cvRound(hist.at<float>(i)) ),
-    //                         Scalar( 255, 0, 0), 2, 8, 0  );
-    //    }
-
-    //    qDebug() << tt.nsecsElapsed() << "ELAPSED HSV";
-    //    imshow("windows2", histImage);
 
     return qMakePair(splitted[0], hist);
 }
@@ -464,7 +494,7 @@ void PedestrianTracker::resolveConflict(PedestrianTracker::PPlayer p1, Pedestria
     qDebug() << calculateIOU(p1PredictedRect, foundPlayer).iou;
 }
 
-void PedestrianTracker::assignPosition(PPlayer player, bool& changed)
+bool PedestrianTracker::assignPosition(PPlayer player, bool& changed)
 {
     bool ok;
     MovePosition mPos = evaluate3dPosition(player->rUse, ok);
@@ -474,51 +504,117 @@ void PedestrianTracker::assignPosition(PPlayer player, bool& changed)
     {
         return norm(p1.second - mPos.onSpace) < norm(p2.second - mPos.onSpace);
     });
-    if (player->position == GamePositions::Invalid || norm(mPos.onSpace - min.value().second) < 1)
+    double distance = norm(mPos.onSpace - min.value().second);
+
+    if (player->position == GamePositions::Invalid ||  distance < 1.5)
     {
+        if (min.key() == GamePositions::Pitch && distance > maxPitchDistance)
+        {
+            QString name = min.value().first;
+            min = std::min_element(positionCoordinates.begin(), positionCoordinates.end(), [mPos, name](auto& p1, auto& p2)
+            {
+                if (p1.first == name)
+                {
+                    return false;
+                }
+                else if (p2.first == name)
+                {
+                    return true;
+                }
+                else
+                {
+                    return norm(p1.second - mPos.onSpace) < norm(p2.second - mPos.onSpace);
+                }
+
+            });
+        }
+
         if (player->position != min.key())
         {
             changed = true;
         }
         player->position = min.key();
     }
+    return ok;
 
+}
+
+void PedestrianTracker::correctPlayerHeight(PPlayer player)
+{
+    CalibrationHelper& helper = CalibrationHelper::instance();
+    Calibration::Position pos;
+    Calibration::Position2D pos2d;
+    pos.X = player->moves.back().second.onSpace.x;
+    pos.Y = player->moves.back().second.onSpace.y;
+    pos.Z = playerMediumHeight;
+    helper.correctHumanHeight(pos, pos2d);
+    player->rUse.height -= pos2d.Y - player->rUse.y ;
+    player->rUse.y = pos2d.Y;
+    player->moves.back().second.height = playerMediumHeight;
 }
 
 void PedestrianTracker::track(Mat _inputImg, quint64 time)
 {    
+    QElapsedTimer t, t1, t2, t3, t4, t5, t6;
+    t.start();
     net->interceptCoeff = minIntersect; // correct intercept
     lastTime = time;
     inputImg = _inputImg;
+
+    t2.start();
     Mat gray;
     cvtColor(inputImg, gray, COLOR_BGR2GRAY);
     Mat grayResized;
     resize(gray, grayResized, Size(), resampleCoeff, resampleCoeff);
+    qDebug() << "PREPARE IMAGE" << t2.elapsed();
+
+    qDebug() << "CURRENT STATE" << state;
     switch (state)
     {
 
     case State::Detect:
     {
-        readFrameInGPUMemory(inputImg);
-        detectNet::Detection* detections = nullptr;
-        const qint32 numDetections = net->Detect(imgCUDA, inputImg.cols, inputImg.rows, &detections, detectNet::OverlayFlags::OVERLAY_NONE);
-        assignROIs(numDetections, detections);
 
+        t5.start();
+        cv::cuda::GpuMat input;
+        cv::cuda::GpuMat input1;
+        cv::cuda::GpuMat input2;
+        input.upload(inputImg);
+        cv::cuda::cvtColor(input, input1, COLOR_BGR2RGBA);
+        input1.convertTo(input2, CV_32FC4);
+        qDebug() << "TEST ELAPSED" << t5.elapsed() << input.cols << input.rows <<input.type() << input2.data;
+        t1.start();
+        detectNet::Detection* detections = nullptr;
+        const qint32 numDetections = net->Detect((float*)input2.data , inputImg.cols, inputImg.rows, &detections, detectNet::OverlayFlags::OVERLAY_NONE);
+        qDebug() << "DETECT ELAPSED" << t1.elapsed() << numDetections;
+        t6.start();
+        assignROIs(numDetections, detections);
+        qDebug() << "assign elapsed" << t6.elapsed();
         QLinkedList<PPlayer>::iterator i = nonStructuredPlayers.begin();
+        t3.start();
         while (i != nonStructuredPlayers.end())
         {
             bool erase = false;
             if (!i->data()->alreadyInited && i->data()->updated
                     && ((i->data()->confirmed > 2 && i->data()->lastConfidence > confidenceThreshold)
-                        ||  i->data()->lastConfidence > 2 *confidenceThreshold))
+                        ||  i->data()->lastConfidence > 2 * confidenceThreshold))
             {
-                initTrackerFirstly(grayResized, (*i));
-                i->data()->alreadyInited = true;
+                if (initTrackerFirstly(grayResized, (*i)))
+                {
+                    i->data()->alreadyInited = true;
+                }
+                else
+                {
+                    erase = true;
+                }
             }
+
+
             if (i->data()->lastTrackConfidence > trackerHighConfidence)
             {
                 trackPlayerInternal(inputImg, *i, grayResized, erase);
             }
+
 
             if (erase)
             {
@@ -526,38 +622,59 @@ void PedestrianTracker::track(Mat _inputImg, quint64 time)
             }
             else
             {
-                //                bool
-                //                assignPosition(i);
-                //evaluate 3d pos here, update if changed, emit signal
                 ++i;
             }
         }
-
+        qDebug() << "track elapsed" << t3.elapsed() ;
+        t4.start();
         for (auto& i : nonStructuredPlayers)
         {
             if (i->updated)
             {
                 bool changed = false;
-                assignPosition(i, changed);
+                if (assignPosition(i, changed))
+                {
+                    if (i->moves.back().second.height > playerHeightThreshold)
+                    {
+
+                        correctPlayerHeight(i);
+                    }
+                }
             }
-//            for (auto& j : i->moves)
-//            {
-//                circle(inputImg, j.second.onCam, 3, CV_RGB(255, 0, 0));
-//            }
         }
+        qDebug() << "position elapsed" << t4.elapsed();
         ++detectCounter;
 
         if (detectCounter == detectDuration)
         {
+
             finishInitialization();
-            QElapsedTimer t;
-            t.start();
-            for (auto& player : nonStructuredPlayers)
+            QElapsedTimer tt;
+            tt.start();
+            QLinkedList<PPlayer>::iterator i = nonStructuredPlayers.begin();
+            while (i != nonStructuredPlayers.end())
             {
-                savePlayerHistory(player);
-                initTrackerFirstly(grayResized, player);
+                if (!i->data()->updated && !i->data()->alreadyInited
+                        && i->data()->lastTrackConfidence < trackerHighConfidence)
+                {
+                    i = nonStructuredPlayers.erase(i);
+                }
+                else
+                {
+                    if (initTrackerFirstly(grayResized, *i))
+                    {
+                        savePlayerHistory(*i);
+                        ++i;
+                    }
+                    else
+                    {
+                        i = nonStructuredPlayers.erase(i);
+                    }
+                }
+
+
             }
-            qDebug() << t.elapsed() << "ELAPSED INIT";
+            qDebug() << tt.elapsed() << "ELAPSED INIT";
             state = Track;
             detectCounter = 0;
         }
@@ -569,9 +686,6 @@ void PedestrianTracker::track(Mat _inputImg, quint64 time)
         {
             if (mode == Players)
             {
-
-                QElapsedTimer t;
-                t.start();
                 QLinkedList<PPlayer>::iterator i = nonStructuredPlayers.begin();
                 while (i != nonStructuredPlayers.end())
                 {
@@ -588,11 +702,18 @@ void PedestrianTracker::track(Mat _inputImg, quint64 time)
                     }
                     else
                     {
-                        //                        assignPosition(i);
                         ++i;
                     }
                 }
-                qDebug() << "ELAPSED" << t.elapsed();
+                for (auto& i : nonStructuredPlayers)
+                {
+                    if (i->updated)
+                    {
+                        bool changed = false;
+                        assignPosition(i, changed);
+                    }
+                }
+
 
             }
             ++trackCounter;
@@ -605,28 +726,28 @@ void PedestrianTracker::track(Mat _inputImg, quint64 time)
         break;
     }
     }
+    qDebug() << "ELAPSED" << t.elapsed();
     intersectPlayers.append(checkPlayersIntersect());
 }
 
-void PedestrianTracker::initTrackerFirstly(Mat grayResized, PPlayer player)
-{
-    if (player->updated)
-    {
-        player->rTrackCropped = (player->rUse.height / player->rUse.width) > bodyWidthHeightProportion ? true : false;
-        player->rTrack.x = player->rUse.x * resampleCoeff;
-        player->rTrack.y = player->rUse.y * resampleCoeff;
-        player->rTrack.width = player->rUse.width * resampleCoeff;
-        player->rTrack.height = player->rUse.height * resampleCoeff;
-        double expand = player->rTrack.width * expandBodyROICoeff;
-        player->rTrack.x -= expand;
-        player->rTrack.width += 2 * expand;
 
-        if (player->rTrackCropped)
-        {
-            player->rTrack.height *= bodyCropCoeff;
-        }
-        initTracker(grayResized, player);
+bool PedestrianTracker::initTrackerFirstly(Mat grayResized, PPlayer player)
+{
+    qDebug() << "firstly" << player->id << positionCoordinates[player->position].first;
+    player->rTrackCropped = (player->rUse.height / player->rUse.width) > bodyWidthHeightProportion ? true : false;
+    player->rTrack.x = player->rUse.x * resampleCoeff;
+    player->rTrack.y = player->rUse.y * resampleCoeff;
+    player->rTrack.width = player->rUse.width * resampleCoeff;
+    player->rTrack.height = player->rUse.height * resampleCoeff;
+    double expand = player->rTrack.width * expandBodyROICoeff;
+    player->rTrack.x -= expand;
+    player->rTrack.width += 2 * expand; 
+
+    if (player->rTrackCropped)
+    {
+        player->rTrack.height *= bodyCropCoeff;
     }
+    return initTracker(grayResized, player);
 }
 
 void PedestrianTracker::savePlayerHistory(PedestrianTracker::PPlayer p)
@@ -643,13 +764,13 @@ void PedestrianTracker::drawROIs(Mat drawImg)
     {
         for (auto& i : nonStructuredPlayers)
         {
-            if (i->moves.size() > 2)
-            {
-                for (qint32 j = 1; j < i->moves.size(); ++j)
-                {
-                    line(drawImg, i->moves[j - 1].second.onCam, i->moves[j].second.onCam, i->color, 10);
-                }
-            }
+//            if (i->moves.size() > 2)
+//            {
+//                for (qint32 j = 1; j < i->moves.size(); ++j)
+//                {
+//                    line(drawImg, i->moves[j - 1].second.onCam, i->moves[j].second.onCam, i->color, 10);
+//                }
+//            }
 
             auto p = i->rUse.tl();
             p.y -= 10;
@@ -673,14 +794,12 @@ void PedestrianTracker::drawROIs(Mat drawImg)
                     rectangle(drawImg, i->predictedR, CV_RGB(255, 255, 255), 3);
                 }
 
-                //putText(drawImg, i->id.toString().left(5).toStdString(), i->rUse.tl(), FONT_HERSHEY_PLAIN, 5, CV_RGB(255, 0, 255));
                 putText(drawImg, positionCoordinates[i->position].first.toStdString(), Point2f(i->rUse.tl().x, i->rUse.tl().y - 20),
                         FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 0, 255), 3);
             }
             else
             {
                 rectangle(drawImg, i->rUse, CV_RGB(255, 255, 0), 3);
-                //putText(drawImg, i->id.toString().left(5).toStdString(), i->rUse.tl(), FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 255, 255));
                 putText(drawImg, positionCoordinates[i->position].first.toStdString(), Point2f(i->rUse.tl().x, i->rUse.tl().y - 20),
                         FONT_HERSHEY_PLAIN, 2, CV_RGB(255, 255, 255), 3);
             }
@@ -700,39 +819,39 @@ PedestrianTracker::IntersectCheckResult PedestrianTracker::intersectsAnyPedestri
     IntersectCheckResult result;
     if (mode == Teams)
     {
-//        QMapIterator<TeamRole, PPlayer> attackIt(attackInfo);
-//        while (attackIt.hasNext())
-//        {
-//            result = handleIntersectCheck(position, attackIt.value(), distance, nonAprior);
-//            if (result.intersect)
-//            {
-//                result.role = attackIt.key();
-//                return result;
-//            }
-//        }
+        //        QMapIterator<TeamRole, PPlayer> attackIt(attackInfo);
+        //        while (attackIt.hasNext())
+        //        {
+        //            result = handleIntersectCheck(position, attackIt.value(), distance, nonAprior);
+        //            if (result.intersect)
+        //            {
+        //                result.role = attackIt.key();
+        //                return result;
+        //            }
+        //        }
 
-//        QMapIterator<TeamRole, PPlayer> defenceIt(defenceInfo);
-//        while (defenceIt.hasNext())
-//        {
-//            result = handleIntersectCheck(position, defenceIt.value(), distance, nonAprior);
-//            if (result.intersect)
-//            {
-//                result.role = defenceIt.key();
-//                return result;
-//            }
-//        }
-//        for (auto& i : unconfirmedPlayers)
-//        {
-//            for (auto& j : i)
-//            {
-//                result = handleIntersectCheck(position, j, distance, nonAprior);
-//                if (result.intersect)
-//                {
-//                    return result;
-//                }
-//            }
+        //        QMapIterator<TeamRole, PPlayer> defenceIt(defenceInfo);
+        //        while (defenceIt.hasNext())
+        //        {
+        //            result = handleIntersectCheck(position, defenceIt.value(), distance, nonAprior);
+        //            if (result.intersect)
+        //            {
+        //                result.role = defenceIt.key();
+        //                return result;
+        //            }
+        //        }
+        //        for (auto& i : unconfirmedPlayers)
+        //        {
+        //            for (auto& j : i)
+        //            {
+        //                result = handleIntersectCheck(position, j, distance, nonAprior);
+        //                if (result.intersect)
+        //                {
+        //                    return result;
+        //                }
+        //            }
 
-//        }
+        //        }
     }
     else
     {
@@ -771,7 +890,7 @@ void PedestrianTracker::clear()
 {
     if (mode == Players)
     {
-        unconfirmedPlayers.clear();
+        //unconfirmedPlayers.clear();
         nonStructuredPlayers.clear();
         detectCounter = 0;
         trackCounter = 0;
@@ -779,35 +898,35 @@ void PedestrianTracker::clear()
     }
 }
 
-PedestrianTracker::PedestrianTrackerState PedestrianTracker::saveState()
-{
-    PedestrianTrackerState state;
-    for (PPlayer& i : nonStructuredPlayers)
-    {
-        state.nonStructuredPlayers.append(PPlayer());
-        *state.nonStructuredPlayers.back() = *i;
-        *state.nonStructuredPlayers.back()->tracker = *i->tracker;
-        i->origHist.first.copyTo(state.nonStructuredPlayers.back()->origHist.first);
-        i->origHist.second.copyTo(state.nonStructuredPlayers.back()->origHist.second);
-    }
-
-//    struct PedestrianTrackerState
+//PedestrianTracker::PedestrianTrackerState PedestrianTracker::saveState()
+//{
+//    PedestrianTrackerState state;
+//    for (PPlayer& i : nonStructuredPlayers)
 //    {
-//        QLinkedList <PPlayer> nonStructuredPlayers;
-//        QVector <LostPlayersArea> intersectPlayers;
-//        TrackMode mode = Players;
-//        State state = Detect;
-//        Mat inputImg;
-//        quint64 lastTime;
-//        qint32 detectCounter = 0;
-//        qint32 trackCounter = 0;
-//    };
-}
+//        state.nonStructuredPlayers.append(PPlayer());
+//        *state.nonStructuredPlayers.back() = *i;
+//        *state.nonStructuredPlayers.back()->tracker = *i->tracker;
+//        i->origHist.first.copyTo(state.nonStructuredPlayers.back()->origHist.first);
+//        i->origHist.second.copyTo(state.nonStructuredPlayers.back()->origHist.second);
+//    }
 
-void PedestrianTracker::resetState(PedestrianTracker::PedestrianTrackerState &state)
-{
+//    //    struct PedestrianTrackerState
+//    //    {
+//    //        QLinkedList <PPlayer> nonStructuredPlayers;
+//    //        QVector <LostPlayersArea> intersectPlayers;
+//    //        TrackMode mode = Players;
+//    //        State state = Detect;
+//    //        Mat inputImg;
+//    //        quint64 lastTime;
+//    //        qint32 detectCounter = 0;
+//    //        qint32 trackCounter = 0;
+//    //    };
+//}
 
-}
+//void PedestrianTracker::resetState(PedestrianTracker::PedestrianTrackerState &state)
+//{
+
+//}
 
 QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersIntersect()
 {
@@ -824,7 +943,6 @@ QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersInter
         {
             auto interResult = calculateIOU(i->data()->rUse, j->data()->rUse);
 
-
             if ((interResult.iou > minIOUIntersect / 3 || interResult.partR1 > minIntersect / 3 || interResult.partR2 > minIntersect / 3)
                     && i->data()->intersectState == NoIntersect
                     && j->data()->intersectState == NoIntersect)
@@ -832,12 +950,17 @@ QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersInter
                 if ((i->data()->confirmed >= 2 || !qFuzzyCompare(i->data()->lastTrackConfidence, -1.))
                         && (j->data()->confirmed >= 2 ||  !qFuzzyCompare(j->data()->lastTrackConfidence, -1.)))
                 {
+                    qDebug() << "get hue"
+                             << positionCoordinates[i->data()->position].first  << i->data()->id
+                             << positionCoordinates[j->data()->position].first << j->data()->id;
                     i->data()->origHist = calculateBodyHueHist(inputImg, i->data()->rUse);
                     j->data()->origHist = calculateBodyHueHist(inputImg, j->data()->rUse);
                     i->data()->intersectState = ProbablyIntersect;
                     j->data()->intersectState = ProbablyIntersect;
+                    qDebug() << "got hue";
                 }
             }
+
             if ((interResult.iou > minIOUIntersect || interResult.partR1 > minIntersect || interResult.partR2 > minIntersect)
                     && i->data()->intersectState <= ProbablyIntersect
                     && j->data()->intersectState <= ProbablyIntersect)
@@ -845,7 +968,6 @@ QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersInter
                 if ((i->data()->confirmed >= 3 || !qFuzzyCompare(i->data()->lastTrackConfidence, -1.))
                         && (j->data()->confirmed >= 3 ||  !qFuzzyCompare(j->data()->lastTrackConfidence, -1.)))
                 {
-
 
                     savePlayerHistory((*i));
                     savePlayerHistory((*j));
@@ -923,7 +1045,6 @@ QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersInter
                     {
                         j->data()->tracker->setDoLearning(false);
                     }
-
                     pairFound = true;
                 }
 
@@ -943,6 +1064,7 @@ QVector<PedestrianTracker::LostPlayersArea> PedestrianTracker::checkPlayersInter
         }
         pairFound = false;
     }
+
     return result;
 }
 
@@ -955,12 +1077,21 @@ PedestrianTracker::MovePosition PedestrianTracker::evaluate3dPosition(cv::Rect r
     xy.X = r.x + r.width / 2;
     xy.Y = r.y + r.height;
     Calibration::RayAndPoint rp;
+    Calibration::Position xyzHeight;
     if (helper.calculatePointOnGround(xy, rp))
     {
         ok = true;
         p.x = rp.Pos.X;
         p.y = rp.Pos.Y;
         p.z = rp.Pos.Z;
+        Calibration::Position2D xyHead;
+        xyHead.X = r.x + r.width / 2;
+        xyHead.Y = r.y;
+
+        if (helper.getZForHuman(xyHead, rp.Pos, xyzHeight))
+        {
+            qDebug() << "HEIGHT" << xyzHeight.Z;
+        }
     }
     else
     {
@@ -969,6 +1100,7 @@ PedestrianTracker::MovePosition PedestrianTracker::evaluate3dPosition(cv::Rect r
     MovePosition mPos;
     mPos.onSpace = p;
     mPos.onCam = Point2f(xy.X, xy.Y);
+    mPos.height = xyzHeight.Z;
     return mPos;
 }
 

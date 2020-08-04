@@ -65,11 +65,12 @@ Camera::Camera(const QString& pattern, bool init, qint32 port, QObject* parent) 
         debugVideoPath = data["debug_path"].toString();
         qDebug()<< options.mutable_stream_params()->port_send_stream_main()
                 << options.mutable_stream_params()->port_send_stream_add();
-
+        CalibrationHelper::instance().setCurrentCamera(QString::fromStdString(options.id()));
         autoExpHandler.setParameters(options.mutable_auto_exp_params());
         recognizer.setROIs(options.mutable_rec_rois());
         recognizer.setRecognizeParams(options.mutable_rec_params());
         connect(&autoExpHandler, &AutoExposureHandler::currentStateReady, this, &Camera::messageFromCameraReady);
+
     }
 
     if (options.cam_type() > CameraType::BaseRightAdd)
@@ -79,12 +80,27 @@ Camera::Camera(const QString& pattern, bool init, qint32 port, QObject* parent) 
     }
     else
     {
-        pedTracker.initCNN(detectNet::PEDNET, 0.6);
+        pedTracker.initCNN(detectNet::PEDNET, 0.5);
         recognizer.setPedestrianTracker(&pedTracker);
     }
 
     connect(&recognizer, &BallRecognizerPP::ballRecognized, this, &Camera::ballMeasureReady);
     connect(&recognizer, &BallRecognizerPP::ballOutOfFrame, this, &Camera::ballOutOfFrame);
+
+//    QtConcurrent::run([]()
+//    {
+//        while(true)
+//        {
+//            qDebug() << "FFFFFF";
+//        }
+//    });
+//    QtConcurrent::run([]()
+//    {
+//        while(true)
+//        {
+//            qDebug() << "BBBBBb";
+//        }
+//    });
 }
 
 
@@ -116,6 +132,50 @@ void Camera::setTriggerModeEnable(bool enable)
         startLiveVideo();
         qDebug() << "trigger" << mode;
     }
+    // cv::Mat::setDefaultAllocator(cv::cuda::HostMem::getAllocator (cv::cuda::HostMem::AllocType::PAGE_LOCKED));
+    cv::Mat img = cv::imread("/home/nvidia/cut10675.png");
+    //    //cv::setNumThreads(0);
+    //    for (qint32 i = 0; i < 100; ++i)
+    //    {
+    //        cv::Mat M = cv::imread("/home/nvidia/cut10675.png");
+    //        QElapsedTimer t;
+    //        t.start();
+    //        const int src_h = M.rows;
+    //        const int src_w = M.cols;
+    //        const int src_c = M.channels();
+    //           //   std::cout << "M = " << endl << " " << M << endl << endl;
+
+    //        cv::Mat hw_c = M.reshape(1, src_h * src_w);
+    //        //std::cout << "hw_c = " << endl << " " << hw_c << endl << endl;
+
+    //        const std::array<int,3> dims = {src_c, src_h, src_w};
+    //        Mat dst;
+    //        dst.create(3, &dims[0], CV_MAKETYPE(M.depth(), 1));
+    //        cv::Mat dst_1d = dst.reshape(1, {src_c, src_h, src_w});
+
+    //        cv::transpose(hw_c, dst_1d);
+    //        //std::cout << "dst_1d = " << endl << " " << dst_1d << endl << endl;
+    //        qDebug() << t.nsecsElapsed();
+    //    }
+
+    //    QElapsedTimer t;
+    //    t.start();
+    //    cv::resize(img, img, cv::Size(128, 64));
+    //    qDebug() <<  t.nsecsElapsed();
+    for (qint32 i = 0; i < 1000; ++i)
+    {
+        QElapsedTimer t1;
+
+        cv::cuda::GpuMat gpuMat, mm;
+        gpuMat.upload(img);
+         t1.start();
+       // gpuMat.copyTo(mm);
+        //cv::cuda::resize(gpuMat, mm, cv::Size(128, 64));
+        // cv::cuda::cvtColor(mm, gpuMat, COLOR_RGB2BGR);
+
+        qDebug() << gpuMat.cols << gpuMat.rows << t1.nsecsElapsed();
+    }
+
 }
 
 void Camera::setTriggerMode(qint32 mode)
@@ -127,11 +187,24 @@ void Camera::tryToStartCamera()
 {
     if (!streamIsActive)
     {
-        QtConcurrent::run(this, &Camera::procImageQueue);
-        QThread::msleep(250);
+        qDebug() << "DEBUG MODE STATUS" << options.has_debug_mode() << options.debug_mode();
+        if (options.has_debug_mode() && options.debug_mode())
+        {
+            QtConcurrent::run(this, &Camera::procImageImitation);
+            QThread::msleep(1000);
+        }
+        else       {
+            QtConcurrent::run(this, &Camera::procImageQueue);
+            QThread::msleep(250);
+        }
+
+
 
 #ifdef AUTOEXP_MAIN_THREAD
-        doAutoExposure();
+        if (!options.has_debug_mode() || !options.debug_mode())
+        {
+            doAutoExposure();
+        }
 #endif
 
     }
@@ -191,13 +264,14 @@ void Camera::procImageQueue()
                                                       .arg(tLagElapsed));
                 }
                 emit currentTimeReady(imageInfo.u64TimestampDevice, t);
-                 //qDebug() << "raw" << t << imageInfo.u64TimestampDevice << bufferFrames.size();
+                //qDebug() << "raw" << t << imageInfo.u64TimestampDevice << bufferFrames.size();
                 FrameInfo ft;
                 ft.time = timeStampPrevious = imageInfo.u64TimestampDevice;
                 ft.computerTime = t.msecsSinceStartOfDay();
                 timePrevious = t;
-                ft.frame = Mat(options.hw_params().height(), options.hw_params().width(), CV_8UC1);
-                memcpy(ft.frame.data, pBuffer, options.hw_params().height() * options.hw_params().width());
+                ft.frame = Mat(options.hw_params().height(), options.hw_params().width(), CV_8UC1, pBuffer);
+                ft.memoryId = nMemID;
+                //memcpy(ft.frame.data, pBuffer, options.hw_params().height() * options.hw_params().width()); // этого делать не нужнл
 
                 QMutexLocker lock(&recMutex);
                 if (options.main_add_mode())
@@ -212,15 +286,17 @@ void Camera::procImageQueue()
                     ft.mainFrame = true;
                 }
                 bufferFrames.append(ft);
-                if (bufferFrames.size() >= maxBufferSize)
+                if (bufferFrames.size() >= maxBufferSize - 1)
                 {
+                    is_UnlockSeqBuf (hCam, bufferFrames.first().memoryId, (char*)bufferFrames.first().frame.data);
                     bufferFrames.removeFirst();
+
                 }
                 lock.unlock();
 
                 emit frameReady(bufferFrames.last());
-                // do not forget to unlock the buffer, when all buffers are locked we cannot receive images any more
-                is_UnlockSeqBuf (hCam, nMemID, pBuffer);
+//                // do not forget to unlock the buffer, when all buffers are locked we cannot receive images any more
+//                is_UnlockSeqBuf (hCam, nMemID, pBuffer);
                 ++i;
             }
         }
@@ -231,6 +307,7 @@ void Camera::procImageQueue()
 
 void Camera::procImageImitation()
 {
+    qDebug() << "open debug" << debugVideoPath;
     VideoCapture capture = VideoCapture(debugVideoPath.toStdString());
     Mat m;
     //QFile file(debugTimePath);
@@ -239,9 +316,11 @@ void Camera::procImageImitation()
 
     if (capture.isOpened())
     {
+        qDebug() << "record is opened";
         qint32 skip = 0;
-        qint32 frameNumber = 0;
+        qint32 frameNumber = 1;
         qint32 delta = (1. / options.hw_params().frame_rate()) * 1e7;
+        constexpr const qint32 takeEach = 3;
         bool  isDebuging = true;
         while (isDebuging)
         {
@@ -250,33 +329,38 @@ void Camera::procImageImitation()
                 if (moveFrames != 0)
                 {
                     capture.set(CAP_PROP_POS_FRAMES, capture.get(CAP_PROP_POS_FRAMES) + moveFrames);
+                    pedTracker.clear();
                     moveFrames = 0;
                 }
-                isDebuging = isDebuging && capture.read((m));
+                isDebuging = true;
                 if (isDebuging)
                 {
+                    while (skip < takeEach)
+                    {
+                        isDebuging = capture.read((m));
+                        ++skip;
+                    }
+                    skip = 0;
                     FrameInfo ft;
                     m.copyTo(ft.frame);
 
-                    if (skip == 1)
-                    {
-                        skip = 0;
-                    }
-                    else if (skip == 0)
-                    {
-                        pedTracker.track(ft.frame, ft.time);
-                        pedTracker.drawROIs(ft.frame);
-                        ft.time = delta * frameNumber;
-                        ++frameNumber;
-                        bufferFrames.append(ft);
-                        waitForCommand = true;
-                    }
 
-                    if (bufferFrames.size() >= maxBufferSize)
+                    pedTracker.track(ft.frame, ft.time);
+                    qDebug() << "draw";
+                    pedTracker.drawROIs(ft.frame);
+                    ft.time = delta * frameNumber;
+                    ++frameNumber;
+                    qDebug() << "push";
+                    ft.mainFrame = true;
+                    bufferFrames.append(ft);
+                    waitForCommand = true;
+
+
+                    if (bufferFrames.size() >= 100)
                     {
                         bufferFrames.removeFirst();
                     }
-                    ++skip;
+
                 }
 
             }
@@ -526,7 +610,7 @@ void Camera::stopLiveVideo()
 void Camera::unlockAllBuffer()
 {
     qint32 errorCode = -1;
-    for (qint32 i = (m_nNumberOfBuffers - 1); i >= 0; --i)
+    for (qint32 i = (maxBufferSize - 1); i >= 0; --i)
     {
         // free buffers
         if((errorCode = is_UnlockSeqBuf(hCam, m_viSeqMemId.at(i), m_vpcSeqImgMem.at(i))) != IS_SUCCESS )
@@ -695,6 +779,7 @@ void Camera::assignCameraOptions(const msg::CameraOptions& _options)
         setAutoExposure(_options.auto_exposure_enable());
     }
 
+
     if (_options.has_ball_recognize_enable())
     {
         setBallRecognizeFlag(_options.ball_recognize_enable());
@@ -703,6 +788,11 @@ void Camera::assignCameraOptions(const msg::CameraOptions& _options)
     if (_options.has_debug_enable())
     {
         setBallRecognizeFlagDebug(_options.debug_enable());
+    }
+
+    if (_options.has_debug_mode())
+    {
+        options.set_debug_mode(_options.debug_mode());
     }
 
     if (_options.has_hw_params())
@@ -717,10 +807,14 @@ void Camera::assignCameraOptions(const msg::CameraOptions& _options)
     if (_options.has_calib_params())
     {
         options.mutable_calib_params()->MergeFrom(_options.calib_params());
-        auto calibHelper = CalibrationHelper::instance();
+        auto& calibHelper = CalibrationHelper::instance();
         Calibration::SpacecraftPlatform::CAMERA::CameraParams Camera;
         Calibration::ExteriorOr EO;
         calibHelper.convertFromProto(_options.calib_params(), Camera, EO);
+        //fix
+        Camera.x_direction = Calibration::SpacecraftPlatform::CAMERA::CameraXdirection::right;
+        Camera.z_direction = Calibration::SpacecraftPlatform::CAMERA::CameraZdirection::frompage;
+        Camera.cameraType = Calibration::SpacecraftPlatform::CAMERA::CameraType::central;
         calibHelper.setEO(QString::fromStdString(options.id()), EO);
         calibHelper.setCameraParams(QString::fromStdString(options.id()), Camera);
     }
@@ -918,8 +1012,6 @@ void Camera::updateHWParameters()
 
     getHWDebounceValue(errorCode);
 
-    //   options.mutable_hw_params()->set_trigger_mode(is_SetExternalTrigger(hCam, IS_GET_EXTERNALTRIGGER));
-
 }
 
 void Camera::fillCurrentCameraParameters()
@@ -934,22 +1026,22 @@ bool Camera::camSeqBuild()
     bool bRet = false;
     qint32 nRet;
 
-    double FrameTimeMin, FrameTimeMax, FrameTimeIntervall;
-    nRet = is_GetFrameTimeRange (hCam, &FrameTimeMin, &FrameTimeMax, &FrameTimeIntervall);
-    if (nRet == IS_SUCCESS)
-    {
-        double maxBuffers;
-        maxBuffers = (1.0f / FrameTimeMin) + 0.5f;
-        m_nNumberOfBuffers = (qint32) (maxBuffers);
-        //qDebug() << "BUFFERS " << maxBuffers;
-        if( m_nNumberOfBuffers < 3 )
-        {
-            m_nNumberOfBuffers = 3;
-        }
+    //    double FrameTimeMin, FrameTimeMax, FrameTimeIntervall;
+    //    nRet = is_GetFrameTimeRange (hCam, &FrameTimeMin, &FrameTimeMax, &FrameTimeIntervall);
+    //    if (nRet == IS_SUCCESS)
+    //    {
+    //        double maxBuffers;
+    //        maxBuffers = (1.0f / FrameTimeMin) + 0.5f;
+    //        m_nNumberOfBuffers = (qint32) (maxBuffers);
+    //        //qDebug() << "BUFFERS " << maxBuffers;
+    //        if( m_nNumberOfBuffers < 3 )
+    //        {
+    //            m_nNumberOfBuffers = 3;
+    //        }
 
-    }
-    else
-        return false;
+    //    }
+    //    else
+    //        return false;
 
 
     // calculate the image buffer width and height , watch if an (absolute) AOI is used
@@ -961,7 +1053,7 @@ bool Camera::camSeqBuild()
 
     // allocate buffers (memory) in a loop
     qint32 i;
-    for (i = 0; i < m_nNumberOfBuffers; ++i)
+    for (i = 0; i < maxBufferSize; ++i)
     {
         qint32 iImgMemID = 0;
         char* pcImgMem = 0;
@@ -979,7 +1071,7 @@ bool Camera::camSeqBuild()
         }
 
         // put memory into the sequence buffer management
-        nRet = is_AddToSequence(	hCam, pcImgMem, iImgMemID);
+        nRet = is_AddToSequence(hCam, pcImgMem, iImgMemID);
         if( nRet != IS_SUCCESS )
         {
             // free latest buffer
@@ -992,18 +1084,12 @@ bool Camera::camSeqBuild()
 
     }
 
-    // store current number buffers in case we did not match to get the desired number
-    m_nNumberOfBuffers = i;
-
     // enable the image queue
     nRet = is_InitImageQueue (hCam, 0);
     if( nRet == IS_SUCCESS )
     {
-        // we got buffers in the image queue
-        if( m_nNumberOfBuffers >= 3)
-            bRet= true;
+        bRet = true;
     }
-
 
     return bRet;
 }
@@ -1015,7 +1101,7 @@ bool Camera::camSeqKill()
     is_ClearSequence(hCam);
 
 
-    for(qint32 i = (m_nNumberOfBuffers-1); i >= 0   ; --i)
+    for(qint32 i = (maxBufferSize - 1); i >= 0; --i)
     {
         // free buffers
         if(is_FreeImageMem(hCam, m_vpcSeqImgMem.at(i), m_viSeqMemId.at(i)) != IS_SUCCESS )
@@ -1027,7 +1113,6 @@ bool Camera::camSeqKill()
     // no valid buffers any more
     m_viSeqMemId.clear();
     m_vpcSeqImgMem.clear();
-    m_nNumberOfBuffers = 0;
 
     return true;
 }
@@ -1237,6 +1322,7 @@ QLinkedList<FrameInfo>::iterator Camera::getLastFrame(bool& ok, bool main)
     QLinkedList<FrameInfo>::iterator it;
     if (bufferFrames.begin() == bufferFrames.end())
     {
+        qDebug() << "NO fRAMES";
         return bufferFrames.begin();
     }
 

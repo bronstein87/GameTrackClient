@@ -9,11 +9,19 @@
 #include <opencv4/opencv2/imgproc.hpp>
 #include <opencv4/opencv2/tracking.hpp>
 #include <opencv4/opencv2/highgui.hpp>
+#include <opencv4/opencv2/cudaimgproc.hpp>
+#include <opencv4/opencv2/cudawarping.hpp>
 #include <QDebug>
 
 using namespace cv;
 class DetectNetBase : public QObject
 {
+
+
+
+
+    Q_OBJECT
+public:
 
     struct IOUResult
     {
@@ -22,9 +30,6 @@ class DetectNetBase : public QObject
         double partR2;
     };
 
-
-    Q_OBJECT
-public:
     explicit DetectNetBase(qint32 width, qint32 height, QObject *parent = nullptr);
 
     void initCNN(detectNet::NetworkType type, double threshold);
@@ -38,6 +43,9 @@ public:
 signals:
 
 protected:
+
+
+
     void readFrameInGPUMemory(Mat img);
 
     QScopedPointer <detectNet> net;

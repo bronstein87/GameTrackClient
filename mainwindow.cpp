@@ -25,10 +25,6 @@ void MainWindow::on_sendMessagePushButton_clicked()
     camera->sendTest(ui->testMessageLineEdit->text());
 }
 
-void MainWindow::on_connectPushButton_clicked()
-{
-    camera->connectToCameraServer(QHostAddress(ui->ipLineEdit->text()), ui->portLineEdit->text().toUShort());
-}
 
 void MainWindow::on_controllerParamsPushButton_clicked()
 {

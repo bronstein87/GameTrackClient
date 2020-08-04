@@ -15,6 +15,8 @@
 #include <calibrationhelper.h>
 #include <proto/msg.internal.pb.h>
 
+
+
 using namespace cv;
 using namespace std;
 using namespace gt::internal;
@@ -64,19 +66,27 @@ public:
         LeftSquare,
         RightSquare,
         Umpire,
+        UmpireFirstBase,
+        UmpireSecondBase,
+        UmpirePitchFirst,
+        UmpirePitchSecond,
+        CouchFirst,
+        CouchSecond,
         FirstBase,
         SecondBase,
         ThirdBase,
         LeftField,
         CenterField,
         RightField,
-        ShortStop
+        ShortStop,
+        Pitch
     };
 
     struct MovePosition
     {
         Point2f onCam;
         Point3f onSpace;
+        double height;
     };
 
 
@@ -208,35 +218,33 @@ private:
 
     void resolveConflict(PPlayer p1, PPlayer p2, Rect2d foundPlayer);
 
-    void initTracker(Mat grayResized, PPlayer player);
+    bool initTracker(Mat grayResized, PPlayer player);
 
-    void initTrackerFirstly(Mat grayResized, PPlayer player);
+    bool initTrackerFirstly(Mat grayResized, PPlayer player);
 
     void savePlayerHistory(PPlayer p);
 
-    void assignPosition(PPlayer player, bool &changed);
+    bool assignPosition(PPlayer player, bool &changed);
+
+    void correctPlayerHeight(PPlayer player);
 
 
 
 
     constexpr const static double trackerThreshold = 3.5;
     constexpr const static double minIOUIntersect = 0.2;
-    constexpr const static double minIntersect = 0.25;
+    constexpr const static double minIntersect = 0.4;
     constexpr const static double trackConfidenceUpdateCoeff = 0.7;
 
     qint32 detectDuration = 8;
     qint32 trackDuration = 20;
 
 
-    //    QMap <TeamRole, PPlayer> attackInfo;
-    //    QMap <TeamRole, PPlayer> defenceInfo;
-
-
     qint32 detectCounter = 0;
     qint32 trackCounter = 0;
     Rect2d trackZone;
 
-    QMap <TeamRole, QVector <PPlayer> > unconfirmedPlayers;
+
     QLinkedList <PPlayer> nonStructuredPlayers;
     QVector <LostPlayersArea> intersectPlayers;
     TrackMode mode = Players;
@@ -251,7 +259,7 @@ private:
     constexpr const static double resampleCoeff = 0.75;
     constexpr const static qint32 heightThreshold = 100;
     constexpr const static qint32 speedUpdateMax = 5;
-    constexpr const static qint32 outOfFrameBorder = 10;
+    constexpr const static qint32 outOfFrameBorder = 20;
     constexpr const static double confidenceThreshold = 1.;
     constexpr const static double trackerHighConfidence = 4.5;
     constexpr const static double bodyCropCoeff = 0.6;
@@ -260,6 +268,9 @@ private:
     constexpr const static double maxTrackNotFound = 10;
     constexpr const static qint32 tryToTrack = 3;
     constexpr const static double speedThreshold = 10;
+    constexpr const static double maxPitchDistance = 3;
+    constexpr const static double playerHeightThreshold = 2.1;
+    constexpr const static double playerMediumHeight = 1.85;
 
 };
 

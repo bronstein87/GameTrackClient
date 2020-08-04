@@ -1,4 +1,5 @@
 #include "calibrationhelper.h"
+#include <math.h>
 
 CalibrationHelper::CalibrationHelper()
 {
@@ -9,12 +10,44 @@ bool CalibrationHelper::calculatePointOnGround(Calibration::Position2D& XYpix, C
 {
     QString cam = name.isEmpty() ? currentCamera : name;
     bool success = Calibration::GetRayAndPoint(eos[cam], cameras[cam], XYpix, RayPoint);
-    RayPoint.Pos.X = RayPoint.Pos.Z * RayPoint.Vect.X / abs(RayPoint.Vect.Z) + RayPoint.Pos.X;
-    RayPoint.Pos.Y = RayPoint.Pos.Z * RayPoint.Vect.Y / abs(RayPoint.Vect.Z) + RayPoint.Pos.Y;
-    RayPoint.Pos.Z = RayPoint.Pos.Z * RayPoint.Vect.Z / abs(RayPoint.Vect.Z) + RayPoint.Pos.Z;
+    if (success)
+    {
+        RayPoint.Pos.X = RayPoint.Pos.Z * RayPoint.Vect.X / abs(RayPoint.Vect.Z) + RayPoint.Pos.X;
+        RayPoint.Pos.Y = RayPoint.Pos.Z * RayPoint.Vect.Y / abs(RayPoint.Vect.Z) + RayPoint.Pos.Y;
+        RayPoint.Pos.Z = RayPoint.Pos.Z * RayPoint.Vect.Z / abs(RayPoint.Vect.Z) + RayPoint.Pos.Z;
+    }
     return success;
 }
 
+bool CalibrationHelper::getZForHuman(Calibration::Position2D& XYpix, const Calibration::Position& XYZGround, Calibration::Position& XYZHeight, const QString& name)
+{
+    Calibration::RayAndPoint RayPoint;
+    QString cam = name.isEmpty() ? currentCamera : name;
+    auto eo = eos[cam];
+    bool success = Calibration::GetRayAndPoint(eo, cameras[cam], XYpix, RayPoint);
+    if (success)
+    {
+
+        double dX = (XYZGround.X - eo.Point.X);
+        double dY = (XYZGround.Y - eo.Point.Y);
+        double distance_2D = std::sqrt(dX * dX + dY * dY);
+
+        double Norm = sqrt(RayPoint.Vect.X * RayPoint.Vect.X +
+                           RayPoint.Vect.Y * RayPoint.Vect.Y);
+        //
+        XYZHeight.X = RayPoint.Vect.X / Norm * distance_2D + eo.Point.X;
+        XYZHeight.Y = RayPoint.Vect.Y / Norm * distance_2D + eo.Point.Y;
+        XYZHeight.Z = RayPoint.Vect.Z / Norm * distance_2D + eo.Point.Z;
+    }
+
+    return success;
+}
+
+void CalibrationHelper::correctHumanHeight(Calibration::Position& XYZHeight, Calibration::Position2D& XYpix, const QString& name)
+{
+    QString cam = name.isEmpty() ? currentCamera : name;
+    Calibration::GetXYfromXYZ(eos[cam], cameras[cam], XYZHeight, XYpix);
+}
 
 
 CalibrationHelper& CalibrationHelper::instance()
@@ -72,7 +105,7 @@ void CalibrationHelper::convertFromProto(const CalibrationParameters &parameters
 
 
 void CalibrationHelper::readCurrentCalibrationParameters(const QString& id, const QString& path, Calibration::ExteriorOr& EO,
-                                                               Calibration::SpacecraftPlatform::CAMERA::CameraParams& Camera, bool current, qint32 w, qint32 h)
+                                                         Calibration::SpacecraftPlatform::CAMERA::CameraParams& Camera, bool current, qint32 w, qint32 h)
 {
 
     QString fullPath = path + calibrateDir;

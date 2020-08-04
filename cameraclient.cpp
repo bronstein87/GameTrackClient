@@ -40,12 +40,6 @@ CameraClient::CameraClient(Camera* cam, const QString& ipPort, QObject *parent) 
 }
 
 
-void CameraClient::connectToCameraServer(const QHostAddress& address, quint16 port)
-{
-    //    sAddress = address;
-    //    client->connectToHost(address, port);
-}
-
 
 void CameraClient::sendTest(const QString& test)
 {
@@ -137,12 +131,15 @@ void CameraClient::initializeMessageHandlers()
             }
             else
             {
+                auto options = camera->getOptions();
                 RtspVideoHandlerParams params;
                 params.cam = camera;
-                params.w = camera->getOptions().hw_params().width();
-                params.h = camera->getOptions().hw_params().height();
+                params.w = options.hw_params().width();
+                params.h = options.hw_params().height();
+                params.isRotated = options.p_params().rotate();
+                params.isDebugMode = options.debug_mode();
 
-                auto options = camera->getOptions();
+
                 QString pipeLine = QString("( appsrc name=vsrc "
                                            "! nvvidconv ! video/x-raw(memory:NVMM),format=NV12 ! omxh264enc bitrate=20000000 control-rate=2 "
                                            "! rtph264pay name=pay pt=96 ! identity name=pay0 )")
@@ -207,8 +204,10 @@ void CameraClient::initializeMessageHandlers()
         {
             msg::DebugInfo command;
             command.ParseFromArray(data.msg.data(), data.msg.size());
-            camera->setFramePosition(command.skipdebugframes());
-
+            if (command.has_message())
+            {
+                camera->setFramePosition(command.skipdebugframes());
+            }
         }
         camera->resetWaitForCommand();
     });

@@ -27,7 +27,7 @@ public:
 
     explicit CameraClient(Camera* cam, const QString& ipPort,  QObject *parent = 0);
 
-    void connectToCameraServer(const QHostAddress& address, quint16 port);
+
 
     void sendTest(const QString& test);
 

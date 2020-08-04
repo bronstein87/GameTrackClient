@@ -73,11 +73,9 @@ unix:!macx: LIBS += -L$$PWD/../../../../../usr/local/lib/ -lopencv_tracking
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_core
 
-#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudaarithm
+unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudaarithm
 
-#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudaimgproc
-
-#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_shape
+unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudawarping
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_highgui
 
@@ -86,10 +84,6 @@ unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudaimgproc
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_imgcodecs
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_features2d
-
-#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudacodec
-
-#unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_cudalegacy
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_videoio
 
@@ -149,13 +143,6 @@ INCLUDEPATH += $$PWD/../../../../usr/local/include
 DEPENDPATH += $$PWD/../../../../usr/local/include
 
 
-
-
-
-#unix:!macx: LIBS += -L$$PWD/../../../../usr/lib/aarch64-linux-gnu/ -lgstrtp-1.0
-
-#INCLUDEPATH += $$PWD/../../../../usr/lib/aarch64-linux-gnu
-#DEPENDPATH += $$PWD/../../../../usr/lib/aarch64-linux-gnu
 
 
 

@@ -25,20 +25,35 @@ private:
     QString calibrateDir = "calibrate/";
     QString currentCamera;
 
-
 public:
 
-    bool calculatePointOnGround(Calibration::Position2D& XYpix, Calibration::RayAndPoint& RayPoint, const QString &name = QString());
+    bool calculatePointOnGround(Calibration::Position2D &XYpix, Calibration::RayAndPoint& RayPoint, const QString& name = QString());
 
-    void setEO(const QString& name, Calibration::ExteriorOr& _eo) {eos.insert(name, _eo);}
+    bool getZForHuman(Calibration::Position2D& XYpix, const Calibration::Position& XYZGround, Calibration::Position& XYZHeight, const QString& name = QString());
+
+    void correctHumanHeight(Calibration::Position& XYZHeight, Calibration::Position2D& XYpix, const QString& name = QString());
+
+    void setEO(const QString& name, Calibration::ExteriorOr& _eo)
+    {
+        eos.insert(name, _eo);
+    }
 
     Calibration::ExteriorOr getEO(const QString& name)
-    {QString cam = name.isEmpty() ? currentCamera : name; return eos[cam];}
+    {
+        QString cam = name.isEmpty() ? currentCamera : name;
+        return eos[cam];}
 
-    void setCameraParams(const QString& name, Calibration::SpacecraftPlatform::CAMERA::CameraParams& _camera) {cameras.insert(name, _camera);}
+
+    void setCameraParams(const QString& name, Calibration::SpacecraftPlatform::CAMERA::CameraParams& _camera)
+    {
+        cameras.insert(name, _camera);
+    }
 
     Calibration::SpacecraftPlatform::CAMERA::CameraParams getCameraParams(const QString& name)
-    {QString cam = name.isEmpty() ? currentCamera : name; return cameras[cam];}
+    {
+        QString cam = name.isEmpty() ? currentCamera : name;
+        return cameras[cam];
+    }
 
     void setCurrentCamera(const QString& camera) {currentCamera = camera;}
 

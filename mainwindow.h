@@ -22,8 +22,6 @@ public:
 private slots:
     void on_sendMessagePushButton_clicked();
 
-    void on_connectPushButton_clicked();
-
     void on_controllerParamsPushButton_clicked();
 
 private:

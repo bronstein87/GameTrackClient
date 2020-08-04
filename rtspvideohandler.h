@@ -16,6 +16,8 @@ struct RtspVideoHandlerParams
     qint32 w;
     qint32 h;
     qint32 framerate;
+    bool isRotated;
+    bool isDebugMode;
 };
 
 class CameraClient;

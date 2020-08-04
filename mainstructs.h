@@ -13,6 +13,7 @@ struct FrameInfo
     cv::Mat frame;
     quint64 time = 0;
     quint64 computerTime = 0;
+    qint32 memoryId = -1;
     bool mainFrame = false;
     bool handled = false;
     bool sent = false;

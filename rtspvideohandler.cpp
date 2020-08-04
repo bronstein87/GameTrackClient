@@ -78,11 +78,28 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
             return;
         }
     }
+
+
     if (!it->sent || params.cam->getNextFrame(it, onlyMain))
     {
         size = params.w * params.h * 4;
-        Mat frame;//COLOR_BayerBG2RGBA
-        cvtColor(it->frame, frame, COLOR_BayerRG2RGBA);
+        Mat frame;
+        if (params.isDebugMode)
+        {
+            cvtColor(it->frame, frame, COLOR_BGR2RGBA);
+        }
+        else
+        {
+            if (params.isRotated)
+            {
+                cvtColor(it->frame, frame, COLOR_BayerRG2RGBA);
+            }
+            else
+            {
+                cvtColor(it->frame, frame, COLOR_BayerBG2RGBA);
+            }
+        }
+
         buffer = gst_buffer_new_wrapped(frame.data, size);
         if (startTime == -1)
         {
@@ -112,7 +129,6 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
         frame.addref();
         gst_buffer_unref (buffer);
         ++currentFrameCount;
-        //qDebug() << currentFrameCount;
     }
 
 }
