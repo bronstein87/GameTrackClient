@@ -24,10 +24,9 @@ RtspVideoHandler::extend_rtp_header_probe (GstPad* pad,
     {
         static guint32 tstmp = -1;
         guint32 ts = gst_rtp_buffer_get_timestamp(&rtpBuffer);
-        if (tstmp != ts)
+        if (tstmp != ts && !handler->tsRtpHeader.isEmpty())
         {
             QMutexLocker lock(&handler->mutex);
-            Q_ASSERT(!handler->tsRtpHeader.isEmpty());
             quint64 data = handler->tsRtpHeader.first();
             handler->tsRtpHeader.removeFirst();
             lock.unlock();
@@ -84,6 +83,8 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
     {
         size = params.w * params.h * 4;
         Mat frame;
+        //cv::putText(it->frame, QString("%1").arg(it->time).toStdString(), Point(1920/2, 1080/2),1,5, Scalar::all(255), 5);
+
         if (params.isDebugMode)
         {
             cvtColor(it->frame, frame, COLOR_BGR2RGBA);
@@ -259,6 +260,7 @@ void RtspVideoHandler::init()
 
 void RtspVideoHandler::reset()
 {
+    tsRtpHeader.clear();
     framesToSend.clear();
     getValidIterator = false;
     currentFrameCount = 0;
