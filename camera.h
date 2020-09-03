@@ -220,7 +220,7 @@ private:
     PedestrianTracker pedTracker;
     BatTracker batTracker; // tmp
     QTimer autoExpTimer;
-    constexpr static const qint32 delayTreshold = 1;
+    constexpr static const qint32 delayTreshold = 1000;
 
     QString debugVideoPath;
     QString debugTimePath;

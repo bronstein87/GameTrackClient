@@ -20,6 +20,30 @@ struct RtspVideoHandlerParams
     bool isDebugMode;
 };
 
+
+struct HeaderData
+{
+    HeaderData() {}
+    HeaderData(quint64 cameraTime, quint64 computerTimeComputer, quint64 computerTimeCamera, qint32 memoryId, quint64 pointer) :
+    _cameraTime(cameraTime), _computerTimeComputer(computerTimeComputer), _computerTimeCamera(computerTimeCamera), _memoryId(memoryId), _pointer(pointer) {}
+    quint64 _cameraTime = 0;
+    quint64 _computerTimeComputer = 0;
+    quint64 _computerTimeCamera = 0;
+    qint32 _memoryId = 0;
+    quint64 _pointer = 0;
+};
+
+
+enum HeaderType
+{
+    Invalid,
+    CameraTime,
+    ComputerTimeComputer,
+    ComputerTimeCamera,
+    MemoryId,
+    Pointer
+};
+
 class CameraClient;
 
 
@@ -108,14 +132,14 @@ private:
 
     static GstPadProbeReturn
     extend_rtp_header_probe (GstPad* pad,
-                GstPadProbeInfo* info,
-                gpointer         user_data);
+                             GstPadProbeInfo* info,
+                             gpointer         user_data);
 
     CameraClient* client = nullptr;
     RtspVideoHandlerParams params;
     QLinkedList <FrameInfo> framesToSend;
     QLinkedList <FrameInfo>::iterator it;
-    QLinkedList <quint64> tsRtpHeader;
+    QLinkedList <HeaderData> tsRtpHeader;
     QMutex mutex;
 
     GMainLoop* loop = nullptr;
@@ -129,8 +153,6 @@ private:
     bool onlyMain = false;
     bool getValidIterator = false;
     QTimer timeoutTimer;
-
-
 };
 
 #endif // RTSPVIDEOHANDLER_H

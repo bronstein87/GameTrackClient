@@ -87,20 +87,20 @@ Camera::Camera(const QString& pattern, bool init, qint32 port, QObject* parent) 
     connect(&recognizer, &BallRecognizerPP::ballRecognized, this, &Camera::ballMeasureReady);
     connect(&recognizer, &BallRecognizerPP::ballOutOfFrame, this, &Camera::ballOutOfFrame);
 
-//    QtConcurrent::run([]()
-//    {
-//        while(true)
-//        {
-//            qDebug() << "FFFFFF";
-//        }
-//    });
-//    QtConcurrent::run([]()
-//    {
-//        while(true)
-//        {
-//            qDebug() << "BBBBBb";
-//        }
-//    });
+    //    QtConcurrent::run([]()
+    //    {
+    //        while(true)
+    //        {
+    //            qDebug() << "FFFFFF";
+    //        }
+    //    });
+    //    QtConcurrent::run([]()
+    //    {
+    //        while(true)
+    //        {
+    //            qDebug() << "BBBBBb";
+    //        }
+    //    });
 }
 
 
@@ -168,8 +168,8 @@ void Camera::setTriggerModeEnable(bool enable)
 
         cv::cuda::GpuMat gpuMat, mm;
         gpuMat.upload(img);
-         t1.start();
-       // gpuMat.copyTo(mm);
+        t1.start();
+        // gpuMat.copyTo(mm);
         //cv::cuda::resize(gpuMat, mm, cv::Size(128, 64));
         // cv::cuda::cvtColor(mm, gpuMat, COLOR_RGB2BGR);
 
@@ -228,50 +228,59 @@ void Camera::procImageQueue()
     char* pBuffer = nullptr;
     qint32 nRet;
     static qint64 timeStampPrevious;
-    static QTime timePrevious;
-    timePrevious = QTime();
+    static QTime timestampSystemPrevious;
+    timestampSystemPrevious = QTime();
     timeStampPrevious = -1;
     do
     {
-        QElapsedTimer t, tlag;
+        QElapsedTimer tlag;
 
         tlag.start();
         nRet = is_WaitForNextImage(hCam, 1000, &pBuffer, &nMemID);
         if (nRet == IS_SUCCESS)
         {
-            t.start();
+            QDateTime dt = QDateTime::currentDateTime();
             quint64 tLagElapsed = tlag.elapsed();
             UEYEIMAGEINFO imageInfo;
             nRet = is_GetImageInfo( hCam, nMemID, &imageInfo, sizeof(imageInfo));
             if (nRet == IS_SUCCESS)
             {
-                QTime t = QTime(imageInfo.TimestampSystem.wHour,imageInfo.TimestampSystem.wMinute,
-                                imageInfo.TimestampSystem.wSecond, imageInfo.TimestampSystem.wMilliseconds);
+                QTime timestampSystem = QTime(imageInfo.TimestampSystem.wHour,imageInfo.TimestampSystem.wMinute,
+                                              imageInfo.TimestampSystem.wSecond, imageInfo.TimestampSystem.wMilliseconds);
 
                 qint64 diff = abs(timeStampPrevious - (qint64)imageInfo.u64TimestampDevice);
                 qint64 thres = (1. / options.hw_params().frame_rate()) * 1e7 + 1e4;
 
                 if (timeStampPrevious != -1 && diff > thres)
                 {
-                    qint32 delta = abs(timePrevious.secsTo(t));
+                    bool fixed = false;
+                    qint32 delta = abs(timestampSystemPrevious.msecsTo(timestampSystem));
                     if (delta > delayTreshold)
                     {
                         imageInfo.u64TimestampDevice = timeStampPrevious + thres;
+                        fixed = true;
                     }
-                    qDebug() << delta << diff << thres << t << timePrevious << tLagElapsed << "DELAY";
-                    emit this->messageFromCameraReady(QString("Задержка приема кадра %1 (%2)")
-                                                      .arg(diff)
-                                                      .arg(tLagElapsed));
+                    QString delayMessage = QString("Delay. Await time: %1. Camera time : %2. System time from camera: %3."
+                                                   "System time from computer: %4. Diff with previous time %5."
+                                                   "Previous camera time: %6. Fixed: ")
+                            .arg(tLagElapsed)
+                            .arg(imageInfo.u64TimestampDevice)
+                            .arg(timestampSystem.toString())
+                            .arg(dt.toString())
+                            .arg(diff)
+                            .arg(timeStampPrevious)
+                            .arg(fixed);
+                    qDebug() << delayMessage;
+                    emit this->messageFromCameraReady(delayMessage);
                 }
-                emit currentTimeReady(imageInfo.u64TimestampDevice, t);
-                //qDebug() << "raw" << t << imageInfo.u64TimestampDevice << bufferFrames.size();
+                emit currentTimeReady(imageInfo.u64TimestampDevice, timestampSystem);
                 FrameInfo ft;
                 ft.time = timeStampPrevious = imageInfo.u64TimestampDevice;
-                ft.computerTime = t.msecsSinceStartOfDay();
-                timePrevious = t;
+                ft.computerTime = timestampSystem.msecsSinceStartOfDay();
+                ft.computerTimeTest = dt.toMSecsSinceEpoch();
+                timestampSystemPrevious = timestampSystem;
                 ft.frame = Mat(options.hw_params().height(), options.hw_params().width(), CV_8UC1, pBuffer);
                 ft.memoryId = nMemID;
-                //memcpy(ft.frame.data, pBuffer, options.hw_params().height() * options.hw_params().width()); // этого делать не нужнл
 
                 QMutexLocker lock(&recMutex);
                 if (options.main_add_mode())
@@ -290,13 +299,11 @@ void Camera::procImageQueue()
                 {
                     is_UnlockSeqBuf (hCam, bufferFrames.first().memoryId, (char*)bufferFrames.first().frame.data);
                     bufferFrames.removeFirst();
-
                 }
+
                 lock.unlock();
 
                 emit frameReady(bufferFrames.last());
-//                // do not forget to unlock the buffer, when all buffers are locked we cannot receive images any more
-//                is_UnlockSeqBuf (hCam, nMemID, pBuffer);
                 ++i;
             }
         }
@@ -1381,9 +1388,9 @@ bool Camera::getNextFrame(QLinkedList<FrameInfo>::iterator& it, bool main)
     const qint32 maxCounter = 3;
     qint32 counter = 0;
     bool waitForNew = false;
-    while ((waitForNew = (itTmp == bufferFrames.end()))
-           || ((main && !itTmp->mainFrame)
-               || (!main && itTmp->mainFrame))
+    while (((waitForNew = (itTmp == bufferFrames.end()))
+            || ((main && !itTmp->mainFrame)
+                || (!main && itTmp->mainFrame)))
            && counter != maxCounter)
     {
         lock.unlock();
@@ -1398,9 +1405,9 @@ bool Camera::getNextFrame(QLinkedList<FrameInfo>::iterator& it, bool main)
     }
 
 
-    auto last = bufferFrames.last();
-    auto test = itTmp;
-    //qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
+        auto last = bufferFrames.last();
+       auto test = itTmp;
+    //    //qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
     //qDebug() << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
     it = itTmp;
     return true;

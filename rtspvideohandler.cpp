@@ -27,10 +27,26 @@ RtspVideoHandler::extend_rtp_header_probe (GstPad* pad,
         if (tstmp != ts && !handler->tsRtpHeader.isEmpty())
         {
             QMutexLocker lock(&handler->mutex);
-            quint64 data = handler->tsRtpHeader.first();
+            HeaderData data = handler->tsRtpHeader.first();
             handler->tsRtpHeader.removeFirst();
             lock.unlock();
-            if (gst_rtp_buffer_add_extension_onebyte_header(&rtpBuffer, 1, &data, sizeof(data)) != TRUE)
+            bool success = true;
+            success = success && gst_rtp_buffer_add_extension_onebyte_header(&rtpBuffer,
+                                                                            HeaderType::CameraTime,
+                                                                             &data._cameraTime, sizeof(data._cameraTime));
+            success = success && gst_rtp_buffer_add_extension_onebyte_header(&rtpBuffer,
+                                                                            HeaderType::ComputerTimeComputer,
+                                                                             &data._computerTimeComputer, sizeof(data._computerTimeComputer));
+            success = success && gst_rtp_buffer_add_extension_onebyte_header(&rtpBuffer,
+                                                                            HeaderType::ComputerTimeCamera,
+                                                                             &data._computerTimeCamera, sizeof(data._computerTimeCamera));
+            success = success && gst_rtp_buffer_add_extension_onebyte_header(&rtpBuffer,
+                                                                            HeaderType::MemoryId,
+                                                                             &data._memoryId, sizeof(data._memoryId));
+            success = success && gst_rtp_buffer_add_extension_onebyte_header(&rtpBuffer,
+                                                                            HeaderType::Pointer,
+                                                                             &data._pointer, sizeof(data._pointer));
+            if (!success)
             {
                 g_printerr("cannot add extension to rtp header");
             }
@@ -78,12 +94,10 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
         }
     }
 
-
     if (!it->sent || params.cam->getNextFrame(it, onlyMain))
     {
         size = params.w * params.h * 4;
         Mat frame;
-        //cv::putText(it->frame, QString("%1").arg(it->time).toStdString(), Point(1920/2, 1080/2),1,5, Scalar::all(255), 5);
 
         if (params.isDebugMode)
         {
@@ -116,11 +130,11 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
         QMutexLocker lock(&mutex);
         if (needFrameCount != -1 && currentFrameCount >= needFrameCount)
         {
-            tsRtpHeader.append(0);
+            tsRtpHeader.append(HeaderData());
         }
         else
         {
-            tsRtpHeader.append(it->time);
+            tsRtpHeader.append(HeaderData(it->time, it->computerTimeTest, it->computerTime, it->memoryId, (quint64)it->frame.data));
         }
         lock.unlock();
 
