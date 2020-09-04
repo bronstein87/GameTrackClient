@@ -151,7 +151,8 @@ void Camera::tryToStartCamera()
             QtConcurrent::run(this, &Camera::procImageImitation);
             QThread::msleep(1000);
         }
-        else       {
+        else
+        {
             QtConcurrent::run(this, &Camera::procImageQueue);
             QThread::msleep(250);
         }

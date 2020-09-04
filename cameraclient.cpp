@@ -177,6 +177,8 @@ void CameraClient::initializeMessageHandlers()
     client.setHandler(msg::GameTrackProtocol::RequestCameraFrame, [this](const NetworkManager::MessageData& data)
     {
         Q_UNUSED(data);
+        camera->stopLiveVideo();
+        camera->startLiveVideo();
         camera->tryToStartCamera();
         QSharedPointer <QMetaObject::Connection> conn (new QMetaObject::Connection);
         *conn = connect(camera, &Camera::frameReady, this, [this, conn](FrameInfo ft) mutable
