@@ -132,49 +132,7 @@ void Camera::setTriggerModeEnable(bool enable)
         startLiveVideo();
         qDebug() << "trigger" << mode;
     }
-    // cv::Mat::setDefaultAllocator(cv::cuda::HostMem::getAllocator (cv::cuda::HostMem::AllocType::PAGE_LOCKED));
-    cv::Mat img = cv::imread("/home/nvidia/cut10675.png");
-    //    //cv::setNumThreads(0);
-    //    for (qint32 i = 0; i < 100; ++i)
-    //    {
-    //        cv::Mat M = cv::imread("/home/nvidia/cut10675.png");
-    //        QElapsedTimer t;
-    //        t.start();
-    //        const int src_h = M.rows;
-    //        const int src_w = M.cols;
-    //        const int src_c = M.channels();
-    //           //   std::cout << "M = " << endl << " " << M << endl << endl;
 
-    //        cv::Mat hw_c = M.reshape(1, src_h * src_w);
-    //        //std::cout << "hw_c = " << endl << " " << hw_c << endl << endl;
-
-    //        const std::array<int,3> dims = {src_c, src_h, src_w};
-    //        Mat dst;
-    //        dst.create(3, &dims[0], CV_MAKETYPE(M.depth(), 1));
-    //        cv::Mat dst_1d = dst.reshape(1, {src_c, src_h, src_w});
-
-    //        cv::transpose(hw_c, dst_1d);
-    //        //std::cout << "dst_1d = " << endl << " " << dst_1d << endl << endl;
-    //        qDebug() << t.nsecsElapsed();
-    //    }
-
-    //    QElapsedTimer t;
-    //    t.start();
-    //    cv::resize(img, img, cv::Size(128, 64));
-    //    qDebug() <<  t.nsecsElapsed();
-    for (qint32 i = 0; i < 1000; ++i)
-    {
-        QElapsedTimer t1;
-
-        cv::cuda::GpuMat gpuMat, mm;
-        gpuMat.upload(img);
-        t1.start();
-        // gpuMat.copyTo(mm);
-        //cv::cuda::resize(gpuMat, mm, cv::Size(128, 64));
-        // cv::cuda::cvtColor(mm, gpuMat, COLOR_RGB2BGR);
-
-        qDebug() << gpuMat.cols << gpuMat.rows << t1.nsecsElapsed();
-    }
 
 }
 
@@ -245,8 +203,10 @@ void Camera::procImageQueue()
             nRet = is_GetImageInfo( hCam, nMemID, &imageInfo, sizeof(imageInfo));
             if (nRet == IS_SUCCESS)
             {
+
                 QTime timestampSystem = QTime(imageInfo.TimestampSystem.wHour,imageInfo.TimestampSystem.wMinute,
                                               imageInfo.TimestampSystem.wSecond, imageInfo.TimestampSystem.wMilliseconds);
+                 qDebug() << imageInfo.u64TimestampDevice << timestampSystem << options.hw_params().frame_rate();
 
                 qint64 diff = abs(timeStampPrevious - (qint64)imageInfo.u64TimestampDevice);
                 qint64 thres = (1. / options.hw_params().frame_rate()) * 1e7 + 1e4;
@@ -262,7 +222,7 @@ void Camera::procImageQueue()
                     }
                     QString delayMessage = QString("Delay. Await time: %1. Camera time : %2. System time from camera: %3."
                                                    "System time from computer: %4. Diff with previous time %5."
-                                                   "Previous camera time: %6. Fixed: ")
+                                                   "Previous camera time: %6. Fixed: %7")
                             .arg(tLagElapsed)
                             .arg(imageInfo.u64TimestampDevice)
                             .arg(timestampSystem.toString())
@@ -1388,9 +1348,8 @@ bool Camera::getNextFrame(QLinkedList<FrameInfo>::iterator& it, bool main)
     const qint32 maxCounter = 3;
     qint32 counter = 0;
     bool waitForNew = false;
-    while (((waitForNew = (itTmp == bufferFrames.end()))
-            || ((main && !itTmp->mainFrame)
-                || (!main && itTmp->mainFrame)))
+    while ((waitForNew = (itTmp == bufferFrames.end()))
+            || ((main && !itTmp->mainFrame) || (!main && itTmp->mainFrame))
            && counter != maxCounter)
     {
         lock.unlock();
@@ -1408,7 +1367,7 @@ bool Camera::getNextFrame(QLinkedList<FrameInfo>::iterator& it, bool main)
         auto last = bufferFrames.last();
        auto test = itTmp;
     //    //qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
-    //qDebug() << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
+   // qDebug()<< itTmp == bufferFrames.end() << itTmp->frame.empty() << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
     it = itTmp;
     return true;
 }
