@@ -18,6 +18,7 @@
 
 Q_DECLARE_METATYPE(cv::Mat)
 Q_DECLARE_METATYPE(FrameInfo)
+Q_DECLARE_METATYPE(msg::CameraOptions)
 
 class RtspVideoHandler;
 class CameraClient : public QObject

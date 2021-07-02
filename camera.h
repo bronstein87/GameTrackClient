@@ -29,7 +29,7 @@
 #include <pedestriantracker.h>
 #include <QJsonDocument>
 
-#define AUTOEXP_MAIN_THREAD
+//#define AUTOEXP_MAIN_THREAD
 
 using namespace BOKZMath;
 using namespace gt::internal;
@@ -159,7 +159,7 @@ signals:
 
     void messageFromCameraReady(const QString& str);
 
-    void parametersChanged(msg::CameraOptions& options);
+    void parametersChanged(msg::CameraOptions options);
 
     void currentTimeReady(quint64 t, QTime ct);
 

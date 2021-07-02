@@ -9,6 +9,8 @@ CameraClient::CameraClient(Camera* cam, const QString& ipPort, QObject *parent) 
     //camera->batTracker.initCNN("/home/nvidia/Downloads/net/deploy.prototxt", "/home/nvidia/Downloads/net/snapshot_iter_340400.caffemodel", 0.6);
     qRegisterMetaType <cv::Mat> ();
     qRegisterMetaType <FrameInfo>();
+    qRegisterMetaType <msg::CameraOptions>();
+
     connect(camera, &Camera::messageFromCameraReady, this, [this](auto msg){this->sendTest(msg);});
     connect(this, &CameraClient::internalMessageReady, this, [this](auto msg){this->sendTest(msg);});
     connect(camera, &Camera::currentTimeReady, this, &CameraClient::sendCurrentTimeInternal);
@@ -178,8 +180,11 @@ void CameraClient::initializeMessageHandlers()
     {
         Q_UNUSED(data);
         camera->stopLiveVideo();
+        qDebug() << "1";
         camera->startLiveVideo();
+        qDebug() << "2";
         camera->tryToStartCamera();
+        qDebug() << "3";
         QSharedPointer <QMetaObject::Connection> conn (new QMetaObject::Connection);
         *conn = connect(camera, &Camera::frameReady, this, [this, conn](FrameInfo ft) mutable
         {

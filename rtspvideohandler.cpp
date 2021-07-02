@@ -127,6 +127,7 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
         qint64 duration = ((double)1 / params.framerate) * GST_SECOND;
         GST_BUFFER_DURATION(buffer) = duration;
         GST_BUFFER_OFFSET(buffer) = currentFrameCount;
+
         QMutexLocker lock(&mutex);
         if (needFrameCount != -1 && currentFrameCount >= needFrameCount)
         {

@@ -70,19 +70,19 @@ Camera::Camera(const QString& pattern, bool init, qint32 port, QObject* parent) 
         recognizer.setROIs(options.mutable_rec_rois());
         recognizer.setRecognizeParams(options.mutable_rec_params());
         connect(&autoExpHandler, &AutoExposureHandler::currentStateReady, this, &Camera::messageFromCameraReady);
-
+        tryToStartCamera();
     }
 
-    if (options.cam_type() > CameraType::BaseRightAdd)
-    {
-        batTracker.initCNN("/home/nvidia/Downloads/net/deploy.prototxt", "/home/nvidia/Downloads/net/snapshot_iter_340400.caffemodel", 0.6);
-        batTracker.setBallRecognizer(&recognizer);
-    }
-    else
-    {
-        pedTracker.initCNN(detectNet::PEDNET, 0.5);
-        recognizer.setPedestrianTracker(&pedTracker);
-    }
+//    if (options.cam_type() > CameraType::BaseRightAdd)
+//    {
+//        batTracker.initCNN("/home/nvidia/Downloads/net/deploy.prototxt", "/home/nvidia/Downloads/net/snapshot_iter_340400.caffemodel", 0.6);
+//        batTracker.setBallRecognizer(&recognizer);
+//    }
+//    else
+//    {
+//        pedTracker.initCNN(detectNet::PEDNET, 0.5);
+//        recognizer.setPedestrianTracker(&pedTracker);
+//    }
 
     connect(&recognizer, &BallRecognizerPP::ballRecognized, this, &Camera::ballMeasureReady);
     connect(&recognizer, &BallRecognizerPP::ballOutOfFrame, this, &Camera::ballOutOfFrame);
@@ -196,18 +196,20 @@ void Camera::procImageQueue()
 
         tlag.start();
         nRet = is_WaitForNextImage(hCam, 1000, &pBuffer, &nMemID);
+        // qDebug() << "get frame " << nRet;
         if (nRet == IS_SUCCESS)
         {
             QDateTime dt = QDateTime::currentDateTime();
             quint64 tLagElapsed = tlag.elapsed();
             UEYEIMAGEINFO imageInfo;
             nRet = is_GetImageInfo( hCam, nMemID, &imageInfo, sizeof(imageInfo));
+
             if (nRet == IS_SUCCESS)
             {
 
                 QTime timestampSystem = QTime(imageInfo.TimestampSystem.wHour,imageInfo.TimestampSystem.wMinute,
                                               imageInfo.TimestampSystem.wSecond, imageInfo.TimestampSystem.wMilliseconds);
-                 qDebug() << imageInfo.u64TimestampDevice << timestampSystem << options.hw_params().frame_rate();
+                 //qDebug() << imageInfo.u64TimestampDevice << timestampSystem << options.hw_params().frame_rate();
 
                 qint64 diff = abs(timeStampPrevious - (qint64)imageInfo.u64TimestampDevice);
                 qint64 thres = (1. / options.hw_params().frame_rate()) * 1e7 + 1e4;
@@ -545,7 +547,7 @@ void Camera::startLiveVideo()
     qint32 errorCode;
     if (!is_CaptureVideo(hCam, IS_GET_LIVE))
     {
-        if (camSeqBuild() && (errorCode = is_CaptureVideo(hCam, IS_DONT_WAIT)) != IS_SUCCESS)
+        if (!camSeqBuild() || (errorCode = is_CaptureVideo(hCam, IS_DONT_WAIT)) != IS_SUCCESS)
         {
             QString error = "не удалось начать съемку, код ошибки:" + QString::number(errorCode);
             qDebug() << error;
@@ -661,7 +663,12 @@ void Camera::setExposure(double exposure)
 {
     qint32 errorCode;
 
-    if ((errorCode = is_Exposure(hCam, IS_EXPOSURE_CMD_SET_EXPOSURE, (void*)&(exposure), sizeof(exposure))) !=
+    if (options.mutable_hw_params()->min_exposure() > exposure || exposure > options.mutable_hw_params()->max_exposure())
+    {
+        qDebug() << "1";
+        options.mutable_auto_exp_params()->set_exposure(options.mutable_hw_params()->exposure());
+    }
+    else if ((errorCode = is_Exposure(hCam, IS_EXPOSURE_CMD_SET_EXPOSURE, (void*)&exposure, sizeof(exposure))) !=
             IS_SUCCESS)
     {
         QString error = "не удалось установить новую экспозицию, код ошибки: " + QString::number(errorCode);
@@ -670,6 +677,7 @@ void Camera::setExposure(double exposure)
     }
     else
     {
+        qDebug() << "2";
         options.mutable_auto_exp_params()->set_exposure(exposure);
         options.mutable_hw_params()->set_exposure(exposure);
     }
@@ -1035,6 +1043,7 @@ bool Camera::camSeqBuild()
                                     &iImgMemID);
         if( nRet != IS_SUCCESS )
         {
+            qDebug() << "can't alloc image mem" << nRet;
             break;  // it makes no sense to continue
         }
 
@@ -1042,6 +1051,7 @@ bool Camera::camSeqBuild()
         nRet = is_AddToSequence(hCam, pcImgMem, iImgMemID);
         if( nRet != IS_SUCCESS )
         {
+            qDebug() << "can't add buffer to sequence" << nRet;
             // free latest buffer
             is_FreeImageMem( hCam, pcImgMem, iImgMemID );
             break;  // it makes no sense to continue
@@ -1057,6 +1067,10 @@ bool Camera::camSeqBuild()
     if( nRet == IS_SUCCESS )
     {
         bRet = true;
+    }
+    else
+    {
+        qDebug() << "can't init image queue" << nRet;
     }
 
     return bRet;
@@ -1130,50 +1144,57 @@ void Camera::doAutoExposure()
     });
     autoExpTimer.setInterval(100);
     autoExpTimer.start();
-#elif
+#else
     while (streamIsActive)
-    {
-        if (options.auto_exposure_enable())
-        {
-            QMutexLocker lockOpt(&recMutex);
-            if (!bufferFrames.isEmpty() && bufferFrames.last().mainFrame)
-            {
-                auto rawFrame = bufferFrames.last().frame;
-                QElapsedTimer t, t1, t2, t3, t4;
-                t.start();
-                lockOpt.unlock();
-                Mat frame;
-                t1.start();
-                resize(rawFrame, frame, Size(), 0.5, 0.5);
+       {
+           if (options.auto_exposure_enable())
+           {
+               QMutexLocker lockOpt(&recMutex);
+               if (!bufferFrames.isEmpty() && bufferFrames.last().mainFrame)
+               {
+                   auto rawFrame = bufferFrames.last().frame;
+                   QElapsedTimer t, t1, t2, t3, t4;
+                   t.start();
+                   lockOpt.unlock();
+                   Mat frame;
+                   t1.start();
+                   resize(rawFrame, frame, Size(), 0.5, 0.5);
 
 
-                frame = frame(Rect(50, 50, frame.cols - 50, frame.rows - 50));
-                int tt1 = t1.elapsed();
+                   frame = frame(cv::Rect(50, 50, frame.cols - 50, frame.rows - 50));
+//                   int tt1 = t1.elapsed();
 
 
-                Mat tmpForAutoExp;
-                t2.start();
-                cvtColor(frame, tmpForAutoExp, CV_BayerBG2GRAY);
-                int tt2 = t2.elapsed();
-                t3.start();
-                int tt3 = 0;
-                if (autoExpHandler.correct(tmpForAutoExp))
-                {
-                    tt3 = t3.elapsed();
-                    t4.start();
-                    QMutexLocker lockOpt(&optionMutex);
-                    setExposure(autoExpHandler.params->exposure());
-                    setGain(autoExpHandler.params->gain());
-                    lockOpt.unlock();
-                    msg::CameraOptions opt;
-                    opt.mutable_hw_params()->set_exposure(options.hw_params().exposure());
-                    opt.mutable_hw_params()->set_gain(options.hw_params().gain());
-                    emit parametersChanged(opt);
-                    QThread::msleep(100);
-
-                }
-            }
-        }
+                   Mat tmpForAutoExp;
+                   t2.start();
+                   cvtColor(frame, tmpForAutoExp, CV_BayerBG2GRAY);
+                   int tt2 = t2.elapsed();
+                   t3.start();
+                   int tt3 = 0;
+                   if (autoExpHandler.correct(tmpForAutoExp))
+                   {
+                       tt3 = t3.elapsed();
+                       t4.start();
+                       QMutexLocker lockOpt(&optionMutex);
+                       setExposure(autoExpHandler.getParameters()->exposure());
+                       setGain(autoExpHandler.getParameters()->gain());
+                       qDebug() << autoExpHandler.getParameters()->gain() << autoExpHandler.getParameters()->exposure() << t1.elapsed()
+                                << options.mutable_hw_params()->min_exposure()  << options.mutable_hw_params()->max_exposure();
+                       lockOpt.unlock();
+                       msg::CameraOptions opt;
+                       opt.mutable_hw_params()->set_exposure(options.hw_params().exposure());
+                       opt.mutable_hw_params()->set_gain(options.hw_params().gain());
+                       opt.set_id(options.id());
+                       opt.set_main_add_mode(options.main_add_mode());
+                       emit parametersChanged(opt);
+                       QThread::msleep(100);
+                   }
+                   else
+                   {
+                       QThread::msleep(100);
+                   }
+               }
+           }
     }
 #endif
 
@@ -1198,6 +1219,10 @@ void Camera::initializeCameraInterface()
     qint32 displayMode = IS_SET_DM_DIB;
     nRet = is_SetDisplayMode (hCam, displayMode);
 
+    if (nRet == IS_SUCCESS){
+        qDebug() << "Display mode is set";
+    }
+
     IS_SIZE_2D sz;
     sz.s32Height = options.hw_params().height();
     sz.s32Width = options.hw_params().width();
@@ -1208,6 +1233,7 @@ void Camera::initializeCameraInterface()
     }
 
     startLiveVideo();
+
 
 }
 
@@ -1367,8 +1393,8 @@ bool Camera::getNextFrame(QLinkedList<FrameInfo>::iterator& it, bool main)
 
         auto last = bufferFrames.last();
        auto test = itTmp;
-    //    //qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
-   // qDebug()<< itTmp == bufferFrames.end() << itTmp->frame.empty() << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
+    //qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
+ //qDebug()<< test->time << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
     it = itTmp;
     return true;
 }
