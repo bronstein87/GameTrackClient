@@ -3,8 +3,8 @@
 BallRecognizerPP::BallRecognizerPP(QObject *parent) : QObject(parent)
 {
     //    cv::namedWindow("window",WINDOW_NORMAL);
-    cv::namedWindow("window2",WINDOW_NORMAL);
-    cv::namedWindow("video3",WINDOW_NORMAL);
+   // cv::namedWindow("window2",WINDOW_NORMAL);
+   // cv::namedWindow("video3",WINDOW_NORMAL);
 }
 
 void BallRecognizerPP::updateWaitState()
