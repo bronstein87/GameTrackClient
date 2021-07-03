@@ -63,7 +63,7 @@ public:
 
     void procImageQueue();
 
-    void procImageImitation();
+    //void procImageImitation();
 
     void startRecognition();
 
@@ -147,7 +147,7 @@ public:
 
     void saveSettings();
 
-    void debugPedestrianDraw(const QString& path);
+    //void debugPedestrianDraw(const QString& path);
 
     ~Camera();
 
@@ -208,7 +208,7 @@ private:
     QVector <char*> m_vpcSeqImgMem;	// camera memory - pointers to buffer
     QLinkedList <FrameInfo> bufferFrames;
     QAtomicInt streamIsActive;
-    constexpr const static qint32 maxBufferSize = 1000;
+    constexpr const static qint32 maxBufferSize = 600;
     quint32 hCam = 0;
     qint32 format = IS_CM_SENSOR_RAW8;//;/*IS_CM_RGB8_PACKED;*/
     qint32 bitCount = 8;
@@ -217,8 +217,8 @@ private:
     QMutex recMutex;
     AutoExposureHandler autoExpHandler;
     BallRecognizerPP recognizer;
-    PedestrianTracker pedTracker;
-    BatTracker batTracker; // tmp
+    //PedestrianTracker pedTracker;
+    //BatTracker batTracker; // tmp
     QTimer autoExpTimer;
     constexpr static const qint32 delayTreshold = 1000;
 

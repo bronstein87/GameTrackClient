@@ -1,7 +1,7 @@
 #include "camera.h"
 
 Camera::Camera(const QString& pattern, bool init, qint32 port, QObject* parent) :
-    QObject(parent), controller(pattern, port), batTracker(1920, 1080)
+    QObject(parent), controller(pattern, port)/*, batTracker(1920, 1080)*/
 {
     loadSettings();
     if (!options.has_id())
@@ -145,17 +145,17 @@ void Camera::tryToStartCamera()
 {
     if (!streamIsActive)
     {
-        qDebug() << "DEBUG MODE STATUS" << options.has_debug_mode() << options.debug_mode();
-        if (options.has_debug_mode() && options.debug_mode())
-        {
-            QtConcurrent::run(this, &Camera::procImageImitation);
-            QThread::msleep(1000);
-        }
-        else
-        {
+//        qDebug() << "DEBUG MODE STATUS" << options.has_debug_mode() << options.debug_mode();
+//        if (options.has_debug_mode() && options.debug_mode())
+//        {
+//            QtConcurrent::run(this, &Camera::procImageImitation);
+//            QThread::msleep(1000);
+//        }
+//        else
+//        {
             QtConcurrent::run(this, &Camera::procImageQueue);
             QThread::msleep(250);
-        }
+//        }
 
 
 
@@ -196,13 +196,12 @@ void Camera::procImageQueue()
 
         tlag.start();
         nRet = is_WaitForNextImage(hCam, 1000, &pBuffer, &nMemID);
-        // qDebug() << "get frame " << nRet;
         if (nRet == IS_SUCCESS)
         {
             QDateTime dt = QDateTime::currentDateTime();
             quint64 tLagElapsed = tlag.elapsed();
             UEYEIMAGEINFO imageInfo;
-            nRet = is_GetImageInfo( hCam, nMemID, &imageInfo, sizeof(imageInfo));
+            nRet = is_GetImageInfo(hCam, nMemID, &imageInfo, sizeof(imageInfo));
 
             if (nRet == IS_SUCCESS)
             {
@@ -260,6 +259,7 @@ void Camera::procImageQueue()
                 bufferFrames.append(ft);
                 if (bufferFrames.size() >= maxBufferSize - 1)
                 {
+                    //qDebug() << "clear";
                     is_UnlockSeqBuf (hCam, bufferFrames.first().memoryId, (char*)bufferFrames.first().frame.data);
                     bufferFrames.removeFirst();
                 }
@@ -269,75 +269,79 @@ void Camera::procImageQueue()
                 emit frameReady(bufferFrames.last());
                 ++i;
             }
+            else
+            {
+                qDebug() << "CAN'T GET FRAME" << nRet;
+            }
         }
     }
     while (streamIsActive);
     bufferFrames.clear();
 }
 
-void Camera::procImageImitation()
-{
-    qDebug() << "open debug" << debugVideoPath;
-    VideoCapture capture = VideoCapture(debugVideoPath.toStdString());
-    Mat m;
-    //QFile file(debugTimePath);
-    //file.open(QIODevice::ReadOnly);
-    //QTextStream in (&file);
+//void Camera::procImageImitation()
+//{
+//    qDebug() << "open debug" << debugVideoPath;
+//    VideoCapture capture = VideoCapture(debugVideoPath.toStdString());
+//    Mat m;
+//    //QFile file(debugTimePath);
+//    //file.open(QIODevice::ReadOnly);
+//    //QTextStream in (&file);
 
-    if (capture.isOpened())
-    {
-        qDebug() << "record is opened";
-        qint32 skip = 0;
-        qint32 frameNumber = 1;
-        qint32 delta = (1. / options.hw_params().frame_rate()) * 1e7;
-        constexpr const qint32 takeEach = 3;
-        bool  isDebuging = true;
-        while (isDebuging)
-        {
-            if (!waitForCommand)
-            {
-                if (moveFrames != 0)
-                {
-                    capture.set(CAP_PROP_POS_FRAMES, capture.get(CAP_PROP_POS_FRAMES) + moveFrames);
-                    pedTracker.clear();
-                    moveFrames = 0;
-                }
-                isDebuging = true;
-                if (isDebuging)
-                {
-                    while (skip < takeEach)
-                    {
-                        isDebuging = capture.read((m));
-                        ++skip;
-                    }
-                    skip = 0;
-                    FrameInfo ft;
-                    m.copyTo(ft.frame);
-
-
-                    pedTracker.track(ft.frame, ft.time);
-                    qDebug() << "draw";
-                    pedTracker.drawROIs(ft.frame);
-                    ft.time = delta * frameNumber;
-                    ++frameNumber;
-                    qDebug() << "push";
-                    ft.mainFrame = true;
-                    bufferFrames.append(ft);
-                    waitForCommand = true;
+//    if (capture.isOpened())
+//    {
+//        qDebug() << "record is opened";
+//        qint32 skip = 0;
+//        qint32 frameNumber = 1;
+//        qint32 delta = (1. / options.hw_params().frame_rate()) * 1e7;
+//        constexpr const qint32 takeEach = 3;
+//        bool  isDebuging = true;
+//        while (isDebuging)
+//        {
+//            if (!waitForCommand)
+//            {
+//                if (moveFrames != 0)
+//                {
+//                    capture.set(CAP_PROP_POS_FRAMES, capture.get(CAP_PROP_POS_FRAMES) + moveFrames);
+//                    pedTracker.clear();
+//                    moveFrames = 0;
+//                }
+//                isDebuging = true;
+//                if (isDebuging)
+//                {
+//                    while (skip < takeEach)
+//                    {
+//                        isDebuging = capture.read((m));
+//                        ++skip;
+//                    }
+//                    skip = 0;
+//                    FrameInfo ft;
+//                    m.copyTo(ft.frame);
 
 
-                    if (bufferFrames.size() >= 100)
-                    {
-                        bufferFrames.removeFirst();
-                    }
+//                    pedTracker.track(ft.frame, ft.time);
+//                    qDebug() << "draw";
+//                    pedTracker.drawROIs(ft.frame);
+//                    ft.time = delta * frameNumber;
+//                    ++frameNumber;
+//                    qDebug() << "push";
+//                    ft.mainFrame = true;
+//                    bufferFrames.append(ft);
+//                    waitForCommand = true;
 
-                }
 
-            }
+//                    if (bufferFrames.size() >= 100)
+//                    {
+//                        bufferFrames.removeFirst();
+//                    }
 
-        }
-    }
-}
+//                }
+
+//            }
+
+//        }
+//    }
+//}
 
 
 void Camera::startRecognition()
@@ -663,9 +667,10 @@ void Camera::setExposure(double exposure)
 {
     qint32 errorCode;
 
+    QElapsedTimer t;
+    t.start();
     if (options.mutable_hw_params()->min_exposure() > exposure || exposure > options.mutable_hw_params()->max_exposure())
     {
-        qDebug() << "1";
         options.mutable_auto_exp_params()->set_exposure(options.mutable_hw_params()->exposure());
     }
     else if ((errorCode = is_Exposure(hCam, IS_EXPOSURE_CMD_SET_EXPOSURE, (void*)&exposure, sizeof(exposure))) !=
@@ -677,11 +682,9 @@ void Camera::setExposure(double exposure)
     }
     else
     {
-        qDebug() << "2";
         options.mutable_auto_exp_params()->set_exposure(exposure);
         options.mutable_hw_params()->set_exposure(exposure);
     }
-
 }
 
 void Camera::setHWParams(const msg::CameraOptions& _options, bool initialize = false)
@@ -1145,6 +1148,7 @@ void Camera::doAutoExposure()
     autoExpTimer.setInterval(100);
     autoExpTimer.start();
 #else
+    cv::setNumThreads(0);
     while (streamIsActive)
        {
            if (options.auto_exposure_enable())
@@ -1162,13 +1166,9 @@ void Camera::doAutoExposure()
 
 
                    frame = frame(cv::Rect(50, 50, frame.cols - 50, frame.rows - 50));
-//                   int tt1 = t1.elapsed();
-
-
                    Mat tmpForAutoExp;
-                   t2.start();
                    cvtColor(frame, tmpForAutoExp, CV_BayerBG2GRAY);
-                   int tt2 = t2.elapsed();
+                   //int tt2 = t2.elapsed();
                    t3.start();
                    int tt3 = 0;
                    if (autoExpHandler.correct(tmpForAutoExp))
@@ -1176,9 +1176,10 @@ void Camera::doAutoExposure()
                        tt3 = t3.elapsed();
                        t4.start();
                        QMutexLocker lockOpt(&optionMutex);
+                       t2.start();
                        setExposure(autoExpHandler.getParameters()->exposure());
                        setGain(autoExpHandler.getParameters()->gain());
-                       qDebug() << autoExpHandler.getParameters()->gain() << autoExpHandler.getParameters()->exposure() << t1.elapsed()
+                       qDebug() << autoExpHandler.getParameters()->gain() << autoExpHandler.getParameters()->exposure() << t1.elapsed() << t2.elapsed()
                                 << options.mutable_hw_params()->min_exposure()  << options.mutable_hw_params()->max_exposure();
                        lockOpt.unlock();
                        msg::CameraOptions opt;
@@ -1394,7 +1395,7 @@ bool Camera::getNextFrame(QLinkedList<FrameInfo>::iterator& it, bool main)
         auto last = bufferFrames.last();
        auto test = itTmp;
     //qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
- //qDebug()<< test->time << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
+// qDebug()<< test->time << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
     it = itTmp;
     return true;
 }
@@ -1465,111 +1466,111 @@ void Camera::saveSettings()
     settings.sync();
 }
 
-void Camera::debugPedestrianDraw(const QString &path)
-{
-    CalibrationHelper& calibHelper = CalibrationHelper::instance();
-    calibHelper.setCurrentCamera("4510");
-    Mat imgMax = imread("calibrate/MAX-ZOOM/MAX-CENTER.bmp");
-    Mat imgMed = imread("calibrate/MED-ZOOM/MED-CENTER.bmp");
-    Mat imgMin = imread("calibrate/MIN-ZOOM/MIN-CENTER.bmp");
-    Calibration::ExteriorOr eOr3850, eOr4510, eOrMin, eOrMed, eOrMax;
-    Calibration::SpacecraftPlatform::CAMERA::CameraParams cam3850, cam4510, camMin, camMed, camMax;
+//void Camera::debugPedestrianDraw(const QString &path)
+//{
+//    CalibrationHelper& calibHelper = CalibrationHelper::instance();
+//    calibHelper.setCurrentCamera("4510");
+//    Mat imgMax = imread("calibrate/MAX-ZOOM/MAX-CENTER.bmp");
+//    Mat imgMed = imread("calibrate/MED-ZOOM/MED-CENTER.bmp");
+//    Mat imgMin = imread("calibrate/MIN-ZOOM/MIN-CENTER.bmp");
+//    Calibration::ExteriorOr eOr3850, eOr4510, eOrMin, eOrMed, eOrMax;
+//    Calibration::SpacecraftPlatform::CAMERA::CameraParams cam3850, cam4510, camMin, camMed, camMax;
 
-    calibHelper.readCurrentCalibrationParameters("3850", "", eOr3850, cam3850, false);
-    calibHelper.setEO("3850", eOr3850);
-    calibHelper.setCameraParams("3850", cam3850);
+//    calibHelper.readCurrentCalibrationParameters("3850", "", eOr3850, cam3850, false);
+//    calibHelper.setEO("3850", eOr3850);
+//    calibHelper.setCameraParams("3850", cam3850);
 
-    calibHelper.readCurrentCalibrationParameters("4510", "", eOr4510, cam4510, false);
-    calibHelper.setEO("4510", eOr4510);
-    calibHelper.setCameraParams("4510", cam4510);
+//    calibHelper.readCurrentCalibrationParameters("4510", "", eOr4510, cam4510, false);
+//    calibHelper.setEO("4510", eOr4510);
+//    calibHelper.setCameraParams("4510", cam4510);
 
-    calibHelper.readCurrentCalibrationParameters("MAX-CENTER", "", eOrMax, camMax, false);
-    calibHelper.setEO("MAX-CENTER", eOrMax);
-    calibHelper.setCameraParams("MAX-CENTER", camMax);
+//    calibHelper.readCurrentCalibrationParameters("MAX-CENTER", "", eOrMax, camMax, false);
+//    calibHelper.setEO("MAX-CENTER", eOrMax);
+//    calibHelper.setCameraParams("MAX-CENTER", camMax);
 
-    calibHelper.readCurrentCalibrationParameters("MED-CENTER", "", eOrMed, camMed, false);
-    calibHelper.setEO("MED-CENTER", eOrMed);
-    calibHelper.setCameraParams("MED-CENTER", camMed);
-    calibHelper.readCurrentCalibrationParameters("MIN-CENTER", "", eOrMin, camMin, false);
-    calibHelper.setEO("MIN-CENTER", eOrMin);
-    calibHelper.setCameraParams("MIN-CENTER", camMin);
+//    calibHelper.readCurrentCalibrationParameters("MED-CENTER", "", eOrMed, camMed, false);
+//    calibHelper.setEO("MED-CENTER", eOrMed);
+//    calibHelper.setCameraParams("MED-CENTER", camMed);
+//    calibHelper.readCurrentCalibrationParameters("MIN-CENTER", "", eOrMin, camMin, false);
+//    calibHelper.setEO("MIN-CENTER", eOrMin);
+//    calibHelper.setCameraParams("MIN-CENTER", camMin);
 
-    VideoCapture cap(path.toStdString());
-    qint32 length = cap.get(cv::CAP_PROP_FRAME_COUNT);
-    Mat frame;
-    streamIsActive = 1;
+//    VideoCapture cap(path.toStdString());
+//    qint32 length = cap.get(cv::CAP_PROP_FRAME_COUNT);
+//    Mat frame;
+//    streamIsActive = 1;
 
-    QString timeFilePath = path;
+//    QString timeFilePath = path;
 
-    QFile f (timeFilePath.replace("avi", "txt"));
-    qDebug() << f.open(QIODevice::ReadOnly);
-    QTextStream in(&f);
+//    QFile f (timeFilePath.replace("avi", "txt"));
+//    qDebug() << f.open(QIODevice::ReadOnly);
+//    QTextStream in(&f);
 
 
-    pedTracker.clear();
-    qint32 skipPedCounter = 0;
+//    pedTracker.clear();
+//    qint32 skipPedCounter = 0;
 
-    bufferFrames.clear();
-    pedTracker.setDebugBuffer(&bufferFrames);
+//    bufferFrames.clear();
+//    pedTracker.setDebugBuffer(&bufferFrames);
 
-    for (qint32 i = 0; i < length; i++)
-    {
-        if (bufferFrames.size() > 200)
-        {
-            qint32 i = 0;
-            while (i < 100)
-            {
-                bufferFrames.removeFirst();
-                ++i;
-            }
-        }
-        cap >> frame;
-        qint64 time = in.readLine().split("\t").first().toLongLong();
-        FrameInfo ft;
-        frame.copyTo(ft.frame);
-        ft.time = time;
-        bufferFrames.append(FrameInfo(frame, time));
-        if (frame.empty())
-            return;
+//    for (qint32 i = 0; i < length; i++)
+//    {
+//        if (bufferFrames.size() > 200)
+//        {
+//            qint32 i = 0;
+//            while (i < 100)
+//            {
+//                bufferFrames.removeFirst();
+//                ++i;
+//            }
+//        }
+//        cap >> frame;
+//        qint64 time = in.readLine().split("\t").first().toLongLong();
+//        FrameInfo ft;
+//        frame.copyTo(ft.frame);
+//        ft.time = time;
+//        bufferFrames.append(FrameInfo(frame, time));
+//        if (frame.empty())
+//            return;
 
-        if (!skipPedCounter)
-        {
-            pedTracker.track(frame, time);
-            pedTracker.drawROIs(frame);
-            imshow("window2", frame);
-            Mat draw;
-            imgMed.copyTo(draw);
-            for (auto& i : pedTracker.getPlayersInfo())
-            {
-                if (i->moves.size() > 2)
-                {
-                    for (qint32 j = 1; j < i->moves.size(); ++j)
-                    {
-                        Calibration::Position2D p1, p2;
-                        Calibration::Position p3d1, p3d2;
-                        p3d1.X = i->moves[j - 1].second.onSpace.x;
-                        p3d1.Y = i->moves[j - 1].second.onSpace.y;
-                        p3d1.Z = i->moves[j - 1].second.onSpace.z;
-                        p3d2.X = i->moves[j].second.onSpace.x;
-                        p3d2.Y = i->moves[j].second.onSpace.y;
-                        p3d2.Z = i->moves[j].second.onSpace.z;
-                        Calibration::GetXYfromXYZ(calibHelper.getEO("MED-CENTER"), calibHelper.getCameraParams("MED-CENTER"), p3d1, p1);
-                        Calibration::GetXYfromXYZ(calibHelper.getEO("MED-CENTER"), calibHelper.getCameraParams("MED-CENTER"), p3d2, p2);
-                        line(draw, Point2f(p1.X, p1.Y), Point2f(p2.X, p2.Y), i->color, 5);
-                    }
-                }
-            }
-            imshow("video3", draw);
-            waitKey(0);
-            ++skipPedCounter;
-        }
-        else
-        {
-            skipPedCounter = 0;
-        }
+//        if (!skipPedCounter)
+//        {
+//            pedTracker.track(frame, time);
+//            pedTracker.drawROIs(frame);
+//            imshow("window2", frame);
+//            Mat draw;
+//            imgMed.copyTo(draw);
+//            for (auto& i : pedTracker.getPlayersInfo())
+//            {
+//                if (i->moves.size() > 2)
+//                {
+//                    for (qint32 j = 1; j < i->moves.size(); ++j)
+//                    {
+//                        Calibration::Position2D p1, p2;
+//                        Calibration::Position p3d1, p3d2;
+//                        p3d1.X = i->moves[j - 1].second.onSpace.x;
+//                        p3d1.Y = i->moves[j - 1].second.onSpace.y;
+//                        p3d1.Z = i->moves[j - 1].second.onSpace.z;
+//                        p3d2.X = i->moves[j].second.onSpace.x;
+//                        p3d2.Y = i->moves[j].second.onSpace.y;
+//                        p3d2.Z = i->moves[j].second.onSpace.z;
+//                        Calibration::GetXYfromXYZ(calibHelper.getEO("MED-CENTER"), calibHelper.getCameraParams("MED-CENTER"), p3d1, p1);
+//                        Calibration::GetXYfromXYZ(calibHelper.getEO("MED-CENTER"), calibHelper.getCameraParams("MED-CENTER"), p3d2, p2);
+//                        line(draw, Point2f(p1.X, p1.Y), Point2f(p2.X, p2.Y), i->color, 5);
+//                    }
+//                }
+//            }
+//            imshow("video3", draw);
+//            waitKey(0);
+//            ++skipPedCounter;
+//        }
+//        else
+//        {
+//            skipPedCounter = 0;
+//        }
 
-    }
-}
+//    }
+//}
 
 
 
