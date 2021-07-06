@@ -145,19 +145,9 @@ void Camera::tryToStartCamera()
 {
     if (!streamIsActive)
     {
-//        qDebug() << "DEBUG MODE STATUS" << options.has_debug_mode() << options.debug_mode();
-//        if (options.has_debug_mode() && options.debug_mode())
-//        {
-//            QtConcurrent::run(this, &Camera::procImageImitation);
-//            QThread::msleep(1000);
-//        }
-//        else
-//        {
+
             QtConcurrent::run(this, &Camera::procImageQueue);
             QThread::msleep(250);
-//        }
-
-
 
 #ifdef AUTOEXP_MAIN_THREAD
         if (!options.has_debug_mode() || !options.debug_mode())
@@ -1317,7 +1307,7 @@ QLinkedList<FrameInfo>::iterator Camera::getLastFrame(bool& ok, bool main)
     QLinkedList<FrameInfo>::iterator it;
     if (bufferFrames.begin() == bufferFrames.end())
     {
-        qDebug() << "NO fRAMES";
+        qDebug() << "NO FRAMES";
         return bufferFrames.begin();
     }
 

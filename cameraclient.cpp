@@ -180,11 +180,8 @@ void CameraClient::initializeMessageHandlers()
     {
         Q_UNUSED(data);
         camera->stopLiveVideo();
-        qDebug() << "1";
         camera->startLiveVideo();
-        qDebug() << "2";
         camera->tryToStartCamera();
-        qDebug() << "3";
         QSharedPointer <QMetaObject::Connection> conn (new QMetaObject::Connection);
         *conn = connect(camera, &Camera::frameReady, this, [this, conn](FrameInfo ft) mutable
         {
