@@ -1169,8 +1169,8 @@ void Camera::doAutoExposure()
                        t2.start();
                        setExposure(autoExpHandler.getParameters()->exposure());
                        setGain(autoExpHandler.getParameters()->gain());
-                       qDebug() << autoExpHandler.getParameters()->gain() << autoExpHandler.getParameters()->exposure() << t1.elapsed() << t2.elapsed()
-                                << options.mutable_hw_params()->min_exposure()  << options.mutable_hw_params()->max_exposure();
+//                       qDebug() << autoExpHandler.getParameters()->gain() << autoExpHandler.getParameters()->exposure() << t1.elapsed() << t2.elapsed()
+//                                << options.mutable_hw_params()->min_exposure()  << options.mutable_hw_params()->max_exposure();
                        lockOpt.unlock();
                        msg::CameraOptions opt;
                        opt.mutable_hw_params()->set_exposure(options.hw_params().exposure());

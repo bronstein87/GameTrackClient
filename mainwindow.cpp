@@ -18,7 +18,8 @@ MainWindow::~MainWindow()
     camera.reset();
     camHard.reset();
     delete ui;
-}
+    qDebug() << "main destructor finished";
+ }
 
 void MainWindow::on_sendMessagePushButton_clicked()
 {
