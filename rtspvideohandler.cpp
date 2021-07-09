@@ -113,7 +113,11 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
             putText(frame,
                     QTime::fromMSecsSinceStartOfDay(it->computerTime).toString(Qt::ISODateWithMs).toStdString(),
                     {10, 30},
-                    FONT_HERSHEY_SIMPLEX , 1, CV_RGB(0, 0, 0), 2);
+                    FONT_HERSHEY_SIMPLEX , 1, cv::Scalar(255, 255, 255, 0), 2);
+            putText(frame,
+                    QString::number(it->time).toStdString(),
+                    {10, 60},
+                    FONT_HERSHEY_SIMPLEX , 1, cv::Scalar(255, 255, 255, 0), 2);
 
         }
 

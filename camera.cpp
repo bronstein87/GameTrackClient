@@ -1431,8 +1431,10 @@ Camera::~Camera()
         streamIsActive = 0;
         stopLiveVideo();
     }
+    qDebug() << "btw";
     is_ExitCamera(hCam);
     saveSettings();
+    qDebug() << "camera destroyed";
 }
 
 void Camera::loadSettings()
