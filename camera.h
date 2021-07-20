@@ -210,8 +210,8 @@ private:
     QAtomicInt streamIsActive;
     constexpr const static qint32 maxBufferSize = 600;
     quint32 hCam = 0;
-    qint32 format = IS_CM_SENSOR_RAW8;//;/*IS_CM_RGB8_PACKED;*/
-    qint32 bitCount = 8;
+    qint32 format = IS_CM_SENSOR_RAW8/*IS_CM_SENSOR_RAW8*/;
+    qint32 bitCount = 8 /*8*/;
     msg::CameraOptions options;
     QMutex optionMutex;
     QMutex recMutex;

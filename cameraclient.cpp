@@ -22,23 +22,10 @@ CameraClient::CameraClient(Camera* cam, const QString& ipPort, QObject *parent) 
     {
         client.send(msg::GameTrackProtocol::SendCameraParameters, &parameters);
     });
-    // VideoCapture in = VideoCapture("/home/nvidia/test_video/bat/video15_38_19_5710.avi");
-    //    VideoCapture in = VideoCapture("/home/nvidia/test_video/bat/video16_25_47_5710.avi");
-    //    qint32 i = 0;
-    //    Mat test;
-    //    while (in.read(test))
-    //    {
-
-    //        auto status = camera->batTracker.handle(test, ++i);
-    //        if (status == BatTracker::BallFound)
-    //        {
-    //            qDebug() << in.set(CAP_PROP_POS_FRAMES, in.get(CAP_PROP_POS_FRAMES) - 40) << "MOVE BACK";
-    //        }
-    //    }
 
     initializeMessageHandlers();
     client.initialize();
-    //camera->debugPedestrianDraw("/home/nvidia/test_video/intercept/video11_32_51_4510.avi");
+
 }
 
 
@@ -154,7 +141,10 @@ void CameraClient::initializeMessageHandlers()
                     mainSender->disconnectClient();
                     mainSender->setRtspParams(params);
                     qDebug() << pipeLine;
-                    QtConcurrent::run(mainSender.data(), &RtspVideoHandler::sendVideo, options.stream_params().port_send_stream_main(), pipeLine, command.video_duration(), true);
+                    if (!mainSender->isInitialized())
+                    {
+                        QtConcurrent::run(mainSender.data(), &RtspVideoHandler::initialize, options.stream_params().port_send_stream_main(), pipeLine, command.video_duration(), true);
+                    }
                 }
                 else
                 {
@@ -162,7 +152,7 @@ void CameraClient::initializeMessageHandlers()
                     pipeLine = pipeLine.arg(params.framerate);
                     addSender->disconnectClient();
                     addSender->setRtspParams(params);
-                    QtConcurrent::run(addSender.data(), &RtspVideoHandler::sendVideo, options.stream_params().port_send_stream_add(), pipeLine, command.video_duration(), false);
+                    //QtConcurrent::run(addSender.data(), &RtspVideoHandler::sendVideo, options.stream_params().port_send_stream_add(), pipeLine, command.video_duration(), false);
                 }
                 client.send(msg::GameTrackProtocol::RequestStream, &command);
             }

@@ -60,19 +60,29 @@ RtspVideoHandler::extend_rtp_header_probe (GstPad* pad,
 
 RtspVideoHandler::RtspVideoHandler(const RtspVideoHandlerParams &p, QObject *parent) : params(p),  QObject(parent)
 {
-    init();
+
 }
 
 RtspVideoHandler::RtspVideoHandler(QObject *parent) : QObject(parent)
 {
-    init();
+
 }
 
+void gammaCorrection(Mat& frame, double coeff)
+{
+    Mat lookUpTable(1, 256, CV_8U);
+    uchar* p = lookUpTable.ptr();
+    for( int i = 0; i < 256; ++i)
+    {
+        p[i] = saturate_cast<uchar>(pow((double)i / 255.0, coeff) * 255.0);
+    }
+    LUT(frame, lookUpTable, frame);
+}
 
 RtspVideoHandler::RtspVideoHandler(const RtspVideoHandlerParams& p, const QLinkedList <FrameInfo>& resFrames, QObject* parent)
     : params(p), framesToSend(resFrames), QObject(parent)
 {
-    init();
+
 }
 
 
@@ -107,6 +117,8 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
         {
             cvtColor(it->frame, frame, COLOR_BayerBG2RGBA);
         }
+
+        gammaCorrection(frame, 0.65);
 
         if (params.isDebugMode)
         {
@@ -176,7 +188,7 @@ void RtspVideoHandler::needDataArray(GstElement *appsrc, guint unused, gpointer 
     if (it == framesToSend.end())
     {
         g_signal_emit_by_name (appsrc, "push-buffer", gst_buffer_new(), &ret);
-        //it = --framesToSend.end();
+
     }
 
     size = params.w * params.h * 3;
@@ -213,6 +225,8 @@ void RtspVideoHandler::mediaConfigure (GstRTSPMediaFactory* factory, GstRTSPMedi
     GstPad *pad;
     /* get the element used for providing the streams of the media */
     element = gst_rtsp_media_get_element (media);
+    gst_rtsp_media_set_shared(media, TRUE);
+    gst_rtsp_media_set_reusable (media, TRUE);
 
     appsrc = gst_bin_get_by_name_recurse_up (GST_BIN (element), "vsrc");
     rtph264pay = gst_bin_get_by_name_recurse_up (GST_BIN (element), "pay0");
@@ -254,50 +268,16 @@ void RtspVideoHandler::closedClient(GstRTSPClient *self, gpointer data)
     Q_UNUSED(self);
     Q_UNUSED(data);
     rtspClient = nullptr;
-    closeServer();
-}
-
-void RtspVideoHandler::init()
-{
-    timeoutTimer.setInterval(5000);
-    connect(this, &RtspVideoHandler::serverStarted, this, [this]()
-    {
-        timeoutTimer.start();
-    });
-
-    connect(&timeoutTimer, &QTimer::timeout, this, [this]()
-    {
-        // qDebug() << "try timeout";
-        if (noClientConnected())
-        {
-            qDebug() << "timeout";
-            closeServer();
-        }
-        timeoutTimer.stop();
-    });
-}
-
-
-
-void RtspVideoHandler::reset()
-{
-    tsRtpHeader.clear();
-    framesToSend.clear();
-    getValidIterator = false;
-    currentFrameCount = 0;
-    it = QLinkedList <FrameInfo>::iterator();
-    startTime = -1;
-}
-
-void RtspVideoHandler::sendVideo(qint32 port, const QString& pipeLine, qint32 frameCount, bool _onlyMain)
-{
     reset();
+}
+
+void RtspVideoHandler::initialize(qint32 port, const QString& pipeLine, qint32 frameCount, bool _onlyMain)
+{
     if (frameCount != -1)
     {
         needFrameCount = frameCount;
     }
     onlyMain = _onlyMain;
-    setenv("GST_DEBUG","4", 0);
     loop = g_main_loop_new (NULL, FALSE);
 
     server = gst_rtsp_server_new();
@@ -306,6 +286,9 @@ void RtspVideoHandler::sendVideo(qint32 port, const QString& pipeLine, qint32 fr
 
     GstRTSPMountPoints* mounts = gst_rtsp_server_get_mount_points (server);
     GstRTSPMediaFactory* factory = gst_rtsp_media_factory_new ();
+    gst_rtsp_media_factory_set_shared (factory, true);
+    gst_rtsp_media_factory_set_protocols(factory, GST_RTSP_LOWER_TRANS_TCP);
+
 
     gst_rtsp_media_factory_set_launch (factory,
                                        QString("( %1 )").arg(pipeLine).toStdString().c_str());
@@ -318,16 +301,19 @@ void RtspVideoHandler::sendVideo(qint32 port, const QString& pipeLine, qint32 fr
     g_object_unref (mounts);
 
     serverId = gst_rtsp_server_attach (server, NULL);
-
-    emit serverStarted();
-    QApplication::processEvents();
-    qDebug() << "server STARTED";
     g_main_loop_run (loop);
 }
 
-void RtspVideoHandler::setTimeout(qint32 ms)
+
+
+void RtspVideoHandler::reset()
 {
-    timeoutTimer.setInterval(ms);
+    tsRtpHeader.clear();
+    framesToSend.clear();
+    getValidIterator = false;
+    currentFrameCount = 0;
+    it = QLinkedList <FrameInfo>::iterator();
+    startTime = -1;
 }
 
 void RtspVideoHandler::closeServer()

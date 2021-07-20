@@ -73,34 +73,10 @@ Camera::Camera(const QString& pattern, bool init, qint32 port, QObject* parent) 
         tryToStartCamera();
     }
 
-//    if (options.cam_type() > CameraType::BaseRightAdd)
-//    {
-//        batTracker.initCNN("/home/nvidia/Downloads/net/deploy.prototxt", "/home/nvidia/Downloads/net/snapshot_iter_340400.caffemodel", 0.6);
-//        batTracker.setBallRecognizer(&recognizer);
-//    }
-//    else
-//    {
-//        pedTracker.initCNN(detectNet::PEDNET, 0.5);
-//        recognizer.setPedestrianTracker(&pedTracker);
-//    }
 
     connect(&recognizer, &BallRecognizerPP::ballRecognized, this, &Camera::ballMeasureReady);
     connect(&recognizer, &BallRecognizerPP::ballOutOfFrame, this, &Camera::ballOutOfFrame);
 
-    //    QtConcurrent::run([]()
-    //    {
-    //        while(true)
-    //        {
-    //            qDebug() << "FFFFFF";
-    //        }
-    //    });
-    //    QtConcurrent::run([]()
-    //    {
-    //        while(true)
-    //        {
-    //            qDebug() << "BBBBBb";
-    //        }
-    //    });
 }
 
 
@@ -1385,7 +1361,7 @@ bool Camera::getNextFrame(QLinkedList<FrameInfo>::iterator& it, bool main)
         auto last = bufferFrames.last();
        auto test = itTmp;
     //qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
-// qDebug()<< test->time << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
+ qDebug()<< test->time << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
     it = itTmp;
     return true;
 }

@@ -62,11 +62,11 @@ public:
 
     void setVideoToSend(const QLinkedList <FrameInfo>& frames) {framesToSend = frames;}
 
-    void sendVideo(qint32 port, const QString &pipeLine, qint32 frameCount = -1, bool _onlyMain = true);
+    void initialize(qint32 port, const QString& pipeLine, qint32 frameCount, bool _onlyMain);
 
-    void setTimeout(qint32 ms);
+    bool isInitialized() const {return server != nullptr;}
 
-    bool isSendArray() {return !framesToSend.isEmpty();}
+    bool isSendArray() const {return !framesToSend.isEmpty();}
 
     bool noClientConnected() {return server != nullptr && rtspClient == nullptr;}
 
@@ -75,12 +75,6 @@ public:
     void disconnectClient();
 
     ~ RtspVideoHandler();
-signals:
-
-    void serverStarted();
-
-public slots:
-
 private:
 
     void needData (GstElement * appsrc, guint unused, gpointer user_data);
@@ -95,8 +89,6 @@ private:
 
     void closedClient (GstRTSPClient * self,
                        gpointer data);
-
-    void init();
 
     void reset();
 
@@ -152,7 +144,6 @@ private:
     qint64 startTime = -1;
     bool onlyMain = false;
     bool getValidIterator = false;
-    QTimer timeoutTimer;
 };
 
 #endif // RTSPVIDEOHANDLER_H
