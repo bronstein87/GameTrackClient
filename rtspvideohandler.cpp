@@ -48,18 +48,18 @@ RtspVideoHandler::extend_rtp_header_probe (GstPad* pad,
                                                                              &data._pointer, sizeof(data._pointer));
             if (!success)
             {
-                qDebug() << "cannot add extension to rtp header";
+                //qDebug() << "cannot add extension to rtp header";
             }
             else
             {
-                qDebug() << ts << data._cameraTime << data._memoryId;
+                //qDebug() << ts << data._cameraTime << data._memoryId;
             }
         }
         else
         {
             if (handler->tsRtpHeader.isEmpty())
             {
-                qDebug() << "tsRtpHeader array is empty";
+                //qDebug() << "tsRtpHeader array is empty";
             }
         }
         tstmp = ts;
