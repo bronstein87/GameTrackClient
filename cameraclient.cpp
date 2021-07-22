@@ -218,21 +218,3 @@ void CameraClient::initializeMessageHandlers()
     });
 
 }
-
-CameraClient::~CameraClient()
-{
-    qDebug() << "server destroy";
-
-}
-
-void CameraClient::loadSettings()
-{
-
-}
-
-void CameraClient::saveSettings()
-{
-
-}
-
-

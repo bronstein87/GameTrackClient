@@ -28,8 +28,6 @@ public:
 
     explicit CameraClient(Camera* cam, const QString& ipPort,  QObject *parent = 0);
 
-
-
     void sendTest(const QString& test);
 
     void sendRecognizeResults(const msg::RecognizeData& measures);
@@ -39,8 +37,6 @@ public:
     void sendBallOutOfFrame(const msg::OutOfFrame msg, const Point2f& point);
 
     qint32 isCollectData() {return collectData;}
-
-    ~CameraClient();
 
 signals:
 
@@ -52,9 +48,6 @@ signals:
 
 private:
 
-    void loadSettings();
-
-    void saveSettings();
 
     void initializeMessageHandlers();
 

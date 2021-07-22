@@ -1430,6 +1430,10 @@ void Camera::saveSettings()
     qint32 size = options.ByteSize();
     QByteArray camParams(options.ByteSize(), '\0');
     options.SerializeToArray(camParams.data(), size);
+    QFile protoFile(QString("config/preferences_%1.proto").arg(QString::fromStdString(options.id())));
+    protoFile.open(QIODevice::WriteOnly);
+    QDataStream out(&protoFile);
+    out.writeRawData(camParams.data(), camParams.size());
     settings.setValue("params", camParams);
     settings.sync();
 }
