@@ -31,6 +31,7 @@ struct HeaderData
     quint64 _computerTimeCamera = 0;
     qint32 _memoryId = 0;
     quint64 _pointer = 0;
+    quint64 _offset = 0;
 };
 
 
@@ -41,7 +42,8 @@ enum HeaderType
     ComputerTimeComputer,
     ComputerTimeCamera,
     MemoryId,
-    Pointer
+    Pointer,
+    Offset
 };
 
 class CameraClient;
@@ -113,7 +115,7 @@ private:
                                      GstRTSPClient * object,
                                      gpointer data)
     {
-        reinterpret_cast<RtspVideoHandler*>(data)->handleClient(self, object, data);
+        reinterpret_cast <RtspVideoHandler*> (data)->handleClient(self, object, data);
     }
 
     static void closedClientCallback(GstRTSPClient * self,
@@ -138,7 +140,8 @@ private:
     GstRTSPServer* server = nullptr;
     GstRTSPClient* rtspClient = nullptr;
 
-    qint32 currentFrameCount = 0;
+    quint64 currentFrameCount = 0;
+    quint64 headerBufferCount = 0;
     qint32 needFrameCount = -1;
     qint32 serverId;
     qint64 startTime = -1;
