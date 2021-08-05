@@ -326,6 +326,7 @@ void RtspVideoHandler::reset()
     tsRtpHeader.clear();
     framesToSend.clear();
     getValidIterator = false;
+    headerBufferCount = 0;
     currentFrameCount = 0;
     it = QLinkedList <FrameInfo>::iterator();
     startTime = -1;
