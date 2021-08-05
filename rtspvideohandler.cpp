@@ -46,6 +46,11 @@ RtspVideoHandler::extend_rtp_header_probe (GstPad* pad,
             success = success && gst_rtp_buffer_add_extension_onebyte_header(&rtpBuffer,
                                                                              HeaderType::Pointer,
                                                                              &data._pointer, sizeof(data._pointer));
+            success = success && gst_rtp_buffer_add_extension_onebyte_header(&rtpBuffer,
+                                                                             HeaderType::Offset,
+                                                                             &(handler->headerBufferCount), sizeof(handler->headerBufferCount));
+
+            ++handler->headerBufferCount;
             if (!success)
             {
                 //qDebug() << "cannot add extension to rtp header";
@@ -199,7 +204,6 @@ void RtspVideoHandler::needDataArray(GstElement *appsrc, guint unused, gpointer 
     if (it == framesToSend.end())
     {
         g_signal_emit_by_name (appsrc, "push-buffer", gst_buffer_new(), &ret);
-
     }
 
     size = params.w * params.h * 3;

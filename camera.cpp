@@ -1361,7 +1361,7 @@ bool Camera::getNextFrame(QLinkedList<FrameInfo>::iterator& it, bool main)
         auto last = bufferFrames.last();
        auto test = itTmp;
     //qDebug() << (last.time - test->time) / 10000000.0 << test->time << it->time << last.time;
- qDebug()<< test->time << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
+ //qDebug()<< test->time << "delay" << (last.time - test->time) / 10000000.0 << QTime::fromMSecsSinceStartOfDay(test->computerTime);
     it = itTmp;
     return true;
 }
