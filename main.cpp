@@ -7,8 +7,9 @@
 
 int main(int argc, char *argv[])
 {
-    gst_init (&argc, &argv);
+
     QApplication a(argc, argv);
+    gst_init (&argc, &argv);
     QCoreApplication::setOrganizationName("IKI RAN");
     QCoreApplication::setApplicationName("BaseballCameraClient");
     qDebug() << argc << QCoreApplication::applicationDirPath();
@@ -28,7 +29,6 @@ int main(int argc, char *argv[])
         w.show();
         return a.exec();
     }
-
 }
 
 

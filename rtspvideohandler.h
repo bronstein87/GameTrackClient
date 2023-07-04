@@ -147,6 +147,7 @@ private:
     qint64 startTime = -1;
     bool onlyMain = false;
     bool getValidIterator = false;
+    bool beforeDestroy = false;
 };
 
 #endif // RTSPVIDEOHANDLER_H

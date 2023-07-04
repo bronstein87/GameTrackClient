@@ -15,11 +15,11 @@ MainWindow::MainWindow(const QString ipPort, QWidget *parent) :
 }
 MainWindow::~MainWindow()
 {
+    delete ui;
     camera.reset();
     camHard.reset();
-    delete ui;
     qDebug() << "main destructor finished";
- }
+}
 
 void MainWindow::on_sendMessagePushButton_clicked()
 {

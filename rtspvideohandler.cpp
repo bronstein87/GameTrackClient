@@ -111,6 +111,10 @@ void RtspVideoHandler::needData (GstElement* appsrc, guint unused, gpointer user
     GstFlowReturn ret;
     QElapsedTimer t;
     t.start();
+    if (beforeDestroy)
+    {
+        return;
+    }
     if (!getValidIterator)
     {
         it = params.cam->getLastFrame(getValidIterator, onlyMain);
@@ -283,7 +287,11 @@ void RtspVideoHandler::closedClient(GstRTSPClient *self, gpointer data)
     Q_UNUSED(self);
     Q_UNUSED(data);
     rtspClient = nullptr;
-    reset();
+    if (!beforeDestroy)
+    {
+          reset();
+    }
+
 }
 
 void RtspVideoHandler::initialize(qint32 port, const QString& pipeLine, qint32 frameCount, bool _onlyMain)
@@ -336,27 +344,33 @@ void RtspVideoHandler::closeServer()
 {
     if (server != nullptr)
     {
+        beforeDestroy = true;
         qDebug() << "rtsp destructor";
-        reset();
+
         if (rtspClient != nullptr)
         {
             gst_rtsp_client_close(rtspClient);
         }
+        qDebug() << "rtsp destructor2";
         g_source_remove (serverId);
         GstRTSPMountPoints *mounts = nullptr;
         mounts = gst_rtsp_server_get_mount_points(server);
         gst_rtsp_mount_points_remove_factory (mounts, "/vd");
         g_object_unref (mounts);
         g_object_unref(server);
+        reset();
+        qDebug() << "rtsp destructor1";
         server = nullptr;
-        qDebug() << loop;
+        qDebug() << "loop" << loop;
         if (loop != nullptr)
         {
             qDebug() << "stop";
             g_main_loop_quit(loop);
             loop = nullptr;
         }
+            qDebug() << "exit destructor";
     }
+
 }
 
 void RtspVideoHandler::disconnectClient()

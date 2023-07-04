@@ -26,8 +26,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QScopedPointer <CameraClient> camera;
     QScopedPointer <Camera> camHard;
+    QScopedPointer <CameraClient> camera;
+
 };
 
 #endif // MAINWINDOW_H

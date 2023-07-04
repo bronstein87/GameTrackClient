@@ -98,6 +98,14 @@ void CameraClient::initializeMessageHandlers()
         camera->assignCameraOptions(opt);
     });
 
+    client.setHandler(msg::GameTrackProtocol::RestartCamera, [this](const NetworkManager::MessageData& data)
+    {
+        QProcess process;
+        process.start("/bin/sh", QStringList() << "/home/nvidia/CLIENT_APP/GameTrackClient/reset_usb_camera");
+        process.waitForStarted();
+        process.waitForFinished();
+    });
+
     client.setHandler(msg::GameTrackProtocol::RequestStream, [this](const NetworkManager::MessageData& data)
     {
         camera->tryToStartCamera();
@@ -130,10 +138,8 @@ void CameraClient::initializeMessageHandlers()
 
 
                 QString pipeLine = QString("( appsrc name=vsrc "
-                                           "! nvvidconv ! video/x-raw(memory:NVMM),format=NV12 ! omxh264enc bitrate=20000000 control-rate=2 "
-                                           "! rtph264pay name=pay pt=96 ! identity name=pay0 )")
-                        .arg(params.w)
-                        .arg(params.h);
+                                           "! nvvidconv ! video/x-raw(memory:NVMM),format=NV12 ! omxh264enc bitrate=20000000  "
+                                           "! rtph264pay name=pay pt=96 ! identity name=pay0 )");
                 if (command.type() == msg::StreamType::Main)
                 {
                     params.framerate = options.stream_params().send_frame_rate_main();
