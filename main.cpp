@@ -25,8 +25,12 @@ int main(int argc, char *argv[])
     else
     {
         QString ipPort (argv[1]);
-        MainWindow w(ipPort);
-        w.show();
+        QScopedPointer <Camera> camHard;
+        QScopedPointer <CameraClient> camera;
+        camHard.reset(new Camera("FT232R", true, -1));
+        camera.reset(new CameraClient(camHard.data(), ipPort));
+        //MainWindow w(ipPort);
+        //w.show();
         return a.exec();
     }
 }

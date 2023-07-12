@@ -22,12 +22,12 @@ namespace msg {
 
 namespace {
 
-const ::google::protobuf::Descriptor* Point2d_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* Point2_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  Point2d_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Point3d_descriptor_ = NULL;
+  Point2_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Point3_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  Point3d_reflection_ = NULL;
+  Point3_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Rect_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Rect_reflection_ = NULL;
@@ -87,7 +87,6 @@ const ::google::protobuf::EnumDescriptor* OutOfFrame_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* StreamType_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* BallEvent_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* PlayerPosition_descriptor_ = NULL;
-const ::google::protobuf::EnumDescriptor* TeamRole_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* CameraType_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* GameTrackProtocol_descriptor_ = NULL;
 
@@ -100,39 +99,39 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "msg.internal.proto");
   GOOGLE_CHECK(file != NULL);
-  Point2d_descriptor_ = file->message_type(0);
-  static const int Point2d_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point2d, x_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point2d, y_),
+  Point2_descriptor_ = file->message_type(0);
+  static const int Point2_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point2, x_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point2, y_),
   };
-  Point2d_reflection_ =
+  Point2_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      Point2d_descriptor_,
-      Point2d::default_instance_,
-      Point2d_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point2d, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point2d, _unknown_fields_),
+      Point2_descriptor_,
+      Point2::default_instance_,
+      Point2_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point2, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point2, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(Point2d));
-  Point3d_descriptor_ = file->message_type(1);
-  static const int Point3d_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3d, x_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3d, y_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3d, z_),
+      sizeof(Point2));
+  Point3_descriptor_ = file->message_type(1);
+  static const int Point3_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3, x_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3, y_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3, z_),
   };
-  Point3d_reflection_ =
+  Point3_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      Point3d_descriptor_,
-      Point3d::default_instance_,
-      Point3d_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3d, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3d, _unknown_fields_),
+      Point3_descriptor_,
+      Point3::default_instance_,
+      Point3_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point3, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(Point3d));
+      sizeof(Point3));
   Rect_descriptor_ = file->message_type(2);
   static const int Rect_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Rect, xy_),
@@ -150,11 +149,13 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Rect));
   RecROIs_descriptor_ = file->message_type(3);
-  static const int RecROIs_offsets_[4] = {
+  static const int RecROIs_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecROIs, throw_search_rect_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecROIs, throw_track_rect_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecROIs, hit_search_rect_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecROIs, hit_track_rect_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecROIs, pick_off_search_rect_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecROIs, bat_detect_rect_),
   };
   RecROIs_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -340,12 +341,16 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CalibrationParameters));
   BallMeasure_descriptor_ = file->message_type(11);
-  static const int BallMeasure_offsets_[5] = {
+  static const int BallMeasure_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallMeasure, xy_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallMeasure, valid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallMeasure, time_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallMeasure, event_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallMeasure, is_rebound_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallMeasure, is_from_out_of_frame_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallMeasure, is_lost_out_of_frame_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallMeasure, is_high_ball_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallMeasure, is_ped_intersect_),
   };
   BallMeasure_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -393,9 +398,11 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(OutOfFrameInfo));
   RecognizeData_descriptor_ = file->message_type(14);
-  static const int RecognizeData_offsets_[2] = {
+  static const int RecognizeData_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecognizeData, data_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecognizeData, start_time_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecognizeData, restored_out_of_frame_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RecognizeData, restored_straight_),
   };
   RecognizeData_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -409,12 +416,10 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(RecognizeData));
   PedestrianMeasure_descriptor_ = file->message_type(15);
-  static const int PedestrianMeasure_offsets_[5] = {
+  static const int PedestrianMeasure_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PedestrianMeasure, r_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PedestrianMeasure, p_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PedestrianMeasure, pos_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PedestrianMeasure, role_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PedestrianMeasure, id_),
   };
   PedestrianMeasure_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -512,9 +517,8 @@ void protobuf_AssignDesc_msg_2einternal_2eproto() {
   StreamType_descriptor_ = file->enum_type(2);
   BallEvent_descriptor_ = file->enum_type(3);
   PlayerPosition_descriptor_ = file->enum_type(4);
-  TeamRole_descriptor_ = file->enum_type(5);
-  CameraType_descriptor_ = file->enum_type(6);
-  GameTrackProtocol_descriptor_ = file->enum_type(7);
+  CameraType_descriptor_ = file->enum_type(5);
+  GameTrackProtocol_descriptor_ = file->enum_type(6);
 }
 
 namespace {
@@ -528,9 +532,9 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    Point2d_descriptor_, &Point2d::default_instance());
+    Point2_descriptor_, &Point2::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    Point3d_descriptor_, &Point3d::default_instance());
+    Point3_descriptor_, &Point3::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Rect_descriptor_, &Rect::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -572,10 +576,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_msg_2einternal_2eproto() {
-  delete Point2d::default_instance_;
-  delete Point2d_reflection_;
-  delete Point3d::default_instance_;
-  delete Point3d_reflection_;
+  delete Point2::default_instance_;
+  delete Point2_reflection_;
+  delete Point3::default_instance_;
+  delete Point3_reflection_;
   delete Rect::default_instance_;
   delete Rect_reflection_;
   delete RecROIs::default_instance_;
@@ -621,132 +625,133 @@ void protobuf_AddDesc_msg_2einternal_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022msg.internal.proto\022\017gt.internal.msg\"\037\n"
-    "\007Point2d\022\t\n\001x\030\001 \002(\001\022\t\n\001y\030\002 \002(\001\"*\n\007Point3"
-    "d\022\t\n\001x\030\001 \002(\001\022\t\n\001y\030\002 \002(\001\022\t\n\001z\030\003 \002(\001\"R\n\004Re"
-    "ct\022$\n\002xy\030\001 \002(\0132\030.gt.internal.msg.Point2d"
-    "\022$\n\002wh\030\002 \002(\0132\030.gt.internal.msg.Point2d\"\313"
-    "\001\n\007RecROIs\0220\n\021throw_search_rect\030\001 \001(\0132\025."
-    "gt.internal.msg.Rect\022/\n\020throw_track_rect"
-    "\030\002 \001(\0132\025.gt.internal.msg.Rect\022.\n\017hit_sea"
-    "rch_rect\030\003 \001(\0132\025.gt.internal.msg.Rect\022-\n"
-    "\016hit_track_rect\030\004 \001(\0132\025.gt.internal.msg."
-    "Rect\"\220\002\n\023RecognizeParameters\022\021\n\tcorr_coe"
-    "f\030\001 \001(\001\022\020\n\010sko_coef\030\002 \001(\001\022\030\n\020search_area"
-    "_size\030\003 \001(\005\022\030\n\020min_sko_template\030\004 \001(\001\022\034\n"
-    "\024max_angle_directions\030\005 \001(\001\022\021\n\tmin_speed"
-    "\030\006 \001(\001\022\027\n\017canny_thres_min\030\007 \001(\005\022\027\n\017canny"
-    "_thres_max\030\010 \001(\005\022\020\n\010max_area\030\t \001(\005\022\020\n\010mi"
-    "n_area\030\n \001(\005\022\031\n\021circularity_coeff\030\013 \001(\001\""
-    "\206\003\n\030HardwareCameraParameters\022\020\n\010exposure"
-    "\030\001 \001(\001\022\024\n\014min_exposure\030\002 \001(\001\022\024\n\014max_expo"
-    "sure\030\003 \001(\001\022\023\n\013pixel_clock\030\004 \001(\005\022\027\n\017min_p"
-    "ixel_clock\030\005 \001(\005\022\027\n\017max_pixel_clock\030\006 \001("
-    "\005\022\022\n\nframe_rate\030\007 \001(\001\022\026\n\016min_frame_rate\030"
-    "\010 \001(\001\022\026\n\016max_frame_rate\030\t \001(\001\022\r\n\005width\030\n"
-    " \001(\005\022\016\n\006height\030\013 \001(\005\022\014\n\004gain\030\014 \001(\005\022\027\n\017de"
-    "bounce_enable\030\r \001(\010\022\026\n\016debounce_value\030\016 "
-    "\001(\005\022\024\n\014trigger_mode\030\017 \001(\005\022\020\n\010focusing\030\020 "
-    "\001(\005\022\033\n\023trigger_mode_enable\030\021 \001(\010\"\326\002\n\027Pic"
-    "tureCameraParameters\022\032\n\022picture_param_fl"
-    "ag\030\001 \001(\005\022\025\n\rwhite_balance\030\002 \001(\005\022&\n\007wb_re"
-    "ct\030\003 \001(\0132\025.gt.internal.msg.Rect\022\r\n\005gamma"
-    "\030\004 \001(\001\022\r\n\005sharp\030\005 \001(\001\022\022\n\nsaturation\030\006 \001("
-    "\005\022\024\n\014r_saturation\030\007 \001(\005\022\024\n\014g_saturation\030"
-    "\010 \001(\005\022\024\n\014b_saturation\030\t \001(\005\022\013\n\003hue\030\n \001(\005"
-    "\022\023\n\013shadow_coef\030\013 \001(\001\022\030\n\020shadow_threshol"
-    "d\030\014 \001(\001\022 \n\030shadow_gauss_window_size\030\r \001("
-    "\005\022\016\n\006rotate\030\016 \001(\005\"\267\001\n\026AutoExposureParame"
-    "ters\022\014\n\004gain\030\001 \001(\001\022\020\n\010exposure\030\002 \001(\001\022\026\n\016"
-    "min_gain_coeff\030\003 \001(\001\022\026\n\016max_gain_coeff\030\004"
-    " \001(\001\022\023\n\013max_percent\030\005 \001(\001\022\024\n\014min_rel_coe"
-    "f\030\006 \001(\001\022\024\n\014max_rel_coef\030\007 \001(\001\022\014\n\004mean\030\010 "
-    "\001(\001\"\243\001\n\026StreamCameraParameters\022\021\n\traw_fr"
-    "ame\030\001 \001(\005\022\034\n\024send_frame_rate_main\030\004 \001(\005\022"
-    "\033\n\023send_frame_rate_add\030\006 \001(\005\022\035\n\025port_sen"
-    "d_stream_main\030\010 \001(\005\022\034\n\024port_send_stream_"
-    "add\030\t \001(\005\"t\n\023StreamCameraCommand\022)\n\004type"
-    "\030\001 \002(\0162\033.gt.internal.msg.StreamType\022\026\n\016v"
-    "ideo_duration\030\002 \001(\005\022\014\n\004desc\030\003 \001(\t\022\014\n\004sto"
-    "p\030\004 \001(\010\"\235\002\n\025CalibrationParameters\022%\n\003xyz"
-    "\030\001 \002(\0132\030.gt.internal.msg.Point3d\022(\n\006angl"
-    "es\030\002 \002(\0132\030.gt.internal.msg.Point3d\022\r\n\005fo"
-    "cus\030\003 \002(\001\022\017\n\007samples\030\004 \002(\001\022\r\n\005lines\030\005 \002("
-    "\001\022\016\n\006sample\030\006 \002(\001\022\014\n\004line\030\007 \002(\001\022\022\n\npixel"
-    "_size\030\010 \002(\001\022\n\n\002k1\030\t \002(\001\022\n\n\002k2\030\n \002(\001\022\n\n\002k"
-    "3\030\013 \002(\001\022\n\n\002p1\030\014 \002(\001\022\n\n\002p2\030\r \002(\001\022\n\n\002b1\030\016 "
-    "\002(\001\022\n\n\002b2\030\017 \002(\001\"\217\001\n\013BallMeasure\022$\n\002xy\030\001 "
-    "\002(\0132\030.gt.internal.msg.Point2d\022\r\n\005valid\030\002"
-    " \002(\010\022\014\n\004time\030\003 \002(\004\022)\n\005event\030\004 \002(\0162\032.gt.i"
-    "nternal.msg.BallEvent\022\022\n\nis_rebound\030\005 \002("
-    "\010\"r\n\nBatMeasure\022\021\n\twas_swing\030\001 \002(\010\022*\n\010me"
-    "asures\030\002 \003(\0132\030.gt.internal.msg.Point2d\022%"
-    "\n\006bboxes\030\003 \003(\0132\025.gt.internal.msg.Rect\"\247\001"
-    "\n\016OutOfFrameInfo\022(\n\003dir\030\001 \002(\0162\033.gt.inter"
-    "nal.msg.OutOfFrame\0222\n\014ball_measure\030\002 \001(\013"
-    "2\034.gt.internal.msg.BallMeasure\0227\n\013ped_me"
-    "asure\030\003 \001(\0132\".gt.internal.msg.Pedestrian"
-    "Measure\"O\n\rRecognizeData\022*\n\004data\030\001 \003(\0132\034"
-    ".gt.internal.msg.BallMeasure\022\022\n\nstart_ti"
-    "me\030\002 \001(\004\"\275\001\n\021PedestrianMeasure\022 \n\001r\030\001 \002("
-    "\0132\025.gt.internal.msg.Rect\022#\n\001p\030\002 \002(\0132\030.gt"
-    ".internal.msg.Point3d\022,\n\003pos\030\003 \002(\0162\037.gt."
-    "internal.msg.PlayerPosition\022\'\n\004role\030\004 \001("
-    "\0162\031.gt.internal.msg.TeamRole\022\n\n\002id\030\005 \002(\t"
-    "\"\242\005\n\rCameraOptions\022<\n\thw_params\030\001 \001(\0132)."
-    "gt.internal.msg.HardwareCameraParameters"
-    "\022:\n\010p_params\030\002 \001(\0132(.gt.internal.msg.Pic"
-    "tureCameraParameters\022@\n\017auto_exp_params\030"
-    "\003 \001(\0132\'.gt.internal.msg.AutoExposurePara"
-    "meters\022<\n\014calib_params\030\004 \001(\0132&.gt.intern"
-    "al.msg.CalibrationParameters\022*\n\010rec_rois"
-    "\030\005 \001(\0132\030.gt.internal.msg.RecROIs\022\035\n\025ball"
-    "_recognize_enable\030\006 \001(\010\022\024\n\014debug_enable\030"
-    "\007 \001(\010\0228\n\nrec_params\030\010 \001(\0132$.gt.internal."
-    "msg.RecognizeParameters\022\014\n\004desc\030\t \001(\t\022-\n"
-    "\010cam_type\030\n \001(\0162\033.gt.internal.msg.Camera"
-    "Type\022\n\n\002id\030\013 \002(\t\022\027\n\017save_parameters\030\014 \001("
-    "\010\022>\n\rstream_params\030\r \001(\0132\'.gt.internal.m"
-    "sg.StreamCameraParameters\022\034\n\024auto_exposu"
-    "re_enable\030\016 \001(\010\022\025\n\rmain_add_mode\030\017 \002(\010\022\021"
-    "\n\tmain_each\030\020 \001(\005\022\022\n\ndebug_mode\030\021 \001(\010\"B\n"
-    "\rServerOptions\022\025\n\rwrite_to_disk\030\001 \001(\010\022\032\n"
-    "\022write_uncompressed\030\002 \001(\010\"F\n\tFrameTime\022\025"
-    "\n\rcomputer_time\030\001 \001(\004\022\023\n\013camera_time\030\002 \001"
-    "(\004\022\r\n\005frame\030\003 \001(\014\"5\n\tDebugInfo\022\017\n\007messag"
-    "e\030\001 \002(\t\022\027\n\017skipDebugFrames\030\002 \001(\005*4\n\016Came"
-    "raPosition\022\r\n\tUndefined\020\000\022\010\n\004Left\020\001\022\t\n\005R"
-    "ight\020\002*\?\n\nOutOfFrame\022\013\n\007LeftOut\020\000\022\014\n\010Rig"
-    "htOut\020\001\022\t\n\005UpOut\020\002\022\013\n\007DownOut\020\003*&\n\nStrea"
-    "mType\022\010\n\004Main\020\001\022\016\n\nAdditional\020\002*A\n\tBallE"
-    "vent\022\021\n\rThrowDetected\020\000\022\017\n\013HitDetected\020\001"
-    "\022\020\n\014MoveDetected\020\002*\215\001\n\016PlayerPosition\022\010\n"
-    "\004Home\020\001\022\r\n\tFirstBase\020\002\022\016\n\nSecondBase\020\003\022\r"
-    "\n\tThirdBase\020\004\022\023\n\017BetwThirdSecond\020\005\022\r\n\tLe"
-    "ftField\020\006\022\016\n\nRightField\020\007\022\017\n\013CenterField"
-    "\020\010*\322\001\n\010TeamRole\022\n\n\006NoRole\020\001\022\013\n\007Pitcher\020\002"
-    "\022\013\n\007Catcher\020\003\022\020\n\014FirstBaseman\020\004\022\021\n\rSecon"
-    "dBaseman\020\005\022\020\n\014ThirdBaseman\020\006\022\r\n\tShortSto"
-    "p\020\007\022\017\n\013LeftFielder\020\010\022\021\n\rCenterFielder\020\t\022"
-    "\020\n\014RightFielder\020\n\022\016\n\nOutfielder\020\013\022\024\n\020Des"
-    "ignatedHitter\020\014*\207\001\n\nCameraType\022\020\n\014BaseLe"
-    "ftMain\020\001\022\021\n\rBaseRightMain\020\002\022\017\n\013BaseLeftA"
-    "dd\020\003\022\020\n\014BaseRightAdd\020\004\022\t\n\005Pitch\020\005\022\013\n\007Bat"
-    "Left\020\006\022\014\n\010BatRight\020\007\022\013\n\007FishEye\020\010*\376\002\n\021Ga"
-    "meTrackProtocol\022\030\n\024SendCameraParameters\020"
-    "\001\022\021\n\rRequestStream\020\002\022\024\n\020NotifyOutOfFrame"
-    "\020\003\022\034\n\030NotifyPedestrianPosition\020\004\022\025\n\021Noti"
-    "fyBallMeasure\020\005\022\026\n\022RequestCameraFrame\020\006\022"
-    "\026\n\022GetBallCoordinates\020\007\022\025\n\021GetBatCoordin"
-    "ates\020\010\022\017\n\013GetTestData\020\t\022\021\n\rRestartCamera"
-    "\020\n\022\023\n\017SendCurrentTime\020\013\022\020\n\014SetDebugMode\020"
-    "\014\022\035\n\031RequestNextFrameDebugMode\020\r\022!\n\035Requ"
-    "estPreviousFrameDebugMode\020\017\022\035\n\031NotifyMom"
-    "entStartDetected\020\016B\002H\001", 4862);
+    "\n\022msg.internal.proto\022\017gt.internal.msg\"\036\n"
+    "\006Point2\022\t\n\001x\030\001 \002(\001\022\t\n\001y\030\002 \002(\001\")\n\006Point3\022"
+    "\t\n\001x\030\001 \002(\001\022\t\n\001y\030\002 \002(\001\022\t\n\001z\030\003 \002(\001\"P\n\004Rect"
+    "\022#\n\002xy\030\001 \002(\0132\027.gt.internal.msg.Point2\022#\n"
+    "\002wh\030\002 \002(\0132\027.gt.internal.msg.Point2\"\260\002\n\007R"
+    "ecROIs\0220\n\021throw_search_rect\030\001 \001(\0132\025.gt.i"
+    "nternal.msg.Rect\022/\n\020throw_track_rect\030\002 \001"
+    "(\0132\025.gt.internal.msg.Rect\022.\n\017hit_search_"
+    "rect\030\003 \001(\0132\025.gt.internal.msg.Rect\022-\n\016hit"
+    "_track_rect\030\004 \001(\0132\025.gt.internal.msg.Rect"
+    "\0223\n\024pick_off_search_rect\030\005 \001(\0132\025.gt.inte"
+    "rnal.msg.Rect\022.\n\017bat_detect_rect\030\006 \001(\0132\025"
+    ".gt.internal.msg.Rect\"\220\002\n\023RecognizeParam"
+    "eters\022\021\n\tcorr_coef\030\001 \001(\001\022\020\n\010sko_coef\030\002 \001"
+    "(\001\022\030\n\020search_area_size\030\003 \001(\005\022\030\n\020min_sko_"
+    "template\030\004 \001(\001\022\034\n\024max_angle_directions\030\005"
+    " \001(\001\022\021\n\tmin_speed\030\006 \001(\001\022\027\n\017canny_thres_m"
+    "in\030\007 \001(\005\022\027\n\017canny_thres_max\030\010 \001(\005\022\020\n\010max"
+    "_area\030\t \001(\005\022\020\n\010min_area\030\n \001(\005\022\031\n\021circula"
+    "rity_coeff\030\013 \001(\001\"\206\003\n\030HardwareCameraParam"
+    "eters\022\020\n\010exposure\030\001 \001(\001\022\024\n\014min_exposure\030"
+    "\002 \001(\001\022\024\n\014max_exposure\030\003 \001(\001\022\023\n\013pixel_clo"
+    "ck\030\004 \001(\005\022\027\n\017min_pixel_clock\030\005 \001(\005\022\027\n\017max"
+    "_pixel_clock\030\006 \001(\005\022\022\n\nframe_rate\030\007 \001(\001\022\026"
+    "\n\016min_frame_rate\030\010 \001(\001\022\026\n\016max_frame_rate"
+    "\030\t \001(\001\022\r\n\005width\030\n \001(\005\022\016\n\006height\030\013 \001(\005\022\014\n"
+    "\004gain\030\014 \001(\005\022\027\n\017debounce_enable\030\r \001(\010\022\026\n\016"
+    "debounce_value\030\016 \001(\005\022\024\n\014trigger_mode\030\017 \001"
+    "(\005\022\020\n\010focusing\030\020 \001(\005\022\033\n\023trigger_mode_ena"
+    "ble\030\021 \001(\010\"\326\002\n\027PictureCameraParameters\022\032\n"
+    "\022picture_param_flag\030\001 \001(\005\022\025\n\rwhite_balan"
+    "ce\030\002 \001(\005\022&\n\007wb_rect\030\003 \001(\0132\025.gt.internal."
+    "msg.Rect\022\r\n\005gamma\030\004 \001(\001\022\r\n\005sharp\030\005 \001(\001\022\022"
+    "\n\nsaturation\030\006 \001(\005\022\024\n\014r_saturation\030\007 \001(\005"
+    "\022\024\n\014g_saturation\030\010 \001(\005\022\024\n\014b_saturation\030\t"
+    " \001(\005\022\013\n\003hue\030\n \001(\005\022\023\n\013shadow_coef\030\013 \001(\001\022\030"
+    "\n\020shadow_threshold\030\014 \001(\001\022 \n\030shadow_gauss"
+    "_window_size\030\r \001(\005\022\016\n\006rotate\030\016 \001(\005\"\267\001\n\026A"
+    "utoExposureParameters\022\014\n\004gain\030\001 \001(\001\022\020\n\010e"
+    "xposure\030\002 \001(\001\022\026\n\016min_gain_coeff\030\003 \001(\001\022\026\n"
+    "\016max_gain_coeff\030\004 \001(\001\022\023\n\013max_percent\030\005 \001"
+    "(\001\022\024\n\014min_rel_coef\030\006 \001(\001\022\024\n\014max_rel_coef"
+    "\030\007 \001(\001\022\014\n\004mean\030\010 \001(\001\"\243\001\n\026StreamCameraPar"
+    "ameters\022\021\n\traw_frame\030\001 \001(\005\022\034\n\024send_frame"
+    "_rate_main\030\004 \001(\005\022\033\n\023send_frame_rate_add\030"
+    "\006 \001(\005\022\035\n\025port_send_stream_main\030\010 \001(\005\022\034\n\024"
+    "port_send_stream_add\030\t \001(\005\"t\n\023StreamCame"
+    "raCommand\022)\n\004type\030\001 \002(\0162\033.gt.internal.ms"
+    "g.StreamType\022\026\n\016video_duration\030\002 \001(\005\022\014\n\004"
+    "desc\030\003 \001(\t\022\014\n\004stop\030\004 \001(\010\"\233\002\n\025Calibration"
+    "Parameters\022$\n\003xyz\030\001 \002(\0132\027.gt.internal.ms"
+    "g.Point3\022\'\n\006angles\030\002 \002(\0132\027.gt.internal.m"
+    "sg.Point3\022\r\n\005focus\030\003 \002(\001\022\017\n\007samples\030\004 \002("
+    "\001\022\r\n\005lines\030\005 \002(\001\022\016\n\006sample\030\006 \002(\001\022\014\n\004line"
+    "\030\007 \002(\001\022\022\n\npixel_size\030\010 \002(\001\022\n\n\002k1\030\t \002(\001\022\n"
+    "\n\002k2\030\n \002(\001\022\n\n\002k3\030\013 \002(\001\022\n\n\002p1\030\014 \002(\001\022\n\n\002p2"
+    "\030\r \002(\001\022\n\n\002b1\030\016 \002(\001\022\n\n\002b2\030\017 \002(\001\"\372\001\n\013BallM"
+    "easure\022#\n\002xy\030\001 \002(\0132\027.gt.internal.msg.Poi"
+    "nt2\022\r\n\005valid\030\002 \002(\010\022\014\n\004time\030\003 \002(\003\022)\n\005even"
+    "t\030\004 \002(\0162\032.gt.internal.msg.BallEvent\022\022\n\ni"
+    "s_rebound\030\005 \002(\010\022\034\n\024is_from_out_of_frame\030"
+    "\006 \002(\010\022\034\n\024is_lost_out_of_frame\030\007 \002(\010\022\024\n\014i"
+    "s_high_ball\030\010 \002(\010\022\030\n\020is_ped_intersect\030\t "
+    "\002(\010\"q\n\nBatMeasure\022\021\n\twas_swing\030\001 \002(\010\022)\n\010"
+    "measures\030\002 \003(\0132\027.gt.internal.msg.Point2\022"
+    "%\n\006bboxes\030\003 \003(\0132\025.gt.internal.msg.Rect\"\247"
+    "\001\n\016OutOfFrameInfo\022(\n\003dir\030\001 \002(\0162\033.gt.inte"
+    "rnal.msg.OutOfFrame\0222\n\014ball_measure\030\002 \001("
+    "\0132\034.gt.internal.msg.BallMeasure\0227\n\013ped_m"
+    "easure\030\003 \001(\0132\".gt.internal.msg.Pedestria"
+    "nMeasure\"\211\001\n\rRecognizeData\022*\n\004data\030\001 \003(\013"
+    "2\034.gt.internal.msg.BallMeasure\022\022\n\nstart_"
+    "time\030\002 \001(\003\022\035\n\025restored_out_of_frame\030\003 \001("
+    "\010\022\031\n\021restored_straight\030\004 \001(\010\"\207\001\n\021Pedestr"
+    "ianMeasure\022 \n\001r\030\001 \002(\0132\025.gt.internal.msg."
+    "Rect\022\"\n\001p\030\002 \002(\0132\027.gt.internal.msg.Point3"
+    "\022,\n\003pos\030\003 \002(\0162\037.gt.internal.msg.PlayerPo"
+    "sition\"\242\005\n\rCameraOptions\022<\n\thw_params\030\001 "
+    "\001(\0132).gt.internal.msg.HardwareCameraPara"
+    "meters\022:\n\010p_params\030\002 \001(\0132(.gt.internal.m"
+    "sg.PictureCameraParameters\022@\n\017auto_exp_p"
+    "arams\030\003 \001(\0132\'.gt.internal.msg.AutoExposu"
+    "reParameters\022<\n\014calib_params\030\004 \001(\0132&.gt."
+    "internal.msg.CalibrationParameters\022*\n\010re"
+    "c_rois\030\005 \001(\0132\030.gt.internal.msg.RecROIs\022\035"
+    "\n\025ball_recognize_enable\030\006 \001(\010\022\024\n\014debug_e"
+    "nable\030\007 \001(\010\0228\n\nrec_params\030\010 \001(\0132$.gt.int"
+    "ernal.msg.RecognizeParameters\022\014\n\004desc\030\t "
+    "\001(\t\022-\n\010cam_type\030\n \001(\0162\033.gt.internal.msg."
+    "CameraType\022\n\n\002id\030\013 \002(\t\022\027\n\017save_parameter"
+    "s\030\014 \001(\010\022>\n\rstream_params\030\r \001(\0132\'.gt.inte"
+    "rnal.msg.StreamCameraParameters\022\034\n\024auto_"
+    "exposure_enable\030\016 \001(\010\022\025\n\rmain_add_mode\030\017"
+    " \002(\010\022\021\n\tmain_each\030\020 \001(\005\022\022\n\ndebug_mode\030\021 "
+    "\001(\010\"B\n\rServerOptions\022\025\n\rwrite_to_disk\030\001 "
+    "\001(\010\022\032\n\022write_uncompressed\030\002 \001(\010\"F\n\tFrame"
+    "Time\022\025\n\rcomputer_time\030\001 \001(\003\022\023\n\013camera_ti"
+    "me\030\002 \001(\003\022\r\n\005frame\030\003 \001(\014\"5\n\tDebugInfo\022\017\n\007"
+    "message\030\001 \002(\t\022\027\n\017skipDebugFrames\030\002 \001(\005*4"
+    "\n\016CameraPosition\022\r\n\tUndefined\020\000\022\010\n\004Left\020"
+    "\001\022\t\n\005Right\020\002*L\n\nOutOfFrame\022\013\n\007LeftOut\020\000\022"
+    "\014\n\010RightOut\020\001\022\t\n\005UpOut\020\002\022\013\n\007DownOut\020\003\022\013\n"
+    "\007InFrame\020\004*&\n\nStreamType\022\010\n\004Main\020\001\022\016\n\nAd"
+    "ditional\020\002*Y\n\tBallEvent\022\021\n\rThrowDetected"
+    "\020\000\022\017\n\013HitDetected\020\001\022\020\n\014MoveDetected\020\002\022\026\n"
+    "\022CatchThrowDetected\020\003*\224\001\n\016PlayerPosition"
+    "\022\013\n\007Invalid\020\001\022\010\n\004Home\020\002\022\r\n\tFirstBase\020\003\022\016"
+    "\n\nSecondBase\020\004\022\r\n\tThirdBase\020\005\022\r\n\tShortSt"
+    "op\020\006\022\r\n\tLeftField\020\007\022\017\n\013CenterField\020\010\022\016\n\n"
+    "RightField\020\t*\207\001\n\nCameraType\022\020\n\014BaseLeftM"
+    "ain\020\001\022\021\n\rBaseRightMain\020\002\022\017\n\013BaseLeftAdd\020"
+    "\003\022\020\n\014BaseRightAdd\020\004\022\t\n\005Pitch\020\005\022\013\n\007BatLef"
+    "t\020\006\022\014\n\010BatRight\020\007\022\013\n\007FishEye\020\010*\223\003\n\021GameT"
+    "rackProtocol\022\030\n\024SendCameraParameters\020\001\022\021"
+    "\n\rRequestStream\020\002\022\024\n\020NotifyOutOfFrame\020\003\022"
+    "\034\n\030NotifyPedestrianPosition\020\004\022\025\n\021NotifyB"
+    "allMeasure\020\005\022\026\n\022RequestCameraFrame\020\006\022\026\n\022"
+    "GetBallCoordinates\020\007\022\025\n\021GetBatCoordinate"
+    "s\020\010\022\017\n\013GetTestData\020\t\022\021\n\rRestartCamera\020\n\022"
+    "\023\n\017SendCurrentTime\020\013\022\020\n\014SetDebugMode\020\014\022\035"
+    "\n\031RequestNextFrameDebugMode\020\r\022\035\n\031NotifyM"
+    "omentStartDetected\020\016\022!\n\035RequestPreviousF"
+    "rameDebugMode\020\017\022\023\n\017RestartSoftware\020\020B\002H\001", 4920);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "msg.internal.proto", &protobuf_RegisterTypes);
-  Point2d::default_instance_ = new Point2d();
-  Point3d::default_instance_ = new Point3d();
+  Point2::default_instance_ = new Point2();
+  Point3::default_instance_ = new Point3();
   Rect::default_instance_ = new Rect();
   RecROIs::default_instance_ = new RecROIs();
   RecognizeParameters::default_instance_ = new RecognizeParameters();
@@ -765,8 +770,8 @@ void protobuf_AddDesc_msg_2einternal_2eproto() {
   ServerOptions::default_instance_ = new ServerOptions();
   FrameTime::default_instance_ = new FrameTime();
   DebugInfo::default_instance_ = new DebugInfo();
-  Point2d::default_instance_->InitAsDefaultInstance();
-  Point3d::default_instance_->InitAsDefaultInstance();
+  Point2::default_instance_->InitAsDefaultInstance();
+  Point3::default_instance_->InitAsDefaultInstance();
   Rect::default_instance_->InitAsDefaultInstance();
   RecROIs::default_instance_->InitAsDefaultInstance();
   RecognizeParameters::default_instance_->InitAsDefaultInstance();
@@ -819,6 +824,7 @@ bool OutOfFrame_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -848,6 +854,7 @@ bool BallEvent_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -868,30 +875,7 @@ bool PlayerPosition_IsValid(int value) {
     case 6:
     case 7:
     case 8:
-      return true;
-    default:
-      return false;
-  }
-}
-
-const ::google::protobuf::EnumDescriptor* TeamRole_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return TeamRole_descriptor_;
-}
-bool TeamRole_IsValid(int value) {
-  switch(value) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
     case 9:
-    case 10:
-    case 11:
-    case 12:
       return true;
     default:
       return false;
@@ -939,6 +923,7 @@ bool GameTrackProtocol_IsValid(int value) {
     case 13:
     case 14:
     case 15:
+    case 16:
       return true;
     default:
       return false;
@@ -949,67 +934,67 @@ bool GameTrackProtocol_IsValid(int value) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int Point2d::kXFieldNumber;
-const int Point2d::kYFieldNumber;
+const int Point2::kXFieldNumber;
+const int Point2::kYFieldNumber;
 #endif  // !_MSC_VER
 
-Point2d::Point2d()
+Point2::Point2()
   : ::google::protobuf::Message() {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(constructor:gt.internal.msg.Point2)
 }
 
-void Point2d::InitAsDefaultInstance() {
+void Point2::InitAsDefaultInstance() {
 }
 
-Point2d::Point2d(const Point2d& from)
+Point2::Point2(const Point2& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(copy_constructor:gt.internal.msg.Point2)
 }
 
-void Point2d::SharedCtor() {
+void Point2::SharedCtor() {
   _cached_size_ = 0;
   x_ = 0;
   y_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-Point2d::~Point2d() {
-  // @@protoc_insertion_point(destructor:gt.internal.msg.Point2d)
+Point2::~Point2() {
+  // @@protoc_insertion_point(destructor:gt.internal.msg.Point2)
   SharedDtor();
 }
 
-void Point2d::SharedDtor() {
+void Point2::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void Point2d::SetCachedSize(int size) const {
+void Point2::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* Point2d::descriptor() {
+const ::google::protobuf::Descriptor* Point2::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return Point2d_descriptor_;
+  return Point2_descriptor_;
 }
 
-const Point2d& Point2d::default_instance() {
+const Point2& Point2::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_msg_2einternal_2eproto();
   return *default_instance_;
 }
 
-Point2d* Point2d::default_instance_ = NULL;
+Point2* Point2::default_instance_ = NULL;
 
-Point2d* Point2d::New() const {
-  return new Point2d;
+Point2* Point2::New() const {
+  return new Point2;
 }
 
-void Point2d::Clear() {
+void Point2::Clear() {
 #define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
-  &reinterpret_cast<Point2d*>(16)->f) - \
+  &reinterpret_cast<Point2*>(16)->f) - \
    reinterpret_cast<char*>(16))
 
 #define ZR_(first, last) do {                              \
@@ -1027,11 +1012,11 @@ void Point2d::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool Point2d::MergePartialFromCodedStream(
+bool Point2::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(parse_start:gt.internal.msg.Point2)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -1080,17 +1065,17 @@ bool Point2d::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(parse_success:gt.internal.msg.Point2)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(parse_failure:gt.internal.msg.Point2)
   return false;
 #undef DO_
 }
 
-void Point2d::SerializeWithCachedSizes(
+void Point2::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(serialize_start:gt.internal.msg.Point2)
   // required double x = 1;
   if (has_x()) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->x(), output);
@@ -1105,12 +1090,12 @@ void Point2d::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
-  // @@protoc_insertion_point(serialize_end:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(serialize_end:gt.internal.msg.Point2)
 }
 
-::google::protobuf::uint8* Point2d::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* Point2::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(serialize_to_array_start:gt.internal.msg.Point2)
   // required double x = 1;
   if (has_x()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->x(), target);
@@ -1125,11 +1110,11 @@ void Point2d::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(serialize_to_array_end:gt.internal.msg.Point2)
   return target;
 }
 
-int Point2d::ByteSize() const {
+int Point2::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -1155,10 +1140,10 @@ int Point2d::ByteSize() const {
   return total_size;
 }
 
-void Point2d::MergeFrom(const ::google::protobuf::Message& from) {
+void Point2::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const Point2d* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const Point2d*>(
+  const Point2* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const Point2*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1167,7 +1152,7 @@ void Point2d::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void Point2d::MergeFrom(const Point2d& from) {
+void Point2::MergeFrom(const Point2& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_x()) {
@@ -1180,25 +1165,25 @@ void Point2d::MergeFrom(const Point2d& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void Point2d::CopyFrom(const ::google::protobuf::Message& from) {
+void Point2::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void Point2d::CopyFrom(const Point2d& from) {
+void Point2::CopyFrom(const Point2& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Point2d::IsInitialized() const {
+bool Point2::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
 
   return true;
 }
 
-void Point2d::Swap(Point2d* other) {
+void Point2::Swap(Point2* other) {
   if (other != this) {
     std::swap(x_, other->x_);
     std::swap(y_, other->y_);
@@ -1208,11 +1193,11 @@ void Point2d::Swap(Point2d* other) {
   }
 }
 
-::google::protobuf::Metadata Point2d::GetMetadata() const {
+::google::protobuf::Metadata Point2::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Point2d_descriptor_;
-  metadata.reflection = Point2d_reflection_;
+  metadata.descriptor = Point2_descriptor_;
+  metadata.reflection = Point2_reflection_;
   return metadata;
 }
 
@@ -1220,28 +1205,28 @@ void Point2d::Swap(Point2d* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int Point3d::kXFieldNumber;
-const int Point3d::kYFieldNumber;
-const int Point3d::kZFieldNumber;
+const int Point3::kXFieldNumber;
+const int Point3::kYFieldNumber;
+const int Point3::kZFieldNumber;
 #endif  // !_MSC_VER
 
-Point3d::Point3d()
+Point3::Point3()
   : ::google::protobuf::Message() {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(constructor:gt.internal.msg.Point3)
 }
 
-void Point3d::InitAsDefaultInstance() {
+void Point3::InitAsDefaultInstance() {
 }
 
-Point3d::Point3d(const Point3d& from)
+Point3::Point3(const Point3& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(copy_constructor:gt.internal.msg.Point3)
 }
 
-void Point3d::SharedCtor() {
+void Point3::SharedCtor() {
   _cached_size_ = 0;
   x_ = 0;
   y_ = 0;
@@ -1249,40 +1234,40 @@ void Point3d::SharedCtor() {
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-Point3d::~Point3d() {
-  // @@protoc_insertion_point(destructor:gt.internal.msg.Point3d)
+Point3::~Point3() {
+  // @@protoc_insertion_point(destructor:gt.internal.msg.Point3)
   SharedDtor();
 }
 
-void Point3d::SharedDtor() {
+void Point3::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void Point3d::SetCachedSize(int size) const {
+void Point3::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* Point3d::descriptor() {
+const ::google::protobuf::Descriptor* Point3::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return Point3d_descriptor_;
+  return Point3_descriptor_;
 }
 
-const Point3d& Point3d::default_instance() {
+const Point3& Point3::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_msg_2einternal_2eproto();
   return *default_instance_;
 }
 
-Point3d* Point3d::default_instance_ = NULL;
+Point3* Point3::default_instance_ = NULL;
 
-Point3d* Point3d::New() const {
-  return new Point3d;
+Point3* Point3::New() const {
+  return new Point3;
 }
 
-void Point3d::Clear() {
+void Point3::Clear() {
 #define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
-  &reinterpret_cast<Point3d*>(16)->f) - \
+  &reinterpret_cast<Point3*>(16)->f) - \
    reinterpret_cast<char*>(16))
 
 #define ZR_(first, last) do {                              \
@@ -1300,11 +1285,11 @@ void Point3d::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool Point3d::MergePartialFromCodedStream(
+bool Point3::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(parse_start:gt.internal.msg.Point3)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -1368,17 +1353,17 @@ bool Point3d::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(parse_success:gt.internal.msg.Point3)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(parse_failure:gt.internal.msg.Point3)
   return false;
 #undef DO_
 }
 
-void Point3d::SerializeWithCachedSizes(
+void Point3::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(serialize_start:gt.internal.msg.Point3)
   // required double x = 1;
   if (has_x()) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->x(), output);
@@ -1398,12 +1383,12 @@ void Point3d::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
-  // @@protoc_insertion_point(serialize_end:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(serialize_end:gt.internal.msg.Point3)
 }
 
-::google::protobuf::uint8* Point3d::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* Point3::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(serialize_to_array_start:gt.internal.msg.Point3)
   // required double x = 1;
   if (has_x()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->x(), target);
@@ -1423,11 +1408,11 @@ void Point3d::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(serialize_to_array_end:gt.internal.msg.Point3)
   return target;
 }
 
-int Point3d::ByteSize() const {
+int Point3::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -1458,10 +1443,10 @@ int Point3d::ByteSize() const {
   return total_size;
 }
 
-void Point3d::MergeFrom(const ::google::protobuf::Message& from) {
+void Point3::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const Point3d* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const Point3d*>(
+  const Point3* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const Point3*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1470,7 +1455,7 @@ void Point3d::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void Point3d::MergeFrom(const Point3d& from) {
+void Point3::MergeFrom(const Point3& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_x()) {
@@ -1486,25 +1471,25 @@ void Point3d::MergeFrom(const Point3d& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void Point3d::CopyFrom(const ::google::protobuf::Message& from) {
+void Point3::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void Point3d::CopyFrom(const Point3d& from) {
+void Point3::CopyFrom(const Point3& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Point3d::IsInitialized() const {
+bool Point3::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
 
   return true;
 }
 
-void Point3d::Swap(Point3d* other) {
+void Point3::Swap(Point3* other) {
   if (other != this) {
     std::swap(x_, other->x_);
     std::swap(y_, other->y_);
@@ -1515,11 +1500,11 @@ void Point3d::Swap(Point3d* other) {
   }
 }
 
-::google::protobuf::Metadata Point3d::GetMetadata() const {
+::google::protobuf::Metadata Point3::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Point3d_descriptor_;
-  metadata.reflection = Point3d_reflection_;
+  metadata.descriptor = Point3_descriptor_;
+  metadata.reflection = Point3_reflection_;
   return metadata;
 }
 
@@ -1538,8 +1523,8 @@ Rect::Rect()
 }
 
 void Rect::InitAsDefaultInstance() {
-  xy_ = const_cast< ::gt::internal::msg::Point2d*>(&::gt::internal::msg::Point2d::default_instance());
-  wh_ = const_cast< ::gt::internal::msg::Point2d*>(&::gt::internal::msg::Point2d::default_instance());
+  xy_ = const_cast< ::gt::internal::msg::Point2*>(&::gt::internal::msg::Point2::default_instance());
+  wh_ = const_cast< ::gt::internal::msg::Point2*>(&::gt::internal::msg::Point2::default_instance());
 }
 
 Rect::Rect(const Rect& from)
@@ -1592,10 +1577,10 @@ Rect* Rect::New() const {
 void Rect::Clear() {
   if (_has_bits_[0 / 32] & 3) {
     if (has_xy()) {
-      if (xy_ != NULL) xy_->::gt::internal::msg::Point2d::Clear();
+      if (xy_ != NULL) xy_->::gt::internal::msg::Point2::Clear();
     }
     if (has_wh()) {
-      if (wh_ != NULL) wh_->::gt::internal::msg::Point2d::Clear();
+      if (wh_ != NULL) wh_->::gt::internal::msg::Point2::Clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1612,7 +1597,7 @@ bool Rect::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .gt.internal.msg.Point2d xy = 1;
+      // required .gt.internal.msg.Point2 xy = 1;
       case 1: {
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -1624,7 +1609,7 @@ bool Rect::MergePartialFromCodedStream(
         break;
       }
 
-      // required .gt.internal.msg.Point2d wh = 2;
+      // required .gt.internal.msg.Point2 wh = 2;
       case 2: {
         if (tag == 18) {
          parse_wh:
@@ -1662,13 +1647,13 @@ failure:
 void Rect::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:gt.internal.msg.Rect)
-  // required .gt.internal.msg.Point2d xy = 1;
+  // required .gt.internal.msg.Point2 xy = 1;
   if (has_xy()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->xy(), output);
   }
 
-  // required .gt.internal.msg.Point2d wh = 2;
+  // required .gt.internal.msg.Point2 wh = 2;
   if (has_wh()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->wh(), output);
@@ -1684,14 +1669,14 @@ void Rect::SerializeWithCachedSizes(
 ::google::protobuf::uint8* Rect::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:gt.internal.msg.Rect)
-  // required .gt.internal.msg.Point2d xy = 1;
+  // required .gt.internal.msg.Point2 xy = 1;
   if (has_xy()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, this->xy(), target);
   }
 
-  // required .gt.internal.msg.Point2d wh = 2;
+  // required .gt.internal.msg.Point2 wh = 2;
   if (has_wh()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -1710,14 +1695,14 @@ int Rect::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .gt.internal.msg.Point2d xy = 1;
+    // required .gt.internal.msg.Point2 xy = 1;
     if (has_xy()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->xy());
     }
 
-    // required .gt.internal.msg.Point2d wh = 2;
+    // required .gt.internal.msg.Point2 wh = 2;
     if (has_wh()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -1752,10 +1737,10 @@ void Rect::MergeFrom(const Rect& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_xy()) {
-      mutable_xy()->::gt::internal::msg::Point2d::MergeFrom(from.xy());
+      mutable_xy()->::gt::internal::msg::Point2::MergeFrom(from.xy());
     }
     if (from.has_wh()) {
-      mutable_wh()->::gt::internal::msg::Point2d::MergeFrom(from.wh());
+      mutable_wh()->::gt::internal::msg::Point2::MergeFrom(from.wh());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -1811,6 +1796,8 @@ const int RecROIs::kThrowSearchRectFieldNumber;
 const int RecROIs::kThrowTrackRectFieldNumber;
 const int RecROIs::kHitSearchRectFieldNumber;
 const int RecROIs::kHitTrackRectFieldNumber;
+const int RecROIs::kPickOffSearchRectFieldNumber;
+const int RecROIs::kBatDetectRectFieldNumber;
 #endif  // !_MSC_VER
 
 RecROIs::RecROIs()
@@ -1824,6 +1811,8 @@ void RecROIs::InitAsDefaultInstance() {
   throw_track_rect_ = const_cast< ::gt::internal::msg::Rect*>(&::gt::internal::msg::Rect::default_instance());
   hit_search_rect_ = const_cast< ::gt::internal::msg::Rect*>(&::gt::internal::msg::Rect::default_instance());
   hit_track_rect_ = const_cast< ::gt::internal::msg::Rect*>(&::gt::internal::msg::Rect::default_instance());
+  pick_off_search_rect_ = const_cast< ::gt::internal::msg::Rect*>(&::gt::internal::msg::Rect::default_instance());
+  bat_detect_rect_ = const_cast< ::gt::internal::msg::Rect*>(&::gt::internal::msg::Rect::default_instance());
 }
 
 RecROIs::RecROIs(const RecROIs& from)
@@ -1839,6 +1828,8 @@ void RecROIs::SharedCtor() {
   throw_track_rect_ = NULL;
   hit_search_rect_ = NULL;
   hit_track_rect_ = NULL;
+  pick_off_search_rect_ = NULL;
+  bat_detect_rect_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1853,6 +1844,8 @@ void RecROIs::SharedDtor() {
     delete throw_track_rect_;
     delete hit_search_rect_;
     delete hit_track_rect_;
+    delete pick_off_search_rect_;
+    delete bat_detect_rect_;
   }
 }
 
@@ -1878,7 +1871,7 @@ RecROIs* RecROIs::New() const {
 }
 
 void RecROIs::Clear() {
-  if (_has_bits_[0 / 32] & 15) {
+  if (_has_bits_[0 / 32] & 63) {
     if (has_throw_search_rect()) {
       if (throw_search_rect_ != NULL) throw_search_rect_->::gt::internal::msg::Rect::Clear();
     }
@@ -1890,6 +1883,12 @@ void RecROIs::Clear() {
     }
     if (has_hit_track_rect()) {
       if (hit_track_rect_ != NULL) hit_track_rect_->::gt::internal::msg::Rect::Clear();
+    }
+    if (has_pick_off_search_rect()) {
+      if (pick_off_search_rect_ != NULL) pick_off_search_rect_->::gt::internal::msg::Rect::Clear();
+    }
+    if (has_bat_detect_rect()) {
+      if (bat_detect_rect_ != NULL) bat_detect_rect_->::gt::internal::msg::Rect::Clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1953,6 +1952,32 @@ bool RecROIs::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(42)) goto parse_pick_off_search_rect;
+        break;
+      }
+
+      // optional .gt.internal.msg.Rect pick_off_search_rect = 5;
+      case 5: {
+        if (tag == 42) {
+         parse_pick_off_search_rect:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_pick_off_search_rect()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(50)) goto parse_bat_detect_rect;
+        break;
+      }
+
+      // optional .gt.internal.msg.Rect bat_detect_rect = 6;
+      case 6: {
+        if (tag == 50) {
+         parse_bat_detect_rect:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_bat_detect_rect()));
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -2006,6 +2031,18 @@ void RecROIs::SerializeWithCachedSizes(
       4, this->hit_track_rect(), output);
   }
 
+  // optional .gt.internal.msg.Rect pick_off_search_rect = 5;
+  if (has_pick_off_search_rect()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, this->pick_off_search_rect(), output);
+  }
+
+  // optional .gt.internal.msg.Rect bat_detect_rect = 6;
+  if (has_bat_detect_rect()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      6, this->bat_detect_rect(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -2042,6 +2079,20 @@ void RecROIs::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         4, this->hit_track_rect(), target);
+  }
+
+  // optional .gt.internal.msg.Rect pick_off_search_rect = 5;
+  if (has_pick_off_search_rect()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        5, this->pick_off_search_rect(), target);
+  }
+
+  // optional .gt.internal.msg.Rect bat_detect_rect = 6;
+  if (has_bat_detect_rect()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        6, this->bat_detect_rect(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -2084,6 +2135,20 @@ int RecROIs::ByteSize() const {
           this->hit_track_rect());
     }
 
+    // optional .gt.internal.msg.Rect pick_off_search_rect = 5;
+    if (has_pick_off_search_rect()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->pick_off_search_rect());
+    }
+
+    // optional .gt.internal.msg.Rect bat_detect_rect = 6;
+    if (has_bat_detect_rect()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->bat_detect_rect());
+    }
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -2123,6 +2188,12 @@ void RecROIs::MergeFrom(const RecROIs& from) {
     if (from.has_hit_track_rect()) {
       mutable_hit_track_rect()->::gt::internal::msg::Rect::MergeFrom(from.hit_track_rect());
     }
+    if (from.has_pick_off_search_rect()) {
+      mutable_pick_off_search_rect()->::gt::internal::msg::Rect::MergeFrom(from.pick_off_search_rect());
+    }
+    if (from.has_bat_detect_rect()) {
+      mutable_bat_detect_rect()->::gt::internal::msg::Rect::MergeFrom(from.bat_detect_rect());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -2153,6 +2224,12 @@ bool RecROIs::IsInitialized() const {
   if (has_hit_track_rect()) {
     if (!this->hit_track_rect().IsInitialized()) return false;
   }
+  if (has_pick_off_search_rect()) {
+    if (!this->pick_off_search_rect().IsInitialized()) return false;
+  }
+  if (has_bat_detect_rect()) {
+    if (!this->bat_detect_rect().IsInitialized()) return false;
+  }
   return true;
 }
 
@@ -2162,6 +2239,8 @@ void RecROIs::Swap(RecROIs* other) {
     std::swap(throw_track_rect_, other->throw_track_rect_);
     std::swap(hit_search_rect_, other->hit_search_rect_);
     std::swap(hit_track_rect_, other->hit_track_rect_);
+    std::swap(pick_off_search_rect_, other->pick_off_search_rect_);
+    std::swap(bat_detect_rect_, other->bat_detect_rect_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -5644,8 +5723,8 @@ CalibrationParameters::CalibrationParameters()
 }
 
 void CalibrationParameters::InitAsDefaultInstance() {
-  xyz_ = const_cast< ::gt::internal::msg::Point3d*>(&::gt::internal::msg::Point3d::default_instance());
-  angles_ = const_cast< ::gt::internal::msg::Point3d*>(&::gt::internal::msg::Point3d::default_instance());
+  xyz_ = const_cast< ::gt::internal::msg::Point3*>(&::gt::internal::msg::Point3::default_instance());
+  angles_ = const_cast< ::gt::internal::msg::Point3*>(&::gt::internal::msg::Point3::default_instance());
 }
 
 CalibrationParameters::CalibrationParameters(const CalibrationParameters& from)
@@ -5722,10 +5801,10 @@ void CalibrationParameters::Clear() {
   if (_has_bits_[0 / 32] & 255) {
     ZR_(focus_, pixel_size_);
     if (has_xyz()) {
-      if (xyz_ != NULL) xyz_->::gt::internal::msg::Point3d::Clear();
+      if (xyz_ != NULL) xyz_->::gt::internal::msg::Point3::Clear();
     }
     if (has_angles()) {
-      if (angles_ != NULL) angles_->::gt::internal::msg::Point3d::Clear();
+      if (angles_ != NULL) angles_->::gt::internal::msg::Point3::Clear();
     }
   }
   if (_has_bits_[8 / 32] & 32512) {
@@ -5749,7 +5828,7 @@ bool CalibrationParameters::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .gt.internal.msg.Point3d xyz = 1;
+      // required .gt.internal.msg.Point3 xyz = 1;
       case 1: {
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -5761,7 +5840,7 @@ bool CalibrationParameters::MergePartialFromCodedStream(
         break;
       }
 
-      // required .gt.internal.msg.Point3d angles = 2;
+      // required .gt.internal.msg.Point3 angles = 2;
       case 2: {
         if (tag == 18) {
          parse_angles:
@@ -5994,13 +6073,13 @@ failure:
 void CalibrationParameters::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:gt.internal.msg.CalibrationParameters)
-  // required .gt.internal.msg.Point3d xyz = 1;
+  // required .gt.internal.msg.Point3 xyz = 1;
   if (has_xyz()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->xyz(), output);
   }
 
-  // required .gt.internal.msg.Point3d angles = 2;
+  // required .gt.internal.msg.Point3 angles = 2;
   if (has_angles()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->angles(), output);
@@ -6081,14 +6160,14 @@ void CalibrationParameters::SerializeWithCachedSizes(
 ::google::protobuf::uint8* CalibrationParameters::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:gt.internal.msg.CalibrationParameters)
-  // required .gt.internal.msg.Point3d xyz = 1;
+  // required .gt.internal.msg.Point3 xyz = 1;
   if (has_xyz()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, this->xyz(), target);
   }
 
-  // required .gt.internal.msg.Point3d angles = 2;
+  // required .gt.internal.msg.Point3 angles = 2;
   if (has_angles()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -6172,14 +6251,14 @@ int CalibrationParameters::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .gt.internal.msg.Point3d xyz = 1;
+    // required .gt.internal.msg.Point3 xyz = 1;
     if (has_xyz()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->xyz());
     }
 
-    // required .gt.internal.msg.Point3d angles = 2;
+    // required .gt.internal.msg.Point3 angles = 2;
     if (has_angles()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -6281,10 +6360,10 @@ void CalibrationParameters::MergeFrom(const CalibrationParameters& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_xyz()) {
-      mutable_xyz()->::gt::internal::msg::Point3d::MergeFrom(from.xyz());
+      mutable_xyz()->::gt::internal::msg::Point3::MergeFrom(from.xyz());
     }
     if (from.has_angles()) {
-      mutable_angles()->::gt::internal::msg::Point3d::MergeFrom(from.angles());
+      mutable_angles()->::gt::internal::msg::Point3::MergeFrom(from.angles());
     }
     if (from.has_focus()) {
       set_focus(from.focus());
@@ -6395,6 +6474,10 @@ const int BallMeasure::kValidFieldNumber;
 const int BallMeasure::kTimeFieldNumber;
 const int BallMeasure::kEventFieldNumber;
 const int BallMeasure::kIsReboundFieldNumber;
+const int BallMeasure::kIsFromOutOfFrameFieldNumber;
+const int BallMeasure::kIsLostOutOfFrameFieldNumber;
+const int BallMeasure::kIsHighBallFieldNumber;
+const int BallMeasure::kIsPedIntersectFieldNumber;
 #endif  // !_MSC_VER
 
 BallMeasure::BallMeasure()
@@ -6404,7 +6487,7 @@ BallMeasure::BallMeasure()
 }
 
 void BallMeasure::InitAsDefaultInstance() {
-  xy_ = const_cast< ::gt::internal::msg::Point2d*>(&::gt::internal::msg::Point2d::default_instance());
+  xy_ = const_cast< ::gt::internal::msg::Point2*>(&::gt::internal::msg::Point2::default_instance());
 }
 
 BallMeasure::BallMeasure(const BallMeasure& from)
@@ -6418,9 +6501,13 @@ void BallMeasure::SharedCtor() {
   _cached_size_ = 0;
   xy_ = NULL;
   valid_ = false;
-  time_ = GOOGLE_ULONGLONG(0);
+  time_ = GOOGLE_LONGLONG(0);
   event_ = 0;
   is_rebound_ = false;
+  is_from_out_of_frame_ = false;
+  is_lost_out_of_frame_ = false;
+  is_high_ball_ = false;
+  is_ped_intersect_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -6467,12 +6554,13 @@ void BallMeasure::Clear() {
     ::memset(&first, 0, n);                                \
   } while (0)
 
-  if (_has_bits_[0 / 32] & 31) {
-    ZR_(time_, event_);
+  if (_has_bits_[0 / 32] & 255) {
+    ZR_(time_, is_high_ball_);
     if (has_xy()) {
-      if (xy_ != NULL) xy_->::gt::internal::msg::Point2d::Clear();
+      if (xy_ != NULL) xy_->::gt::internal::msg::Point2::Clear();
     }
   }
+  is_ped_intersect_ = false;
 
 #undef OFFSET_OF_FIELD_
 #undef ZR_
@@ -6491,7 +6579,7 @@ bool BallMeasure::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .gt.internal.msg.Point2d xy = 1;
+      // required .gt.internal.msg.Point2 xy = 1;
       case 1: {
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -6518,12 +6606,12 @@ bool BallMeasure::MergePartialFromCodedStream(
         break;
       }
 
-      // required uint64 time = 3;
+      // required int64 time = 3;
       case 3: {
         if (tag == 24) {
          parse_time:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
                  input, &time_)));
           set_has_time();
         } else {
@@ -6564,6 +6652,66 @@ bool BallMeasure::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(48)) goto parse_is_from_out_of_frame;
+        break;
+      }
+
+      // required bool is_from_out_of_frame = 6;
+      case 6: {
+        if (tag == 48) {
+         parse_is_from_out_of_frame:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &is_from_out_of_frame_)));
+          set_has_is_from_out_of_frame();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(56)) goto parse_is_lost_out_of_frame;
+        break;
+      }
+
+      // required bool is_lost_out_of_frame = 7;
+      case 7: {
+        if (tag == 56) {
+         parse_is_lost_out_of_frame:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &is_lost_out_of_frame_)));
+          set_has_is_lost_out_of_frame();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(64)) goto parse_is_high_ball;
+        break;
+      }
+
+      // required bool is_high_ball = 8;
+      case 8: {
+        if (tag == 64) {
+         parse_is_high_ball:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &is_high_ball_)));
+          set_has_is_high_ball();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(72)) goto parse_is_ped_intersect;
+        break;
+      }
+
+      // required bool is_ped_intersect = 9;
+      case 9: {
+        if (tag == 72) {
+         parse_is_ped_intersect:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &is_ped_intersect_)));
+          set_has_is_ped_intersect();
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -6593,7 +6741,7 @@ failure:
 void BallMeasure::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:gt.internal.msg.BallMeasure)
-  // required .gt.internal.msg.Point2d xy = 1;
+  // required .gt.internal.msg.Point2 xy = 1;
   if (has_xy()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->xy(), output);
@@ -6604,9 +6752,9 @@ void BallMeasure::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->valid(), output);
   }
 
-  // required uint64 time = 3;
+  // required int64 time = 3;
   if (has_time()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(3, this->time(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->time(), output);
   }
 
   // required .gt.internal.msg.BallEvent event = 4;
@@ -6620,6 +6768,26 @@ void BallMeasure::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->is_rebound(), output);
   }
 
+  // required bool is_from_out_of_frame = 6;
+  if (has_is_from_out_of_frame()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->is_from_out_of_frame(), output);
+  }
+
+  // required bool is_lost_out_of_frame = 7;
+  if (has_is_lost_out_of_frame()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(7, this->is_lost_out_of_frame(), output);
+  }
+
+  // required bool is_high_ball = 8;
+  if (has_is_high_ball()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(8, this->is_high_ball(), output);
+  }
+
+  // required bool is_ped_intersect = 9;
+  if (has_is_ped_intersect()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(9, this->is_ped_intersect(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -6630,7 +6798,7 @@ void BallMeasure::SerializeWithCachedSizes(
 ::google::protobuf::uint8* BallMeasure::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:gt.internal.msg.BallMeasure)
-  // required .gt.internal.msg.Point2d xy = 1;
+  // required .gt.internal.msg.Point2 xy = 1;
   if (has_xy()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -6642,9 +6810,9 @@ void BallMeasure::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->valid(), target);
   }
 
-  // required uint64 time = 3;
+  // required int64 time = 3;
   if (has_time()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(3, this->time(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->time(), target);
   }
 
   // required .gt.internal.msg.BallEvent event = 4;
@@ -6656,6 +6824,26 @@ void BallMeasure::SerializeWithCachedSizes(
   // required bool is_rebound = 5;
   if (has_is_rebound()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->is_rebound(), target);
+  }
+
+  // required bool is_from_out_of_frame = 6;
+  if (has_is_from_out_of_frame()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->is_from_out_of_frame(), target);
+  }
+
+  // required bool is_lost_out_of_frame = 7;
+  if (has_is_lost_out_of_frame()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(7, this->is_lost_out_of_frame(), target);
+  }
+
+  // required bool is_high_ball = 8;
+  if (has_is_high_ball()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(8, this->is_high_ball(), target);
+  }
+
+  // required bool is_ped_intersect = 9;
+  if (has_is_ped_intersect()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(9, this->is_ped_intersect(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -6670,7 +6858,7 @@ int BallMeasure::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .gt.internal.msg.Point2d xy = 1;
+    // required .gt.internal.msg.Point2 xy = 1;
     if (has_xy()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -6682,10 +6870,10 @@ int BallMeasure::ByteSize() const {
       total_size += 1 + 1;
     }
 
-    // required uint64 time = 3;
+    // required int64 time = 3;
     if (has_time()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
           this->time());
     }
 
@@ -6697,6 +6885,28 @@ int BallMeasure::ByteSize() const {
 
     // required bool is_rebound = 5;
     if (has_is_rebound()) {
+      total_size += 1 + 1;
+    }
+
+    // required bool is_from_out_of_frame = 6;
+    if (has_is_from_out_of_frame()) {
+      total_size += 1 + 1;
+    }
+
+    // required bool is_lost_out_of_frame = 7;
+    if (has_is_lost_out_of_frame()) {
+      total_size += 1 + 1;
+    }
+
+    // required bool is_high_ball = 8;
+    if (has_is_high_ball()) {
+      total_size += 1 + 1;
+    }
+
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    // required bool is_ped_intersect = 9;
+    if (has_is_ped_intersect()) {
       total_size += 1 + 1;
     }
 
@@ -6728,7 +6938,7 @@ void BallMeasure::MergeFrom(const BallMeasure& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_xy()) {
-      mutable_xy()->::gt::internal::msg::Point2d::MergeFrom(from.xy());
+      mutable_xy()->::gt::internal::msg::Point2::MergeFrom(from.xy());
     }
     if (from.has_valid()) {
       set_valid(from.valid());
@@ -6741,6 +6951,20 @@ void BallMeasure::MergeFrom(const BallMeasure& from) {
     }
     if (from.has_is_rebound()) {
       set_is_rebound(from.is_rebound());
+    }
+    if (from.has_is_from_out_of_frame()) {
+      set_is_from_out_of_frame(from.is_from_out_of_frame());
+    }
+    if (from.has_is_lost_out_of_frame()) {
+      set_is_lost_out_of_frame(from.is_lost_out_of_frame());
+    }
+    if (from.has_is_high_ball()) {
+      set_is_high_ball(from.is_high_ball());
+    }
+  }
+  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    if (from.has_is_ped_intersect()) {
+      set_is_ped_intersect(from.is_ped_intersect());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -6759,7 +6983,7 @@ void BallMeasure::CopyFrom(const BallMeasure& from) {
 }
 
 bool BallMeasure::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
+  if ((_has_bits_[0] & 0x000001ff) != 0x000001ff) return false;
 
   if (has_xy()) {
     if (!this->xy().IsInitialized()) return false;
@@ -6774,6 +6998,10 @@ void BallMeasure::Swap(BallMeasure* other) {
     std::swap(time_, other->time_);
     std::swap(event_, other->event_);
     std::swap(is_rebound_, other->is_rebound_);
+    std::swap(is_from_out_of_frame_, other->is_from_out_of_frame_);
+    std::swap(is_lost_out_of_frame_, other->is_lost_out_of_frame_);
+    std::swap(is_high_ball_, other->is_high_ball_);
+    std::swap(is_ped_intersect_, other->is_ped_intersect_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -6882,7 +7110,7 @@ bool BatMeasure::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .gt.internal.msg.Point2d measures = 2;
+      // repeated .gt.internal.msg.Point2 measures = 2;
       case 2: {
         if (tag == 18) {
          parse_measures:
@@ -6940,7 +7168,7 @@ void BatMeasure::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->was_swing(), output);
   }
 
-  // repeated .gt.internal.msg.Point2d measures = 2;
+  // repeated .gt.internal.msg.Point2 measures = 2;
   for (int i = 0; i < this->measures_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->measures(i), output);
@@ -6967,7 +7195,7 @@ void BatMeasure::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->was_swing(), target);
   }
 
-  // repeated .gt.internal.msg.Point2d measures = 2;
+  // repeated .gt.internal.msg.Point2 measures = 2;
   for (int i = 0; i < this->measures_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -6999,7 +7227,7 @@ int BatMeasure::ByteSize() const {
     }
 
   }
-  // repeated .gt.internal.msg.Point2d measures = 2;
+  // repeated .gt.internal.msg.Point2 measures = 2;
   total_size += 1 * this->measures_size();
   for (int i = 0; i < this->measures_size(); i++) {
     total_size +=
@@ -7420,6 +7648,8 @@ void OutOfFrameInfo::Swap(OutOfFrameInfo* other) {
 #ifndef _MSC_VER
 const int RecognizeData::kDataFieldNumber;
 const int RecognizeData::kStartTimeFieldNumber;
+const int RecognizeData::kRestoredOutOfFrameFieldNumber;
+const int RecognizeData::kRestoredStraightFieldNumber;
 #endif  // !_MSC_VER
 
 RecognizeData::RecognizeData()
@@ -7440,7 +7670,9 @@ RecognizeData::RecognizeData(const RecognizeData& from)
 
 void RecognizeData::SharedCtor() {
   _cached_size_ = 0;
-  start_time_ = GOOGLE_ULONGLONG(0);
+  start_time_ = GOOGLE_LONGLONG(0);
+  restored_out_of_frame_ = false;
+  restored_straight_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -7476,7 +7708,21 @@ RecognizeData* RecognizeData::New() const {
 }
 
 void RecognizeData::Clear() {
-  start_time_ = GOOGLE_ULONGLONG(0);
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<RecognizeData*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  ZR_(start_time_, restored_straight_);
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   data_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -7506,14 +7752,44 @@ bool RecognizeData::MergePartialFromCodedStream(
         break;
       }
 
-      // optional uint64 start_time = 2;
+      // optional int64 start_time = 2;
       case 2: {
         if (tag == 16) {
          parse_start_time:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
                  input, &start_time_)));
           set_has_start_time();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_restored_out_of_frame;
+        break;
+      }
+
+      // optional bool restored_out_of_frame = 3;
+      case 3: {
+        if (tag == 24) {
+         parse_restored_out_of_frame:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &restored_out_of_frame_)));
+          set_has_restored_out_of_frame();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(32)) goto parse_restored_straight;
+        break;
+      }
+
+      // optional bool restored_straight = 4;
+      case 4: {
+        if (tag == 32) {
+         parse_restored_straight:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &restored_straight_)));
+          set_has_restored_straight();
         } else {
           goto handle_unusual;
         }
@@ -7552,9 +7828,19 @@ void RecognizeData::SerializeWithCachedSizes(
       1, this->data(i), output);
   }
 
-  // optional uint64 start_time = 2;
+  // optional int64 start_time = 2;
   if (has_start_time()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(2, this->start_time(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->start_time(), output);
+  }
+
+  // optional bool restored_out_of_frame = 3;
+  if (has_restored_out_of_frame()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->restored_out_of_frame(), output);
+  }
+
+  // optional bool restored_straight = 4;
+  if (has_restored_straight()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->restored_straight(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -7574,9 +7860,19 @@ void RecognizeData::SerializeWithCachedSizes(
         1, this->data(i), target);
   }
 
-  // optional uint64 start_time = 2;
+  // optional int64 start_time = 2;
   if (has_start_time()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(2, this->start_time(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->start_time(), target);
+  }
+
+  // optional bool restored_out_of_frame = 3;
+  if (has_restored_out_of_frame()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->restored_out_of_frame(), target);
+  }
+
+  // optional bool restored_straight = 4;
+  if (has_restored_straight()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->restored_straight(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -7591,11 +7887,21 @@ int RecognizeData::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    // optional uint64 start_time = 2;
+    // optional int64 start_time = 2;
     if (has_start_time()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
           this->start_time());
+    }
+
+    // optional bool restored_out_of_frame = 3;
+    if (has_restored_out_of_frame()) {
+      total_size += 1 + 1;
+    }
+
+    // optional bool restored_straight = 4;
+    if (has_restored_straight()) {
+      total_size += 1 + 1;
     }
 
   }
@@ -7637,6 +7943,12 @@ void RecognizeData::MergeFrom(const RecognizeData& from) {
     if (from.has_start_time()) {
       set_start_time(from.start_time());
     }
+    if (from.has_restored_out_of_frame()) {
+      set_restored_out_of_frame(from.restored_out_of_frame());
+    }
+    if (from.has_restored_straight()) {
+      set_restored_straight(from.restored_straight());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -7663,6 +7975,8 @@ void RecognizeData::Swap(RecognizeData* other) {
   if (other != this) {
     data_.Swap(&other->data_);
     std::swap(start_time_, other->start_time_);
+    std::swap(restored_out_of_frame_, other->restored_out_of_frame_);
+    std::swap(restored_straight_, other->restored_straight_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -7684,8 +7998,6 @@ void RecognizeData::Swap(RecognizeData* other) {
 const int PedestrianMeasure::kRFieldNumber;
 const int PedestrianMeasure::kPFieldNumber;
 const int PedestrianMeasure::kPosFieldNumber;
-const int PedestrianMeasure::kRoleFieldNumber;
-const int PedestrianMeasure::kIdFieldNumber;
 #endif  // !_MSC_VER
 
 PedestrianMeasure::PedestrianMeasure()
@@ -7696,7 +8008,7 @@ PedestrianMeasure::PedestrianMeasure()
 
 void PedestrianMeasure::InitAsDefaultInstance() {
   r_ = const_cast< ::gt::internal::msg::Rect*>(&::gt::internal::msg::Rect::default_instance());
-  p_ = const_cast< ::gt::internal::msg::Point3d*>(&::gt::internal::msg::Point3d::default_instance());
+  p_ = const_cast< ::gt::internal::msg::Point3*>(&::gt::internal::msg::Point3::default_instance());
 }
 
 PedestrianMeasure::PedestrianMeasure(const PedestrianMeasure& from)
@@ -7707,13 +8019,10 @@ PedestrianMeasure::PedestrianMeasure(const PedestrianMeasure& from)
 }
 
 void PedestrianMeasure::SharedCtor() {
-  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   r_ = NULL;
   p_ = NULL;
   pos_ = 1;
-  role_ = 1;
-  id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -7723,9 +8032,6 @@ PedestrianMeasure::~PedestrianMeasure() {
 }
 
 void PedestrianMeasure::SharedDtor() {
-  if (id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete id_;
-  }
   if (this != default_instance_) {
     delete r_;
     delete p_;
@@ -7754,20 +8060,14 @@ PedestrianMeasure* PedestrianMeasure::New() const {
 }
 
 void PedestrianMeasure::Clear() {
-  if (_has_bits_[0 / 32] & 31) {
+  if (_has_bits_[0 / 32] & 7) {
     if (has_r()) {
       if (r_ != NULL) r_->::gt::internal::msg::Rect::Clear();
     }
     if (has_p()) {
-      if (p_ != NULL) p_->::gt::internal::msg::Point3d::Clear();
+      if (p_ != NULL) p_->::gt::internal::msg::Point3::Clear();
     }
     pos_ = 1;
-    role_ = 1;
-    if (has_id()) {
-      if (id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        id_->clear();
-      }
-    }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -7795,7 +8095,7 @@ bool PedestrianMeasure::MergePartialFromCodedStream(
         break;
       }
 
-      // required .gt.internal.msg.Point3d p = 2;
+      // required .gt.internal.msg.Point3 p = 2;
       case 2: {
         if (tag == 18) {
          parse_p:
@@ -7821,43 +8121,6 @@ bool PedestrianMeasure::MergePartialFromCodedStream(
           } else {
             mutable_unknown_fields()->AddVarint(3, value);
           }
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(32)) goto parse_role;
-        break;
-      }
-
-      // optional .gt.internal.msg.TeamRole role = 4;
-      case 4: {
-        if (tag == 32) {
-         parse_role:
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          if (::gt::internal::msg::TeamRole_IsValid(value)) {
-            set_role(static_cast< ::gt::internal::msg::TeamRole >(value));
-          } else {
-            mutable_unknown_fields()->AddVarint(4, value);
-          }
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(42)) goto parse_id;
-        break;
-      }
-
-      // required string id = 5;
-      case 5: {
-        if (tag == 42) {
-         parse_id:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_id()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->id().data(), this->id().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "id");
         } else {
           goto handle_unusual;
         }
@@ -7896,7 +8159,7 @@ void PedestrianMeasure::SerializeWithCachedSizes(
       1, this->r(), output);
   }
 
-  // required .gt.internal.msg.Point3d p = 2;
+  // required .gt.internal.msg.Point3 p = 2;
   if (has_p()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->p(), output);
@@ -7906,22 +8169,6 @@ void PedestrianMeasure::SerializeWithCachedSizes(
   if (has_pos()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       3, this->pos(), output);
-  }
-
-  // optional .gt.internal.msg.TeamRole role = 4;
-  if (has_role()) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      4, this->role(), output);
-  }
-
-  // required string id = 5;
-  if (has_id()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->id().data(), this->id().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "id");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->id(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -7941,7 +8188,7 @@ void PedestrianMeasure::SerializeWithCachedSizes(
         1, this->r(), target);
   }
 
-  // required .gt.internal.msg.Point3d p = 2;
+  // required .gt.internal.msg.Point3 p = 2;
   if (has_p()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -7952,23 +8199,6 @@ void PedestrianMeasure::SerializeWithCachedSizes(
   if (has_pos()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       3, this->pos(), target);
-  }
-
-  // optional .gt.internal.msg.TeamRole role = 4;
-  if (has_role()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      4, this->role(), target);
-  }
-
-  // required string id = 5;
-  if (has_id()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->id().data(), this->id().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "id");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->id(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -7990,7 +8220,7 @@ int PedestrianMeasure::ByteSize() const {
           this->r());
     }
 
-    // required .gt.internal.msg.Point3d p = 2;
+    // required .gt.internal.msg.Point3 p = 2;
     if (has_p()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -8001,19 +8231,6 @@ int PedestrianMeasure::ByteSize() const {
     if (has_pos()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->pos());
-    }
-
-    // optional .gt.internal.msg.TeamRole role = 4;
-    if (has_role()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->role());
-    }
-
-    // required string id = 5;
-    if (has_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->id());
     }
 
   }
@@ -8047,16 +8264,10 @@ void PedestrianMeasure::MergeFrom(const PedestrianMeasure& from) {
       mutable_r()->::gt::internal::msg::Rect::MergeFrom(from.r());
     }
     if (from.has_p()) {
-      mutable_p()->::gt::internal::msg::Point3d::MergeFrom(from.p());
+      mutable_p()->::gt::internal::msg::Point3::MergeFrom(from.p());
     }
     if (from.has_pos()) {
       set_pos(from.pos());
-    }
-    if (from.has_role()) {
-      set_role(from.role());
-    }
-    if (from.has_id()) {
-      set_id(from.id());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -8075,7 +8286,7 @@ void PedestrianMeasure::CopyFrom(const PedestrianMeasure& from) {
 }
 
 bool PedestrianMeasure::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000017) != 0x00000017) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
 
   if (has_r()) {
     if (!this->r().IsInitialized()) return false;
@@ -8091,8 +8302,6 @@ void PedestrianMeasure::Swap(PedestrianMeasure* other) {
     std::swap(r_, other->r_);
     std::swap(p_, other->p_);
     std::swap(pos_, other->pos_);
-    std::swap(role_, other->role_);
-    std::swap(id_, other->id_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -9354,8 +9563,8 @@ FrameTime::FrameTime(const FrameTime& from)
 void FrameTime::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  computer_time_ = GOOGLE_ULONGLONG(0);
-  camera_time_ = GOOGLE_ULONGLONG(0);
+  computer_time_ = GOOGLE_LONGLONG(0);
+  camera_time_ = GOOGLE_LONGLONG(0);
   frame_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -9431,11 +9640,11 @@ bool FrameTime::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional uint64 computer_time = 1;
+      // optional int64 computer_time = 1;
       case 1: {
         if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
                  input, &computer_time_)));
           set_has_computer_time();
         } else {
@@ -9445,12 +9654,12 @@ bool FrameTime::MergePartialFromCodedStream(
         break;
       }
 
-      // optional uint64 camera_time = 2;
+      // optional int64 camera_time = 2;
       case 2: {
         if (tag == 16) {
          parse_camera_time:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
                  input, &camera_time_)));
           set_has_camera_time();
         } else {
@@ -9498,14 +9707,14 @@ failure:
 void FrameTime::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:gt.internal.msg.FrameTime)
-  // optional uint64 computer_time = 1;
+  // optional int64 computer_time = 1;
   if (has_computer_time()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(1, this->computer_time(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->computer_time(), output);
   }
 
-  // optional uint64 camera_time = 2;
+  // optional int64 camera_time = 2;
   if (has_camera_time()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(2, this->camera_time(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->camera_time(), output);
   }
 
   // optional bytes frame = 3;
@@ -9524,14 +9733,14 @@ void FrameTime::SerializeWithCachedSizes(
 ::google::protobuf::uint8* FrameTime::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:gt.internal.msg.FrameTime)
-  // optional uint64 computer_time = 1;
+  // optional int64 computer_time = 1;
   if (has_computer_time()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(1, this->computer_time(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->computer_time(), target);
   }
 
-  // optional uint64 camera_time = 2;
+  // optional int64 camera_time = 2;
   if (has_camera_time()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(2, this->camera_time(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->camera_time(), target);
   }
 
   // optional bytes frame = 3;
@@ -9553,17 +9762,17 @@ int FrameTime::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional uint64 computer_time = 1;
+    // optional int64 computer_time = 1;
     if (has_computer_time()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
           this->computer_time());
     }
 
-    // optional uint64 camera_time = 2;
+    // optional int64 camera_time = 2;
     if (has_camera_time()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
           this->camera_time());
     }
 

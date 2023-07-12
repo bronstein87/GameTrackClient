@@ -226,6 +226,8 @@ private:
     QString debugTimePath;
     qint32 moveFrames = 0;
     bool waitForCommand = false;
+    QFuture <void> m_procImageFuture;
+    QFuture <void> m_autoExpFuture;
 };
 
 #endif // CAMERA_H

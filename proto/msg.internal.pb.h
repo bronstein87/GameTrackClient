@@ -36,8 +36,8 @@ void  protobuf_AddDesc_msg_2einternal_2eproto();
 void protobuf_AssignDesc_msg_2einternal_2eproto();
 void protobuf_ShutdownFile_msg_2einternal_2eproto();
 
-class Point2d;
-class Point3d;
+class Point2;
+class Point3;
 class Rect;
 class RecROIs;
 class RecognizeParameters;
@@ -81,11 +81,12 @@ enum OutOfFrame {
   LeftOut = 0,
   RightOut = 1,
   UpOut = 2,
-  DownOut = 3
+  DownOut = 3,
+  InFrame = 4
 };
 bool OutOfFrame_IsValid(int value);
 const OutOfFrame OutOfFrame_MIN = LeftOut;
-const OutOfFrame OutOfFrame_MAX = DownOut;
+const OutOfFrame OutOfFrame_MAX = InFrame;
 const int OutOfFrame_ARRAYSIZE = OutOfFrame_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* OutOfFrame_descriptor();
@@ -120,11 +121,12 @@ inline bool StreamType_Parse(
 enum BallEvent {
   ThrowDetected = 0,
   HitDetected = 1,
-  MoveDetected = 2
+  MoveDetected = 2,
+  CatchThrowDetected = 3
 };
 bool BallEvent_IsValid(int value);
 const BallEvent BallEvent_MIN = ThrowDetected;
-const BallEvent BallEvent_MAX = MoveDetected;
+const BallEvent BallEvent_MAX = CatchThrowDetected;
 const int BallEvent_ARRAYSIZE = BallEvent_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* BallEvent_descriptor();
@@ -138,18 +140,19 @@ inline bool BallEvent_Parse(
     BallEvent_descriptor(), name, value);
 }
 enum PlayerPosition {
-  Home = 1,
-  FirstBase = 2,
-  SecondBase = 3,
-  ThirdBase = 4,
-  BetwThirdSecond = 5,
-  LeftField = 6,
-  RightField = 7,
-  CenterField = 8
+  Invalid = 1,
+  Home = 2,
+  FirstBase = 3,
+  SecondBase = 4,
+  ThirdBase = 5,
+  ShortStop = 6,
+  LeftField = 7,
+  CenterField = 8,
+  RightField = 9
 };
 bool PlayerPosition_IsValid(int value);
-const PlayerPosition PlayerPosition_MIN = Home;
-const PlayerPosition PlayerPosition_MAX = CenterField;
+const PlayerPosition PlayerPosition_MIN = Invalid;
+const PlayerPosition PlayerPosition_MAX = RightField;
 const int PlayerPosition_ARRAYSIZE = PlayerPosition_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* PlayerPosition_descriptor();
@@ -161,35 +164,6 @@ inline bool PlayerPosition_Parse(
     const ::std::string& name, PlayerPosition* value) {
   return ::google::protobuf::internal::ParseNamedEnum<PlayerPosition>(
     PlayerPosition_descriptor(), name, value);
-}
-enum TeamRole {
-  NoRole = 1,
-  Pitcher = 2,
-  Catcher = 3,
-  FirstBaseman = 4,
-  SecondBaseman = 5,
-  ThirdBaseman = 6,
-  ShortStop = 7,
-  LeftFielder = 8,
-  CenterFielder = 9,
-  RightFielder = 10,
-  Outfielder = 11,
-  DesignatedHitter = 12
-};
-bool TeamRole_IsValid(int value);
-const TeamRole TeamRole_MIN = NoRole;
-const TeamRole TeamRole_MAX = DesignatedHitter;
-const int TeamRole_ARRAYSIZE = TeamRole_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* TeamRole_descriptor();
-inline const ::std::string& TeamRole_Name(TeamRole value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    TeamRole_descriptor(), value);
-}
-inline bool TeamRole_Parse(
-    const ::std::string& name, TeamRole* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<TeamRole>(
-    TeamRole_descriptor(), name, value);
 }
 enum CameraType {
   BaseLeftMain = 1,
@@ -230,12 +204,13 @@ enum GameTrackProtocol {
   SendCurrentTime = 11,
   SetDebugMode = 12,
   RequestNextFrameDebugMode = 13,
+  NotifyMomentStartDetected = 14,
   RequestPreviousFrameDebugMode = 15,
-  NotifyMomentStartDetected = 14
+  RestartSoftware = 16
 };
 bool GameTrackProtocol_IsValid(int value);
 const GameTrackProtocol GameTrackProtocol_MIN = SendCameraParameters;
-const GameTrackProtocol GameTrackProtocol_MAX = RequestPreviousFrameDebugMode;
+const GameTrackProtocol GameTrackProtocol_MAX = RestartSoftware;
 const int GameTrackProtocol_ARRAYSIZE = GameTrackProtocol_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* GameTrackProtocol_descriptor();
@@ -250,14 +225,14 @@ inline bool GameTrackProtocol_Parse(
 }
 // ===================================================================
 
-class Point2d : public ::google::protobuf::Message {
+class Point2 : public ::google::protobuf::Message {
  public:
-  Point2d();
-  virtual ~Point2d();
+  Point2();
+  virtual ~Point2();
 
-  Point2d(const Point2d& from);
+  Point2(const Point2& from);
 
-  inline Point2d& operator=(const Point2d& from) {
+  inline Point2& operator=(const Point2& from) {
     CopyFrom(from);
     return *this;
   }
@@ -271,17 +246,17 @@ class Point2d : public ::google::protobuf::Message {
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const Point2d& default_instance();
+  static const Point2& default_instance();
 
-  void Swap(Point2d* other);
+  void Swap(Point2* other);
 
   // implements Message ----------------------------------------------
 
-  Point2d* New() const;
+  Point2* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Point2d& from);
-  void MergeFrom(const Point2d& from);
+  void CopyFrom(const Point2& from);
+  void MergeFrom(const Point2& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -317,7 +292,7 @@ class Point2d : public ::google::protobuf::Message {
   inline double y() const;
   inline void set_y(double value);
 
-  // @@protoc_insertion_point(class_scope:gt.internal.msg.Point2d)
+  // @@protoc_insertion_point(class_scope:gt.internal.msg.Point2)
  private:
   inline void set_has_x();
   inline void clear_has_x();
@@ -335,18 +310,18 @@ class Point2d : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
 
   void InitAsDefaultInstance();
-  static Point2d* default_instance_;
+  static Point2* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class Point3d : public ::google::protobuf::Message {
+class Point3 : public ::google::protobuf::Message {
  public:
-  Point3d();
-  virtual ~Point3d();
+  Point3();
+  virtual ~Point3();
 
-  Point3d(const Point3d& from);
+  Point3(const Point3& from);
 
-  inline Point3d& operator=(const Point3d& from) {
+  inline Point3& operator=(const Point3& from) {
     CopyFrom(from);
     return *this;
   }
@@ -360,17 +335,17 @@ class Point3d : public ::google::protobuf::Message {
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const Point3d& default_instance();
+  static const Point3& default_instance();
 
-  void Swap(Point3d* other);
+  void Swap(Point3* other);
 
   // implements Message ----------------------------------------------
 
-  Point3d* New() const;
+  Point3* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Point3d& from);
-  void MergeFrom(const Point3d& from);
+  void CopyFrom(const Point3& from);
+  void MergeFrom(const Point3& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -413,7 +388,7 @@ class Point3d : public ::google::protobuf::Message {
   inline double z() const;
   inline void set_z(double value);
 
-  // @@protoc_insertion_point(class_scope:gt.internal.msg.Point3d)
+  // @@protoc_insertion_point(class_scope:gt.internal.msg.Point3)
  private:
   inline void set_has_x();
   inline void clear_has_x();
@@ -434,7 +409,7 @@ class Point3d : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
 
   void InitAsDefaultInstance();
-  static Point3d* default_instance_;
+  static Point3* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -491,23 +466,23 @@ class Rect : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required .gt.internal.msg.Point2d xy = 1;
+  // required .gt.internal.msg.Point2 xy = 1;
   inline bool has_xy() const;
   inline void clear_xy();
   static const int kXyFieldNumber = 1;
-  inline const ::gt::internal::msg::Point2d& xy() const;
-  inline ::gt::internal::msg::Point2d* mutable_xy();
-  inline ::gt::internal::msg::Point2d* release_xy();
-  inline void set_allocated_xy(::gt::internal::msg::Point2d* xy);
+  inline const ::gt::internal::msg::Point2& xy() const;
+  inline ::gt::internal::msg::Point2* mutable_xy();
+  inline ::gt::internal::msg::Point2* release_xy();
+  inline void set_allocated_xy(::gt::internal::msg::Point2* xy);
 
-  // required .gt.internal.msg.Point2d wh = 2;
+  // required .gt.internal.msg.Point2 wh = 2;
   inline bool has_wh() const;
   inline void clear_wh();
   static const int kWhFieldNumber = 2;
-  inline const ::gt::internal::msg::Point2d& wh() const;
-  inline ::gt::internal::msg::Point2d* mutable_wh();
-  inline ::gt::internal::msg::Point2d* release_wh();
-  inline void set_allocated_wh(::gt::internal::msg::Point2d* wh);
+  inline const ::gt::internal::msg::Point2& wh() const;
+  inline ::gt::internal::msg::Point2* mutable_wh();
+  inline ::gt::internal::msg::Point2* release_wh();
+  inline void set_allocated_wh(::gt::internal::msg::Point2* wh);
 
   // @@protoc_insertion_point(class_scope:gt.internal.msg.Rect)
  private:
@@ -520,8 +495,8 @@ class Rect : public ::google::protobuf::Message {
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
-  ::gt::internal::msg::Point2d* xy_;
-  ::gt::internal::msg::Point2d* wh_;
+  ::gt::internal::msg::Point2* xy_;
+  ::gt::internal::msg::Point2* wh_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -620,6 +595,24 @@ class RecROIs : public ::google::protobuf::Message {
   inline ::gt::internal::msg::Rect* release_hit_track_rect();
   inline void set_allocated_hit_track_rect(::gt::internal::msg::Rect* hit_track_rect);
 
+  // optional .gt.internal.msg.Rect pick_off_search_rect = 5;
+  inline bool has_pick_off_search_rect() const;
+  inline void clear_pick_off_search_rect();
+  static const int kPickOffSearchRectFieldNumber = 5;
+  inline const ::gt::internal::msg::Rect& pick_off_search_rect() const;
+  inline ::gt::internal::msg::Rect* mutable_pick_off_search_rect();
+  inline ::gt::internal::msg::Rect* release_pick_off_search_rect();
+  inline void set_allocated_pick_off_search_rect(::gt::internal::msg::Rect* pick_off_search_rect);
+
+  // optional .gt.internal.msg.Rect bat_detect_rect = 6;
+  inline bool has_bat_detect_rect() const;
+  inline void clear_bat_detect_rect();
+  static const int kBatDetectRectFieldNumber = 6;
+  inline const ::gt::internal::msg::Rect& bat_detect_rect() const;
+  inline ::gt::internal::msg::Rect* mutable_bat_detect_rect();
+  inline ::gt::internal::msg::Rect* release_bat_detect_rect();
+  inline void set_allocated_bat_detect_rect(::gt::internal::msg::Rect* bat_detect_rect);
+
   // @@protoc_insertion_point(class_scope:gt.internal.msg.RecROIs)
  private:
   inline void set_has_throw_search_rect();
@@ -630,6 +623,10 @@ class RecROIs : public ::google::protobuf::Message {
   inline void clear_has_hit_search_rect();
   inline void set_has_hit_track_rect();
   inline void clear_has_hit_track_rect();
+  inline void set_has_pick_off_search_rect();
+  inline void clear_has_pick_off_search_rect();
+  inline void set_has_bat_detect_rect();
+  inline void clear_has_bat_detect_rect();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -639,6 +636,8 @@ class RecROIs : public ::google::protobuf::Message {
   ::gt::internal::msg::Rect* throw_track_rect_;
   ::gt::internal::msg::Rect* hit_search_rect_;
   ::gt::internal::msg::Rect* hit_track_rect_;
+  ::gt::internal::msg::Rect* pick_off_search_rect_;
+  ::gt::internal::msg::Rect* bat_detect_rect_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -1712,23 +1711,23 @@ class CalibrationParameters : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required .gt.internal.msg.Point3d xyz = 1;
+  // required .gt.internal.msg.Point3 xyz = 1;
   inline bool has_xyz() const;
   inline void clear_xyz();
   static const int kXyzFieldNumber = 1;
-  inline const ::gt::internal::msg::Point3d& xyz() const;
-  inline ::gt::internal::msg::Point3d* mutable_xyz();
-  inline ::gt::internal::msg::Point3d* release_xyz();
-  inline void set_allocated_xyz(::gt::internal::msg::Point3d* xyz);
+  inline const ::gt::internal::msg::Point3& xyz() const;
+  inline ::gt::internal::msg::Point3* mutable_xyz();
+  inline ::gt::internal::msg::Point3* release_xyz();
+  inline void set_allocated_xyz(::gt::internal::msg::Point3* xyz);
 
-  // required .gt.internal.msg.Point3d angles = 2;
+  // required .gt.internal.msg.Point3 angles = 2;
   inline bool has_angles() const;
   inline void clear_angles();
   static const int kAnglesFieldNumber = 2;
-  inline const ::gt::internal::msg::Point3d& angles() const;
-  inline ::gt::internal::msg::Point3d* mutable_angles();
-  inline ::gt::internal::msg::Point3d* release_angles();
-  inline void set_allocated_angles(::gt::internal::msg::Point3d* angles);
+  inline const ::gt::internal::msg::Point3& angles() const;
+  inline ::gt::internal::msg::Point3* mutable_angles();
+  inline ::gt::internal::msg::Point3* release_angles();
+  inline void set_allocated_angles(::gt::internal::msg::Point3* angles);
 
   // required double focus = 3;
   inline bool has_focus() const;
@@ -1858,8 +1857,8 @@ class CalibrationParameters : public ::google::protobuf::Message {
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
-  ::gt::internal::msg::Point3d* xyz_;
-  ::gt::internal::msg::Point3d* angles_;
+  ::gt::internal::msg::Point3* xyz_;
+  ::gt::internal::msg::Point3* angles_;
   double focus_;
   double samples_;
   double lines_;
@@ -1935,14 +1934,14 @@ class BallMeasure : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required .gt.internal.msg.Point2d xy = 1;
+  // required .gt.internal.msg.Point2 xy = 1;
   inline bool has_xy() const;
   inline void clear_xy();
   static const int kXyFieldNumber = 1;
-  inline const ::gt::internal::msg::Point2d& xy() const;
-  inline ::gt::internal::msg::Point2d* mutable_xy();
-  inline ::gt::internal::msg::Point2d* release_xy();
-  inline void set_allocated_xy(::gt::internal::msg::Point2d* xy);
+  inline const ::gt::internal::msg::Point2& xy() const;
+  inline ::gt::internal::msg::Point2* mutable_xy();
+  inline ::gt::internal::msg::Point2* release_xy();
+  inline void set_allocated_xy(::gt::internal::msg::Point2* xy);
 
   // required bool valid = 2;
   inline bool has_valid() const;
@@ -1951,12 +1950,12 @@ class BallMeasure : public ::google::protobuf::Message {
   inline bool valid() const;
   inline void set_valid(bool value);
 
-  // required uint64 time = 3;
+  // required int64 time = 3;
   inline bool has_time() const;
   inline void clear_time();
   static const int kTimeFieldNumber = 3;
-  inline ::google::protobuf::uint64 time() const;
-  inline void set_time(::google::protobuf::uint64 value);
+  inline ::google::protobuf::int64 time() const;
+  inline void set_time(::google::protobuf::int64 value);
 
   // required .gt.internal.msg.BallEvent event = 4;
   inline bool has_event() const;
@@ -1972,6 +1971,34 @@ class BallMeasure : public ::google::protobuf::Message {
   inline bool is_rebound() const;
   inline void set_is_rebound(bool value);
 
+  // required bool is_from_out_of_frame = 6;
+  inline bool has_is_from_out_of_frame() const;
+  inline void clear_is_from_out_of_frame();
+  static const int kIsFromOutOfFrameFieldNumber = 6;
+  inline bool is_from_out_of_frame() const;
+  inline void set_is_from_out_of_frame(bool value);
+
+  // required bool is_lost_out_of_frame = 7;
+  inline bool has_is_lost_out_of_frame() const;
+  inline void clear_is_lost_out_of_frame();
+  static const int kIsLostOutOfFrameFieldNumber = 7;
+  inline bool is_lost_out_of_frame() const;
+  inline void set_is_lost_out_of_frame(bool value);
+
+  // required bool is_high_ball = 8;
+  inline bool has_is_high_ball() const;
+  inline void clear_is_high_ball();
+  static const int kIsHighBallFieldNumber = 8;
+  inline bool is_high_ball() const;
+  inline void set_is_high_ball(bool value);
+
+  // required bool is_ped_intersect = 9;
+  inline bool has_is_ped_intersect() const;
+  inline void clear_is_ped_intersect();
+  static const int kIsPedIntersectFieldNumber = 9;
+  inline bool is_ped_intersect() const;
+  inline void set_is_ped_intersect(bool value);
+
   // @@protoc_insertion_point(class_scope:gt.internal.msg.BallMeasure)
  private:
   inline void set_has_xy();
@@ -1984,16 +2011,28 @@ class BallMeasure : public ::google::protobuf::Message {
   inline void clear_has_event();
   inline void set_has_is_rebound();
   inline void clear_has_is_rebound();
+  inline void set_has_is_from_out_of_frame();
+  inline void clear_has_is_from_out_of_frame();
+  inline void set_has_is_lost_out_of_frame();
+  inline void clear_has_is_lost_out_of_frame();
+  inline void set_has_is_high_ball();
+  inline void clear_has_is_high_ball();
+  inline void set_has_is_ped_intersect();
+  inline void clear_has_is_ped_intersect();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
-  ::gt::internal::msg::Point2d* xy_;
-  ::google::protobuf::uint64 time_;
+  ::gt::internal::msg::Point2* xy_;
+  ::google::protobuf::int64 time_;
+  int event_;
   bool valid_;
   bool is_rebound_;
-  int event_;
+  bool is_from_out_of_frame_;
+  bool is_lost_out_of_frame_;
+  bool is_high_ball_;
+  bool is_ped_intersect_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -2063,16 +2102,16 @@ class BatMeasure : public ::google::protobuf::Message {
   inline bool was_swing() const;
   inline void set_was_swing(bool value);
 
-  // repeated .gt.internal.msg.Point2d measures = 2;
+  // repeated .gt.internal.msg.Point2 measures = 2;
   inline int measures_size() const;
   inline void clear_measures();
   static const int kMeasuresFieldNumber = 2;
-  inline const ::gt::internal::msg::Point2d& measures(int index) const;
-  inline ::gt::internal::msg::Point2d* mutable_measures(int index);
-  inline ::gt::internal::msg::Point2d* add_measures();
-  inline const ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2d >&
+  inline const ::gt::internal::msg::Point2& measures(int index) const;
+  inline ::gt::internal::msg::Point2* mutable_measures(int index);
+  inline ::gt::internal::msg::Point2* add_measures();
+  inline const ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2 >&
       measures() const;
-  inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2d >*
+  inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2 >*
       mutable_measures();
 
   // repeated .gt.internal.msg.Rect bboxes = 3;
@@ -2096,7 +2135,7 @@ class BatMeasure : public ::google::protobuf::Message {
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
-  ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2d > measures_;
+  ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2 > measures_;
   ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Rect > bboxes_;
   bool was_swing_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
@@ -2276,24 +2315,44 @@ class RecognizeData : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::BallMeasure >*
       mutable_data();
 
-  // optional uint64 start_time = 2;
+  // optional int64 start_time = 2;
   inline bool has_start_time() const;
   inline void clear_start_time();
   static const int kStartTimeFieldNumber = 2;
-  inline ::google::protobuf::uint64 start_time() const;
-  inline void set_start_time(::google::protobuf::uint64 value);
+  inline ::google::protobuf::int64 start_time() const;
+  inline void set_start_time(::google::protobuf::int64 value);
+
+  // optional bool restored_out_of_frame = 3;
+  inline bool has_restored_out_of_frame() const;
+  inline void clear_restored_out_of_frame();
+  static const int kRestoredOutOfFrameFieldNumber = 3;
+  inline bool restored_out_of_frame() const;
+  inline void set_restored_out_of_frame(bool value);
+
+  // optional bool restored_straight = 4;
+  inline bool has_restored_straight() const;
+  inline void clear_restored_straight();
+  static const int kRestoredStraightFieldNumber = 4;
+  inline bool restored_straight() const;
+  inline void set_restored_straight(bool value);
 
   // @@protoc_insertion_point(class_scope:gt.internal.msg.RecognizeData)
  private:
   inline void set_has_start_time();
   inline void clear_has_start_time();
+  inline void set_has_restored_out_of_frame();
+  inline void clear_has_restored_out_of_frame();
+  inline void set_has_restored_straight();
+  inline void clear_has_restored_straight();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
   ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::BallMeasure > data_;
-  ::google::protobuf::uint64 start_time_;
+  ::google::protobuf::int64 start_time_;
+  bool restored_out_of_frame_;
+  bool restored_straight_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -2365,14 +2424,14 @@ class PedestrianMeasure : public ::google::protobuf::Message {
   inline ::gt::internal::msg::Rect* release_r();
   inline void set_allocated_r(::gt::internal::msg::Rect* r);
 
-  // required .gt.internal.msg.Point3d p = 2;
+  // required .gt.internal.msg.Point3 p = 2;
   inline bool has_p() const;
   inline void clear_p();
   static const int kPFieldNumber = 2;
-  inline const ::gt::internal::msg::Point3d& p() const;
-  inline ::gt::internal::msg::Point3d* mutable_p();
-  inline ::gt::internal::msg::Point3d* release_p();
-  inline void set_allocated_p(::gt::internal::msg::Point3d* p);
+  inline const ::gt::internal::msg::Point3& p() const;
+  inline ::gt::internal::msg::Point3* mutable_p();
+  inline ::gt::internal::msg::Point3* release_p();
+  inline void set_allocated_p(::gt::internal::msg::Point3* p);
 
   // required .gt.internal.msg.PlayerPosition pos = 3;
   inline bool has_pos() const;
@@ -2380,25 +2439,6 @@ class PedestrianMeasure : public ::google::protobuf::Message {
   static const int kPosFieldNumber = 3;
   inline ::gt::internal::msg::PlayerPosition pos() const;
   inline void set_pos(::gt::internal::msg::PlayerPosition value);
-
-  // optional .gt.internal.msg.TeamRole role = 4;
-  inline bool has_role() const;
-  inline void clear_role();
-  static const int kRoleFieldNumber = 4;
-  inline ::gt::internal::msg::TeamRole role() const;
-  inline void set_role(::gt::internal::msg::TeamRole value);
-
-  // required string id = 5;
-  inline bool has_id() const;
-  inline void clear_id();
-  static const int kIdFieldNumber = 5;
-  inline const ::std::string& id() const;
-  inline void set_id(const ::std::string& value);
-  inline void set_id(const char* value);
-  inline void set_id(const char* value, size_t size);
-  inline ::std::string* mutable_id();
-  inline ::std::string* release_id();
-  inline void set_allocated_id(::std::string* id);
 
   // @@protoc_insertion_point(class_scope:gt.internal.msg.PedestrianMeasure)
  private:
@@ -2408,20 +2448,14 @@ class PedestrianMeasure : public ::google::protobuf::Message {
   inline void clear_has_p();
   inline void set_has_pos();
   inline void clear_has_pos();
-  inline void set_has_role();
-  inline void clear_has_role();
-  inline void set_has_id();
-  inline void clear_has_id();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
   ::gt::internal::msg::Rect* r_;
-  ::gt::internal::msg::Point3d* p_;
+  ::gt::internal::msg::Point3* p_;
   int pos_;
-  int role_;
-  ::std::string* id_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
   friend void protobuf_ShutdownFile_msg_2einternal_2eproto();
@@ -2836,19 +2870,19 @@ class FrameTime : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional uint64 computer_time = 1;
+  // optional int64 computer_time = 1;
   inline bool has_computer_time() const;
   inline void clear_computer_time();
   static const int kComputerTimeFieldNumber = 1;
-  inline ::google::protobuf::uint64 computer_time() const;
-  inline void set_computer_time(::google::protobuf::uint64 value);
+  inline ::google::protobuf::int64 computer_time() const;
+  inline void set_computer_time(::google::protobuf::int64 value);
 
-  // optional uint64 camera_time = 2;
+  // optional int64 camera_time = 2;
   inline bool has_camera_time() const;
   inline void clear_camera_time();
   static const int kCameraTimeFieldNumber = 2;
-  inline ::google::protobuf::uint64 camera_time() const;
-  inline void set_camera_time(::google::protobuf::uint64 value);
+  inline ::google::protobuf::int64 camera_time() const;
+  inline void set_camera_time(::google::protobuf::int64 value);
 
   // optional bytes frame = 3;
   inline bool has_frame() const;
@@ -2875,8 +2909,8 @@ class FrameTime : public ::google::protobuf::Message {
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
-  ::google::protobuf::uint64 computer_time_;
-  ::google::protobuf::uint64 camera_time_;
+  ::google::protobuf::int64 computer_time_;
+  ::google::protobuf::int64 camera_time_;
   ::std::string* frame_;
   friend void  protobuf_AddDesc_msg_2einternal_2eproto();
   friend void protobuf_AssignDesc_msg_2einternal_2eproto();
@@ -2984,137 +3018,137 @@ class DebugInfo : public ::google::protobuf::Message {
 
 // ===================================================================
 
-// Point2d
+// Point2
 
 // required double x = 1;
-inline bool Point2d::has_x() const {
+inline bool Point2::has_x() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void Point2d::set_has_x() {
+inline void Point2::set_has_x() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void Point2d::clear_has_x() {
+inline void Point2::clear_has_x() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void Point2d::clear_x() {
+inline void Point2::clear_x() {
   x_ = 0;
   clear_has_x();
 }
-inline double Point2d::x() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.Point2d.x)
+inline double Point2::x() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.Point2.x)
   return x_;
 }
-inline void Point2d::set_x(double value) {
+inline void Point2::set_x(double value) {
   set_has_x();
   x_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.Point2d.x)
+  // @@protoc_insertion_point(field_set:gt.internal.msg.Point2.x)
 }
 
 // required double y = 2;
-inline bool Point2d::has_y() const {
+inline bool Point2::has_y() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void Point2d::set_has_y() {
+inline void Point2::set_has_y() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void Point2d::clear_has_y() {
+inline void Point2::clear_has_y() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void Point2d::clear_y() {
+inline void Point2::clear_y() {
   y_ = 0;
   clear_has_y();
 }
-inline double Point2d::y() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.Point2d.y)
+inline double Point2::y() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.Point2.y)
   return y_;
 }
-inline void Point2d::set_y(double value) {
+inline void Point2::set_y(double value) {
   set_has_y();
   y_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.Point2d.y)
+  // @@protoc_insertion_point(field_set:gt.internal.msg.Point2.y)
 }
 
 // -------------------------------------------------------------------
 
-// Point3d
+// Point3
 
 // required double x = 1;
-inline bool Point3d::has_x() const {
+inline bool Point3::has_x() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void Point3d::set_has_x() {
+inline void Point3::set_has_x() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void Point3d::clear_has_x() {
+inline void Point3::clear_has_x() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void Point3d::clear_x() {
+inline void Point3::clear_x() {
   x_ = 0;
   clear_has_x();
 }
-inline double Point3d::x() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.Point3d.x)
+inline double Point3::x() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.Point3.x)
   return x_;
 }
-inline void Point3d::set_x(double value) {
+inline void Point3::set_x(double value) {
   set_has_x();
   x_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.Point3d.x)
+  // @@protoc_insertion_point(field_set:gt.internal.msg.Point3.x)
 }
 
 // required double y = 2;
-inline bool Point3d::has_y() const {
+inline bool Point3::has_y() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void Point3d::set_has_y() {
+inline void Point3::set_has_y() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void Point3d::clear_has_y() {
+inline void Point3::clear_has_y() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void Point3d::clear_y() {
+inline void Point3::clear_y() {
   y_ = 0;
   clear_has_y();
 }
-inline double Point3d::y() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.Point3d.y)
+inline double Point3::y() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.Point3.y)
   return y_;
 }
-inline void Point3d::set_y(double value) {
+inline void Point3::set_y(double value) {
   set_has_y();
   y_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.Point3d.y)
+  // @@protoc_insertion_point(field_set:gt.internal.msg.Point3.y)
 }
 
 // required double z = 3;
-inline bool Point3d::has_z() const {
+inline bool Point3::has_z() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Point3d::set_has_z() {
+inline void Point3::set_has_z() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void Point3d::clear_has_z() {
+inline void Point3::clear_has_z() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void Point3d::clear_z() {
+inline void Point3::clear_z() {
   z_ = 0;
   clear_has_z();
 }
-inline double Point3d::z() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.Point3d.z)
+inline double Point3::z() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.Point3.z)
   return z_;
 }
-inline void Point3d::set_z(double value) {
+inline void Point3::set_z(double value) {
   set_has_z();
   z_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.Point3d.z)
+  // @@protoc_insertion_point(field_set:gt.internal.msg.Point3.z)
 }
 
 // -------------------------------------------------------------------
 
 // Rect
 
-// required .gt.internal.msg.Point2d xy = 1;
+// required .gt.internal.msg.Point2 xy = 1;
 inline bool Rect::has_xy() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -3125,26 +3159,26 @@ inline void Rect::clear_has_xy() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void Rect::clear_xy() {
-  if (xy_ != NULL) xy_->::gt::internal::msg::Point2d::Clear();
+  if (xy_ != NULL) xy_->::gt::internal::msg::Point2::Clear();
   clear_has_xy();
 }
-inline const ::gt::internal::msg::Point2d& Rect::xy() const {
+inline const ::gt::internal::msg::Point2& Rect::xy() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.Rect.xy)
   return xy_ != NULL ? *xy_ : *default_instance_->xy_;
 }
-inline ::gt::internal::msg::Point2d* Rect::mutable_xy() {
+inline ::gt::internal::msg::Point2* Rect::mutable_xy() {
   set_has_xy();
-  if (xy_ == NULL) xy_ = new ::gt::internal::msg::Point2d;
+  if (xy_ == NULL) xy_ = new ::gt::internal::msg::Point2;
   // @@protoc_insertion_point(field_mutable:gt.internal.msg.Rect.xy)
   return xy_;
 }
-inline ::gt::internal::msg::Point2d* Rect::release_xy() {
+inline ::gt::internal::msg::Point2* Rect::release_xy() {
   clear_has_xy();
-  ::gt::internal::msg::Point2d* temp = xy_;
+  ::gt::internal::msg::Point2* temp = xy_;
   xy_ = NULL;
   return temp;
 }
-inline void Rect::set_allocated_xy(::gt::internal::msg::Point2d* xy) {
+inline void Rect::set_allocated_xy(::gt::internal::msg::Point2* xy) {
   delete xy_;
   xy_ = xy;
   if (xy) {
@@ -3155,7 +3189,7 @@ inline void Rect::set_allocated_xy(::gt::internal::msg::Point2d* xy) {
   // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.Rect.xy)
 }
 
-// required .gt.internal.msg.Point2d wh = 2;
+// required .gt.internal.msg.Point2 wh = 2;
 inline bool Rect::has_wh() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -3166,26 +3200,26 @@ inline void Rect::clear_has_wh() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void Rect::clear_wh() {
-  if (wh_ != NULL) wh_->::gt::internal::msg::Point2d::Clear();
+  if (wh_ != NULL) wh_->::gt::internal::msg::Point2::Clear();
   clear_has_wh();
 }
-inline const ::gt::internal::msg::Point2d& Rect::wh() const {
+inline const ::gt::internal::msg::Point2& Rect::wh() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.Rect.wh)
   return wh_ != NULL ? *wh_ : *default_instance_->wh_;
 }
-inline ::gt::internal::msg::Point2d* Rect::mutable_wh() {
+inline ::gt::internal::msg::Point2* Rect::mutable_wh() {
   set_has_wh();
-  if (wh_ == NULL) wh_ = new ::gt::internal::msg::Point2d;
+  if (wh_ == NULL) wh_ = new ::gt::internal::msg::Point2;
   // @@protoc_insertion_point(field_mutable:gt.internal.msg.Rect.wh)
   return wh_;
 }
-inline ::gt::internal::msg::Point2d* Rect::release_wh() {
+inline ::gt::internal::msg::Point2* Rect::release_wh() {
   clear_has_wh();
-  ::gt::internal::msg::Point2d* temp = wh_;
+  ::gt::internal::msg::Point2* temp = wh_;
   wh_ = NULL;
   return temp;
 }
-inline void Rect::set_allocated_wh(::gt::internal::msg::Point2d* wh) {
+inline void Rect::set_allocated_wh(::gt::internal::msg::Point2* wh) {
   delete wh_;
   wh_ = wh;
   if (wh) {
@@ -3362,6 +3396,88 @@ inline void RecROIs::set_allocated_hit_track_rect(::gt::internal::msg::Rect* hit
     clear_has_hit_track_rect();
   }
   // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.RecROIs.hit_track_rect)
+}
+
+// optional .gt.internal.msg.Rect pick_off_search_rect = 5;
+inline bool RecROIs::has_pick_off_search_rect() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void RecROIs::set_has_pick_off_search_rect() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void RecROIs::clear_has_pick_off_search_rect() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void RecROIs::clear_pick_off_search_rect() {
+  if (pick_off_search_rect_ != NULL) pick_off_search_rect_->::gt::internal::msg::Rect::Clear();
+  clear_has_pick_off_search_rect();
+}
+inline const ::gt::internal::msg::Rect& RecROIs::pick_off_search_rect() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.RecROIs.pick_off_search_rect)
+  return pick_off_search_rect_ != NULL ? *pick_off_search_rect_ : *default_instance_->pick_off_search_rect_;
+}
+inline ::gt::internal::msg::Rect* RecROIs::mutable_pick_off_search_rect() {
+  set_has_pick_off_search_rect();
+  if (pick_off_search_rect_ == NULL) pick_off_search_rect_ = new ::gt::internal::msg::Rect;
+  // @@protoc_insertion_point(field_mutable:gt.internal.msg.RecROIs.pick_off_search_rect)
+  return pick_off_search_rect_;
+}
+inline ::gt::internal::msg::Rect* RecROIs::release_pick_off_search_rect() {
+  clear_has_pick_off_search_rect();
+  ::gt::internal::msg::Rect* temp = pick_off_search_rect_;
+  pick_off_search_rect_ = NULL;
+  return temp;
+}
+inline void RecROIs::set_allocated_pick_off_search_rect(::gt::internal::msg::Rect* pick_off_search_rect) {
+  delete pick_off_search_rect_;
+  pick_off_search_rect_ = pick_off_search_rect;
+  if (pick_off_search_rect) {
+    set_has_pick_off_search_rect();
+  } else {
+    clear_has_pick_off_search_rect();
+  }
+  // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.RecROIs.pick_off_search_rect)
+}
+
+// optional .gt.internal.msg.Rect bat_detect_rect = 6;
+inline bool RecROIs::has_bat_detect_rect() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void RecROIs::set_has_bat_detect_rect() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void RecROIs::clear_has_bat_detect_rect() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void RecROIs::clear_bat_detect_rect() {
+  if (bat_detect_rect_ != NULL) bat_detect_rect_->::gt::internal::msg::Rect::Clear();
+  clear_has_bat_detect_rect();
+}
+inline const ::gt::internal::msg::Rect& RecROIs::bat_detect_rect() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.RecROIs.bat_detect_rect)
+  return bat_detect_rect_ != NULL ? *bat_detect_rect_ : *default_instance_->bat_detect_rect_;
+}
+inline ::gt::internal::msg::Rect* RecROIs::mutable_bat_detect_rect() {
+  set_has_bat_detect_rect();
+  if (bat_detect_rect_ == NULL) bat_detect_rect_ = new ::gt::internal::msg::Rect;
+  // @@protoc_insertion_point(field_mutable:gt.internal.msg.RecROIs.bat_detect_rect)
+  return bat_detect_rect_;
+}
+inline ::gt::internal::msg::Rect* RecROIs::release_bat_detect_rect() {
+  clear_has_bat_detect_rect();
+  ::gt::internal::msg::Rect* temp = bat_detect_rect_;
+  bat_detect_rect_ = NULL;
+  return temp;
+}
+inline void RecROIs::set_allocated_bat_detect_rect(::gt::internal::msg::Rect* bat_detect_rect) {
+  delete bat_detect_rect_;
+  bat_detect_rect_ = bat_detect_rect;
+  if (bat_detect_rect) {
+    set_has_bat_detect_rect();
+  } else {
+    clear_has_bat_detect_rect();
+  }
+  // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.RecROIs.bat_detect_rect)
 }
 
 // -------------------------------------------------------------------
@@ -4878,7 +4994,7 @@ inline void StreamCameraCommand::set_stop(bool value) {
 
 // CalibrationParameters
 
-// required .gt.internal.msg.Point3d xyz = 1;
+// required .gt.internal.msg.Point3 xyz = 1;
 inline bool CalibrationParameters::has_xyz() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -4889,26 +5005,26 @@ inline void CalibrationParameters::clear_has_xyz() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void CalibrationParameters::clear_xyz() {
-  if (xyz_ != NULL) xyz_->::gt::internal::msg::Point3d::Clear();
+  if (xyz_ != NULL) xyz_->::gt::internal::msg::Point3::Clear();
   clear_has_xyz();
 }
-inline const ::gt::internal::msg::Point3d& CalibrationParameters::xyz() const {
+inline const ::gt::internal::msg::Point3& CalibrationParameters::xyz() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.CalibrationParameters.xyz)
   return xyz_ != NULL ? *xyz_ : *default_instance_->xyz_;
 }
-inline ::gt::internal::msg::Point3d* CalibrationParameters::mutable_xyz() {
+inline ::gt::internal::msg::Point3* CalibrationParameters::mutable_xyz() {
   set_has_xyz();
-  if (xyz_ == NULL) xyz_ = new ::gt::internal::msg::Point3d;
+  if (xyz_ == NULL) xyz_ = new ::gt::internal::msg::Point3;
   // @@protoc_insertion_point(field_mutable:gt.internal.msg.CalibrationParameters.xyz)
   return xyz_;
 }
-inline ::gt::internal::msg::Point3d* CalibrationParameters::release_xyz() {
+inline ::gt::internal::msg::Point3* CalibrationParameters::release_xyz() {
   clear_has_xyz();
-  ::gt::internal::msg::Point3d* temp = xyz_;
+  ::gt::internal::msg::Point3* temp = xyz_;
   xyz_ = NULL;
   return temp;
 }
-inline void CalibrationParameters::set_allocated_xyz(::gt::internal::msg::Point3d* xyz) {
+inline void CalibrationParameters::set_allocated_xyz(::gt::internal::msg::Point3* xyz) {
   delete xyz_;
   xyz_ = xyz;
   if (xyz) {
@@ -4919,7 +5035,7 @@ inline void CalibrationParameters::set_allocated_xyz(::gt::internal::msg::Point3
   // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.CalibrationParameters.xyz)
 }
 
-// required .gt.internal.msg.Point3d angles = 2;
+// required .gt.internal.msg.Point3 angles = 2;
 inline bool CalibrationParameters::has_angles() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -4930,26 +5046,26 @@ inline void CalibrationParameters::clear_has_angles() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void CalibrationParameters::clear_angles() {
-  if (angles_ != NULL) angles_->::gt::internal::msg::Point3d::Clear();
+  if (angles_ != NULL) angles_->::gt::internal::msg::Point3::Clear();
   clear_has_angles();
 }
-inline const ::gt::internal::msg::Point3d& CalibrationParameters::angles() const {
+inline const ::gt::internal::msg::Point3& CalibrationParameters::angles() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.CalibrationParameters.angles)
   return angles_ != NULL ? *angles_ : *default_instance_->angles_;
 }
-inline ::gt::internal::msg::Point3d* CalibrationParameters::mutable_angles() {
+inline ::gt::internal::msg::Point3* CalibrationParameters::mutable_angles() {
   set_has_angles();
-  if (angles_ == NULL) angles_ = new ::gt::internal::msg::Point3d;
+  if (angles_ == NULL) angles_ = new ::gt::internal::msg::Point3;
   // @@protoc_insertion_point(field_mutable:gt.internal.msg.CalibrationParameters.angles)
   return angles_;
 }
-inline ::gt::internal::msg::Point3d* CalibrationParameters::release_angles() {
+inline ::gt::internal::msg::Point3* CalibrationParameters::release_angles() {
   clear_has_angles();
-  ::gt::internal::msg::Point3d* temp = angles_;
+  ::gt::internal::msg::Point3* temp = angles_;
   angles_ = NULL;
   return temp;
 }
-inline void CalibrationParameters::set_allocated_angles(::gt::internal::msg::Point3d* angles) {
+inline void CalibrationParameters::set_allocated_angles(::gt::internal::msg::Point3* angles) {
   delete angles_;
   angles_ = angles;
   if (angles) {
@@ -5276,7 +5392,7 @@ inline void CalibrationParameters::set_b2(double value) {
 
 // BallMeasure
 
-// required .gt.internal.msg.Point2d xy = 1;
+// required .gt.internal.msg.Point2 xy = 1;
 inline bool BallMeasure::has_xy() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -5287,26 +5403,26 @@ inline void BallMeasure::clear_has_xy() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void BallMeasure::clear_xy() {
-  if (xy_ != NULL) xy_->::gt::internal::msg::Point2d::Clear();
+  if (xy_ != NULL) xy_->::gt::internal::msg::Point2::Clear();
   clear_has_xy();
 }
-inline const ::gt::internal::msg::Point2d& BallMeasure::xy() const {
+inline const ::gt::internal::msg::Point2& BallMeasure::xy() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.BallMeasure.xy)
   return xy_ != NULL ? *xy_ : *default_instance_->xy_;
 }
-inline ::gt::internal::msg::Point2d* BallMeasure::mutable_xy() {
+inline ::gt::internal::msg::Point2* BallMeasure::mutable_xy() {
   set_has_xy();
-  if (xy_ == NULL) xy_ = new ::gt::internal::msg::Point2d;
+  if (xy_ == NULL) xy_ = new ::gt::internal::msg::Point2;
   // @@protoc_insertion_point(field_mutable:gt.internal.msg.BallMeasure.xy)
   return xy_;
 }
-inline ::gt::internal::msg::Point2d* BallMeasure::release_xy() {
+inline ::gt::internal::msg::Point2* BallMeasure::release_xy() {
   clear_has_xy();
-  ::gt::internal::msg::Point2d* temp = xy_;
+  ::gt::internal::msg::Point2* temp = xy_;
   xy_ = NULL;
   return temp;
 }
-inline void BallMeasure::set_allocated_xy(::gt::internal::msg::Point2d* xy) {
+inline void BallMeasure::set_allocated_xy(::gt::internal::msg::Point2* xy) {
   delete xy_;
   xy_ = xy;
   if (xy) {
@@ -5341,7 +5457,7 @@ inline void BallMeasure::set_valid(bool value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.BallMeasure.valid)
 }
 
-// required uint64 time = 3;
+// required int64 time = 3;
 inline bool BallMeasure::has_time() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -5352,14 +5468,14 @@ inline void BallMeasure::clear_has_time() {
   _has_bits_[0] &= ~0x00000004u;
 }
 inline void BallMeasure::clear_time() {
-  time_ = GOOGLE_ULONGLONG(0);
+  time_ = GOOGLE_LONGLONG(0);
   clear_has_time();
 }
-inline ::google::protobuf::uint64 BallMeasure::time() const {
+inline ::google::protobuf::int64 BallMeasure::time() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.BallMeasure.time)
   return time_;
 }
-inline void BallMeasure::set_time(::google::protobuf::uint64 value) {
+inline void BallMeasure::set_time(::google::protobuf::int64 value) {
   set_has_time();
   time_ = value;
   // @@protoc_insertion_point(field_set:gt.internal.msg.BallMeasure.time)
@@ -5414,6 +5530,102 @@ inline void BallMeasure::set_is_rebound(bool value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.BallMeasure.is_rebound)
 }
 
+// required bool is_from_out_of_frame = 6;
+inline bool BallMeasure::has_is_from_out_of_frame() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void BallMeasure::set_has_is_from_out_of_frame() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void BallMeasure::clear_has_is_from_out_of_frame() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void BallMeasure::clear_is_from_out_of_frame() {
+  is_from_out_of_frame_ = false;
+  clear_has_is_from_out_of_frame();
+}
+inline bool BallMeasure::is_from_out_of_frame() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.BallMeasure.is_from_out_of_frame)
+  return is_from_out_of_frame_;
+}
+inline void BallMeasure::set_is_from_out_of_frame(bool value) {
+  set_has_is_from_out_of_frame();
+  is_from_out_of_frame_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.BallMeasure.is_from_out_of_frame)
+}
+
+// required bool is_lost_out_of_frame = 7;
+inline bool BallMeasure::has_is_lost_out_of_frame() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void BallMeasure::set_has_is_lost_out_of_frame() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void BallMeasure::clear_has_is_lost_out_of_frame() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void BallMeasure::clear_is_lost_out_of_frame() {
+  is_lost_out_of_frame_ = false;
+  clear_has_is_lost_out_of_frame();
+}
+inline bool BallMeasure::is_lost_out_of_frame() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.BallMeasure.is_lost_out_of_frame)
+  return is_lost_out_of_frame_;
+}
+inline void BallMeasure::set_is_lost_out_of_frame(bool value) {
+  set_has_is_lost_out_of_frame();
+  is_lost_out_of_frame_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.BallMeasure.is_lost_out_of_frame)
+}
+
+// required bool is_high_ball = 8;
+inline bool BallMeasure::has_is_high_ball() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void BallMeasure::set_has_is_high_ball() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void BallMeasure::clear_has_is_high_ball() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void BallMeasure::clear_is_high_ball() {
+  is_high_ball_ = false;
+  clear_has_is_high_ball();
+}
+inline bool BallMeasure::is_high_ball() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.BallMeasure.is_high_ball)
+  return is_high_ball_;
+}
+inline void BallMeasure::set_is_high_ball(bool value) {
+  set_has_is_high_ball();
+  is_high_ball_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.BallMeasure.is_high_ball)
+}
+
+// required bool is_ped_intersect = 9;
+inline bool BallMeasure::has_is_ped_intersect() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void BallMeasure::set_has_is_ped_intersect() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void BallMeasure::clear_has_is_ped_intersect() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void BallMeasure::clear_is_ped_intersect() {
+  is_ped_intersect_ = false;
+  clear_has_is_ped_intersect();
+}
+inline bool BallMeasure::is_ped_intersect() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.BallMeasure.is_ped_intersect)
+  return is_ped_intersect_;
+}
+inline void BallMeasure::set_is_ped_intersect(bool value) {
+  set_has_is_ped_intersect();
+  is_ped_intersect_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.BallMeasure.is_ped_intersect)
+}
+
 // -------------------------------------------------------------------
 
 // BatMeasure
@@ -5442,31 +5654,31 @@ inline void BatMeasure::set_was_swing(bool value) {
   // @@protoc_insertion_point(field_set:gt.internal.msg.BatMeasure.was_swing)
 }
 
-// repeated .gt.internal.msg.Point2d measures = 2;
+// repeated .gt.internal.msg.Point2 measures = 2;
 inline int BatMeasure::measures_size() const {
   return measures_.size();
 }
 inline void BatMeasure::clear_measures() {
   measures_.Clear();
 }
-inline const ::gt::internal::msg::Point2d& BatMeasure::measures(int index) const {
+inline const ::gt::internal::msg::Point2& BatMeasure::measures(int index) const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.BatMeasure.measures)
   return measures_.Get(index);
 }
-inline ::gt::internal::msg::Point2d* BatMeasure::mutable_measures(int index) {
+inline ::gt::internal::msg::Point2* BatMeasure::mutable_measures(int index) {
   // @@protoc_insertion_point(field_mutable:gt.internal.msg.BatMeasure.measures)
   return measures_.Mutable(index);
 }
-inline ::gt::internal::msg::Point2d* BatMeasure::add_measures() {
+inline ::gt::internal::msg::Point2* BatMeasure::add_measures() {
   // @@protoc_insertion_point(field_add:gt.internal.msg.BatMeasure.measures)
   return measures_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2d >&
+inline const ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2 >&
 BatMeasure::measures() const {
   // @@protoc_insertion_point(field_list:gt.internal.msg.BatMeasure.measures)
   return measures_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2d >*
+inline ::google::protobuf::RepeatedPtrField< ::gt::internal::msg::Point2 >*
 BatMeasure::mutable_measures() {
   // @@protoc_insertion_point(field_mutable_list:gt.internal.msg.BatMeasure.measures)
   return &measures_;
@@ -5647,7 +5859,7 @@ RecognizeData::mutable_data() {
   return &data_;
 }
 
-// optional uint64 start_time = 2;
+// optional int64 start_time = 2;
 inline bool RecognizeData::has_start_time() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -5658,17 +5870,65 @@ inline void RecognizeData::clear_has_start_time() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void RecognizeData::clear_start_time() {
-  start_time_ = GOOGLE_ULONGLONG(0);
+  start_time_ = GOOGLE_LONGLONG(0);
   clear_has_start_time();
 }
-inline ::google::protobuf::uint64 RecognizeData::start_time() const {
+inline ::google::protobuf::int64 RecognizeData::start_time() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.RecognizeData.start_time)
   return start_time_;
 }
-inline void RecognizeData::set_start_time(::google::protobuf::uint64 value) {
+inline void RecognizeData::set_start_time(::google::protobuf::int64 value) {
   set_has_start_time();
   start_time_ = value;
   // @@protoc_insertion_point(field_set:gt.internal.msg.RecognizeData.start_time)
+}
+
+// optional bool restored_out_of_frame = 3;
+inline bool RecognizeData::has_restored_out_of_frame() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void RecognizeData::set_has_restored_out_of_frame() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void RecognizeData::clear_has_restored_out_of_frame() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void RecognizeData::clear_restored_out_of_frame() {
+  restored_out_of_frame_ = false;
+  clear_has_restored_out_of_frame();
+}
+inline bool RecognizeData::restored_out_of_frame() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.RecognizeData.restored_out_of_frame)
+  return restored_out_of_frame_;
+}
+inline void RecognizeData::set_restored_out_of_frame(bool value) {
+  set_has_restored_out_of_frame();
+  restored_out_of_frame_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.RecognizeData.restored_out_of_frame)
+}
+
+// optional bool restored_straight = 4;
+inline bool RecognizeData::has_restored_straight() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void RecognizeData::set_has_restored_straight() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void RecognizeData::clear_has_restored_straight() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void RecognizeData::clear_restored_straight() {
+  restored_straight_ = false;
+  clear_has_restored_straight();
+}
+inline bool RecognizeData::restored_straight() const {
+  // @@protoc_insertion_point(field_get:gt.internal.msg.RecognizeData.restored_straight)
+  return restored_straight_;
+}
+inline void RecognizeData::set_restored_straight(bool value) {
+  set_has_restored_straight();
+  restored_straight_ = value;
+  // @@protoc_insertion_point(field_set:gt.internal.msg.RecognizeData.restored_straight)
 }
 
 // -------------------------------------------------------------------
@@ -5716,7 +5976,7 @@ inline void PedestrianMeasure::set_allocated_r(::gt::internal::msg::Rect* r) {
   // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.PedestrianMeasure.r)
 }
 
-// required .gt.internal.msg.Point3d p = 2;
+// required .gt.internal.msg.Point3 p = 2;
 inline bool PedestrianMeasure::has_p() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -5727,26 +5987,26 @@ inline void PedestrianMeasure::clear_has_p() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void PedestrianMeasure::clear_p() {
-  if (p_ != NULL) p_->::gt::internal::msg::Point3d::Clear();
+  if (p_ != NULL) p_->::gt::internal::msg::Point3::Clear();
   clear_has_p();
 }
-inline const ::gt::internal::msg::Point3d& PedestrianMeasure::p() const {
+inline const ::gt::internal::msg::Point3& PedestrianMeasure::p() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.PedestrianMeasure.p)
   return p_ != NULL ? *p_ : *default_instance_->p_;
 }
-inline ::gt::internal::msg::Point3d* PedestrianMeasure::mutable_p() {
+inline ::gt::internal::msg::Point3* PedestrianMeasure::mutable_p() {
   set_has_p();
-  if (p_ == NULL) p_ = new ::gt::internal::msg::Point3d;
+  if (p_ == NULL) p_ = new ::gt::internal::msg::Point3;
   // @@protoc_insertion_point(field_mutable:gt.internal.msg.PedestrianMeasure.p)
   return p_;
 }
-inline ::gt::internal::msg::Point3d* PedestrianMeasure::release_p() {
+inline ::gt::internal::msg::Point3* PedestrianMeasure::release_p() {
   clear_has_p();
-  ::gt::internal::msg::Point3d* temp = p_;
+  ::gt::internal::msg::Point3* temp = p_;
   p_ = NULL;
   return temp;
 }
-inline void PedestrianMeasure::set_allocated_p(::gt::internal::msg::Point3d* p) {
+inline void PedestrianMeasure::set_allocated_p(::gt::internal::msg::Point3* p) {
   delete p_;
   p_ = p;
   if (p) {
@@ -5780,107 +6040,6 @@ inline void PedestrianMeasure::set_pos(::gt::internal::msg::PlayerPosition value
   set_has_pos();
   pos_ = value;
   // @@protoc_insertion_point(field_set:gt.internal.msg.PedestrianMeasure.pos)
-}
-
-// optional .gt.internal.msg.TeamRole role = 4;
-inline bool PedestrianMeasure::has_role() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void PedestrianMeasure::set_has_role() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void PedestrianMeasure::clear_has_role() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void PedestrianMeasure::clear_role() {
-  role_ = 1;
-  clear_has_role();
-}
-inline ::gt::internal::msg::TeamRole PedestrianMeasure::role() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.PedestrianMeasure.role)
-  return static_cast< ::gt::internal::msg::TeamRole >(role_);
-}
-inline void PedestrianMeasure::set_role(::gt::internal::msg::TeamRole value) {
-  assert(::gt::internal::msg::TeamRole_IsValid(value));
-  set_has_role();
-  role_ = value;
-  // @@protoc_insertion_point(field_set:gt.internal.msg.PedestrianMeasure.role)
-}
-
-// required string id = 5;
-inline bool PedestrianMeasure::has_id() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void PedestrianMeasure::set_has_id() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void PedestrianMeasure::clear_has_id() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void PedestrianMeasure::clear_id() {
-  if (id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    id_->clear();
-  }
-  clear_has_id();
-}
-inline const ::std::string& PedestrianMeasure::id() const {
-  // @@protoc_insertion_point(field_get:gt.internal.msg.PedestrianMeasure.id)
-  return *id_;
-}
-inline void PedestrianMeasure::set_id(const ::std::string& value) {
-  set_has_id();
-  if (id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    id_ = new ::std::string;
-  }
-  id_->assign(value);
-  // @@protoc_insertion_point(field_set:gt.internal.msg.PedestrianMeasure.id)
-}
-inline void PedestrianMeasure::set_id(const char* value) {
-  set_has_id();
-  if (id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    id_ = new ::std::string;
-  }
-  id_->assign(value);
-  // @@protoc_insertion_point(field_set_char:gt.internal.msg.PedestrianMeasure.id)
-}
-inline void PedestrianMeasure::set_id(const char* value, size_t size) {
-  set_has_id();
-  if (id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    id_ = new ::std::string;
-  }
-  id_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:gt.internal.msg.PedestrianMeasure.id)
-}
-inline ::std::string* PedestrianMeasure::mutable_id() {
-  set_has_id();
-  if (id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    id_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:gt.internal.msg.PedestrianMeasure.id)
-  return id_;
-}
-inline ::std::string* PedestrianMeasure::release_id() {
-  clear_has_id();
-  if (id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = id_;
-    id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void PedestrianMeasure::set_allocated_id(::std::string* id) {
-  if (id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete id_;
-  }
-  if (id) {
-    set_has_id();
-    id_ = id;
-  } else {
-    clear_has_id();
-    id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:gt.internal.msg.PedestrianMeasure.id)
 }
 
 // -------------------------------------------------------------------
@@ -6575,7 +6734,7 @@ inline void ServerOptions::set_write_uncompressed(bool value) {
 
 // FrameTime
 
-// optional uint64 computer_time = 1;
+// optional int64 computer_time = 1;
 inline bool FrameTime::has_computer_time() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -6586,20 +6745,20 @@ inline void FrameTime::clear_has_computer_time() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void FrameTime::clear_computer_time() {
-  computer_time_ = GOOGLE_ULONGLONG(0);
+  computer_time_ = GOOGLE_LONGLONG(0);
   clear_has_computer_time();
 }
-inline ::google::protobuf::uint64 FrameTime::computer_time() const {
+inline ::google::protobuf::int64 FrameTime::computer_time() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.FrameTime.computer_time)
   return computer_time_;
 }
-inline void FrameTime::set_computer_time(::google::protobuf::uint64 value) {
+inline void FrameTime::set_computer_time(::google::protobuf::int64 value) {
   set_has_computer_time();
   computer_time_ = value;
   // @@protoc_insertion_point(field_set:gt.internal.msg.FrameTime.computer_time)
 }
 
-// optional uint64 camera_time = 2;
+// optional int64 camera_time = 2;
 inline bool FrameTime::has_camera_time() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -6610,14 +6769,14 @@ inline void FrameTime::clear_has_camera_time() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void FrameTime::clear_camera_time() {
-  camera_time_ = GOOGLE_ULONGLONG(0);
+  camera_time_ = GOOGLE_LONGLONG(0);
   clear_has_camera_time();
 }
-inline ::google::protobuf::uint64 FrameTime::camera_time() const {
+inline ::google::protobuf::int64 FrameTime::camera_time() const {
   // @@protoc_insertion_point(field_get:gt.internal.msg.FrameTime.camera_time)
   return camera_time_;
 }
-inline void FrameTime::set_camera_time(::google::protobuf::uint64 value) {
+inline void FrameTime::set_camera_time(::google::protobuf::int64 value) {
   set_has_camera_time();
   camera_time_ = value;
   // @@protoc_insertion_point(field_set:gt.internal.msg.FrameTime.camera_time)
@@ -6838,11 +6997,6 @@ template <> struct is_proto_enum< ::gt::internal::msg::PlayerPosition> : ::googl
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::gt::internal::msg::PlayerPosition>() {
   return ::gt::internal::msg::PlayerPosition_descriptor();
-}
-template <> struct is_proto_enum< ::gt::internal::msg::TeamRole> : ::google::protobuf::internal::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::gt::internal::msg::TeamRole>() {
-  return ::gt::internal::msg::TeamRole_descriptor();
 }
 template <> struct is_proto_enum< ::gt::internal::msg::CameraType> : ::google::protobuf::internal::true_type {};
 template <>

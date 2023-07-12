@@ -122,7 +122,7 @@ void Camera::tryToStartCamera()
     if (!streamIsActive)
     {
 
-            QtConcurrent::run(this, &Camera::procImageQueue);
+            m_procImageFuture = QtConcurrent::run(this, &Camera::procImageQueue);
             QThread::msleep(250);
 
 #ifdef AUTOEXP_MAIN_THREAD
@@ -145,7 +145,7 @@ void Camera::procImageQueue()
     }
     streamIsActive = 1;
 #ifndef AUTOEXP_MAIN_THREAD
-    QtConcurrent::run(this, &Camera::doAutoExposure);
+    m_autoExpFuture = QtConcurrent::run(this, &Camera::doAutoExposure);
 #endif
 
     qint32 i = 0;
@@ -174,7 +174,7 @@ void Camera::procImageQueue()
 
                 QTime timestampSystem = QTime(imageInfo.TimestampSystem.wHour,imageInfo.TimestampSystem.wMinute,
                                               imageInfo.TimestampSystem.wSecond, imageInfo.TimestampSystem.wMilliseconds);
-               //qDebug() << imageInfo.u64TimestampDevice << timestampSystem << options.hw_params().frame_rate();
+               qDebug() << imageInfo.u64TimestampDevice << timestampSystem << options.hw_params().frame_rate();
 
                 qint64 diff = abs(timeStampPrevious - (qint64)imageInfo.u64TimestampDevice);
                 qint64 thres = (1. / options.hw_params().frame_rate()) * 1e7 + 1e4;
@@ -243,6 +243,7 @@ void Camera::procImageQueue()
     }
     while (streamIsActive);
     bufferFrames.clear();
+    qDebug() << "finish frame capture";
 }
 
 //void Camera::procImageImitation()
@@ -1163,6 +1164,7 @@ void Camera::doAutoExposure()
                }
            }
     }
+        qDebug() << "finish autoexposure";
 #endif
 
 
@@ -1405,10 +1407,14 @@ Camera::~Camera()
     if (streamIsActive)
     {
         streamIsActive = 0;
+        m_procImageFuture.waitForFinished();
+        m_autoExpFuture.waitForFinished();
         stopLiveVideo();
     }
-    qDebug() << "btw";
+
+    qDebug() << "before exit";
     is_ExitCamera(hCam);
+    qDebug() << "after exit";
     saveSettings();
     qDebug() << "camera destroyed";
 }
