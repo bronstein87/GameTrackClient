@@ -109,7 +109,7 @@ void CameraClient::initializeMessageHandlers()
 
     client.setHandler(msg::GameTrackProtocol::RestartSoftware, [this](const NetworkManager::MessageData& data)
     {
-          QApplication::quit();
+          QCoreApplication::quit();
     });
 
     client.setHandler(msg::GameTrackProtocol::RequestStream, [this](const NetworkManager::MessageData& data)

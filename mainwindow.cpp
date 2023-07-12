@@ -1,42 +1,42 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include <QElapsedTimer>
-#include <opencv2/highgui.hpp>
+//#include "mainwindow.h"
+//#include "ui_mainwindow.h"
+//#include <QElapsedTimer>
+//#include <opencv2/highgui.hpp>
 
-MainWindow::MainWindow(const QString ipPort, QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
-    ui->setupUi(this);
-    camHard.reset(new Camera("FT232R", true, -1));
-    camera.reset(new CameraClient(camHard.data(), ipPort));
-    connect(camera.data(), &CameraClient::readyMessageFromClient, this, [](auto msg){qDebug() << msg;});
+//MainWindow::MainWindow(const QString ipPort, QWidget *parent) :
+//    QMainWindow(parent),
+//    ui(new Ui::MainWindow)
+//{
+//    ui->setupUi(this);
+//    camHard.reset(new Camera("FT232R", true, -1));
+//    camera.reset(new CameraClient(camHard.data(), ipPort));
+//    connect(camera.data(), &CameraClient::readyMessageFromClient, this, [](auto msg){qDebug() << msg;});
 
-}
-MainWindow::~MainWindow()
-{
-    camera.reset();
-    camHard.reset();
-    delete ui;
-        qDebug() << "main destructor finished";
+//}
+//MainWindow::~MainWindow()
+//{
+//    camera.reset();
+//    camHard.reset();
+//    delete ui;
+//        qDebug() << "main destructor finished";
 
-}
+//}
 
-void MainWindow::on_sendMessagePushButton_clicked()
-{
-    camera->sendTest(ui->testMessageLineEdit->text());
-}
+//void MainWindow::on_sendMessagePushButton_clicked()
+//{
+//    camera->sendTest(ui->testMessageLineEdit->text());
+//}
 
 
-void MainWindow::on_controllerParamsPushButton_clicked()
-{
-    if (!ui->controllerPatternLineEdit->text().isEmpty()
-            && ui->controllerPortSpinBox->value() != -1)
-    {
-        camHard->activateObjectiveController(ui->controllerPatternLineEdit->text(), ui->controllerPortSpinBox->value());
-    }
-    else
-    {
-        QMessageBox::warning(this, "Внимание", "Не заданы параметры контроллера.");
-    }
-}
+//void MainWindow::on_controllerParamsPushButton_clicked()
+//{
+//    if (!ui->controllerPatternLineEdit->text().isEmpty()
+//            && ui->controllerPortSpinBox->value() != -1)
+//    {
+//        camHard->activateObjectiveController(ui->controllerPatternLineEdit->text(), ui->controllerPortSpinBox->value());
+//    }
+//    else
+//    {
+//        QMessageBox::warning(this, "Внимание", "Не заданы параметры контроллера.");
+//    }
+//}

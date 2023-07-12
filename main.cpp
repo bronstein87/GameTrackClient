@@ -1,15 +1,20 @@
 #include <gst/gst.h>
-#include "mainwindow.h"
-#include <QApplication>
+#include <cameraclient.h>
+//#include "mainwindow.h"
+#include <QCoreApplication>
 #include <QDebug>
 #include <QString>
+
+#include <QScopedPointer>
 
 
 int main(int argc, char *argv[])
 {
-
-    QApplication a(argc, argv);
+    qDebug() << "start" << argc;
+    QCoreApplication a(argc, argv);
+    qDebug() << "start2" << argc;
     gst_init (&argc, &argv);
+     qDebug() << "gst inited";
     QCoreApplication::setOrganizationName("IKI RAN");
     QCoreApplication::setApplicationName("BaseballCameraClient");
     qDebug() << argc << QCoreApplication::applicationDirPath();

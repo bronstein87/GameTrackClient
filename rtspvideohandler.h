@@ -7,7 +7,7 @@
 #include <gst/rtp/gstrtpbuffer.h>
 #include <QObject>
 #include <camera.h>
-#include <QApplication>
+#include <QCoreApplication>
 
 
 struct RtspVideoHandlerParams

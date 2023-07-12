@@ -1,13 +1,17 @@
 [Unit]
-Description=SAURON CONTROL
+Description=BASEBALL2
 After=network.target
 StartLimitIntervalSec=0
 [Service]
-User=bronstein
+User=nvidia
 Type=simple
 Restart=always
 RestartSec=5
-ExecStart=/home/nvidia/CLIENT_APP/build-camera_client_debug_app-Jetson_TX2-Release/camera_client_work_app
+WorkingDirectory =/home/nvidia/CLIENT_APP/build-camera_client_debug_app-Jetson_TX2-Release/
+ExecStart=/home/nvidia/CLIENT_APP/build-camera_client_debug_app-Jetson_TX2-Release/camera_client_work_app 10.57.57.57:57575
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=baseball
 
 [Install]
 WantedBy=multi-user.target

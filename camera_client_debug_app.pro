@@ -5,15 +5,15 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network serialport
+QT       += core network serialport
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+#greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
 
 TARGET = camera_client_work_app
 TEMPLATE = app
-CONFIG += c++14
+CONFIG += c++14 console
 DEFINES += PROTOBUF_USE_DLLS
 
 
