@@ -1,0 +1,13 @@
+[Unit]
+Description=SAURON CONTROL
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+User=bronstein
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=/home/nvidia/CLIENT_APP/build-camera_client_debug_app-Jetson_TX2-Release/camera_client_work_app
+
+[Install]
+WantedBy=multi-user.target
