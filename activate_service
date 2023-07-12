@@ -1,0 +1,3 @@
+#!/bin/bash
+cp baseball.service /etc/systemd/system/
+systemctl enable baseball.service
