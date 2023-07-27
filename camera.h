@@ -147,6 +147,8 @@ public:
 
     void saveSettings();
 
+    void close();
+
     //void debugPedestrianDraw(const QString& path);
 
     ~Camera();

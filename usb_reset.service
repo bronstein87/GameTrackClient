@@ -1,0 +1,14 @@
+[Unit]
+Description=USB_RESET_SERVICE
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+WorkingDirectory =/home/nvidia/CLIENT_APP/build-camera_client_debug_app-Jetson_TX2-Release/
+ExecStart=/home/nvidia/CLIENT_APP/GameTrackClient/activate_usb_reset
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=baseball
+
+[Install]
+WantedBy=multi-user.target

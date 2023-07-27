@@ -109,7 +109,10 @@ void CameraClient::initializeMessageHandlers()
 
     client.setHandler(msg::GameTrackProtocol::RestartSoftware, [this](const NetworkManager::MessageData& data)
     {
-          QCoreApplication::quit();
+       //amera->re
+        mainSender.reset();
+        qint64 pid = QCoreApplication::applicationPid();
+        QProcess::startDetached("kill -9 " + QString::number(pid));
     });
 
     client.setHandler(msg::GameTrackProtocol::RequestStream, [this](const NetworkManager::MessageData& data)

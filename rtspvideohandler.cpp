@@ -347,10 +347,10 @@ void RtspVideoHandler::closeServer()
         beforeDestroy = true;
         qDebug() << "rtsp destructor";
 
-        if (rtspClient != nullptr)
-        {
-            gst_rtsp_client_close(rtspClient);
-        }
+//        if (rtspClient != nullptr)
+//        {
+//            gst_rtsp_client_close(rtspClient);
+//        }
         qDebug() << "rtsp destructor2";
         g_source_remove (serverId);
         GstRTSPMountPoints *mounts = nullptr;

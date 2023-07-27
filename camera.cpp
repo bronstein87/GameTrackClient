@@ -174,7 +174,7 @@ void Camera::procImageQueue()
 
                 QTime timestampSystem = QTime(imageInfo.TimestampSystem.wHour,imageInfo.TimestampSystem.wMinute,
                                               imageInfo.TimestampSystem.wSecond, imageInfo.TimestampSystem.wMilliseconds);
-               qDebug() << imageInfo.u64TimestampDevice << timestampSystem << options.hw_params().frame_rate();
+               //qDebug() << imageInfo.u64TimestampDevice << timestampSystem << options.hw_params().frame_rate();
 
                 qint64 diff = abs(timeStampPrevious - (qint64)imageInfo.u64TimestampDevice);
                 qint64 thres = (1. / options.hw_params().frame_rate()) * 1e7 + 1e4;
